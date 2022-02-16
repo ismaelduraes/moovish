@@ -3,7 +3,6 @@ import { useState, useLayoutEffect as useEffect, useContext } from "react";
 import { View, Text, Image, TextInput, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { ThemeContext } from "./Contexts/ThemeContext";
 
-import { default as SimpleLineIcons } from "react-native-vector-icons/SimpleLineIcons";
 import { default as AntDesign } from "react-native-vector-icons/AntDesign";
 
 import LinearGradient from "react-native-linear-gradient";
@@ -13,7 +12,7 @@ import YouTube from "react-native-youtube";
 import { YT_API_KEY } from '@env'
 import { TMDB_API_KEY } from '@env'
 
-import { imgPrefix, imagePrefixOriginal, imagePrefixLow, imgPrefixOriginal } from './Utilities/Utilities'
+import { imgPrefix, imgPrefixOriginal, imgPrefixLow } from './Utilities/Utilities'
 
 import { MovieContext } from "../App";
 
@@ -63,8 +62,6 @@ export default function MovieScreen({id}){
         //separates cast and crew by department.
         //makes easier to show only the data that is relevant since
         //tmdb doesnt sort crew and cast by their departments themselves
-
-        console.log('sorting crew')
 
         const tempCrew = {
             acting: [],
@@ -119,7 +116,6 @@ export default function MovieScreen({id}){
     }
 
     function sortCast(credits){
-        console.log('sorting cast')
 
 
         const tempCast = {
@@ -142,7 +138,6 @@ export default function MovieScreen({id}){
                     break
                 case 'acting':
                     tempCast.acting.push(item)
-                    console.log(`${item.name} pushed`)
                     break
                 case 'sound':
                     tempCast.sound.push(item)
@@ -170,7 +165,6 @@ export default function MovieScreen({id}){
                     break
             }
             })
-        console.log(tempCast.acting)
         setCast(tempCast)
     }
 
@@ -186,9 +180,6 @@ export default function MovieScreen({id}){
         setIsLoading(true)
         fetchData()
     }, [])
-    useEffect(() => {
-        console.log(cast.acting)
-    }, [crew])
 
 
     const styles = StyleSheet.create({
@@ -258,7 +249,6 @@ export default function MovieScreen({id}){
             alignItems: 'center',
             paddingHorizontal: '7%',
             justifyContent: 'space-evenly',
-            // marginBottom: 40
         },
         companies: {
             textAlign: 'center',
@@ -314,29 +304,66 @@ export default function MovieScreen({id}){
     if (isLoading) return null
 
     else return(
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={styles.container}
+        >
 
 {/*  */}
 {/* POSTER */}
-            <LinearGradient style={styles.posterGradient} colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} />
-            <Image style={styles.poster} source={{uri: `${imgPrefixOriginal}${movieData.backdrop_path}`}}/>
+            <LinearGradient
+                style={styles.posterGradient}
+                colors={[
+                    'rgba(0, 0, 0, 0)',
+                    'rgba(0, 0, 0, 0)',
+                    'rgba(0, 0, 0, 1)',
+                ]}
+            />
+
+            <Image
+                style={styles.poster}
+                source={{uri:
+                `${imgPrefixOriginal}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}`
+                }}
+            />
             
             {/* title */}
-            <View style={styles.titleContainer}>
-                <View onTouchEnd={() => contextProps.setIsOnMovie(false)}>
-                    <AntDesign name="arrowleft" size={30} color={theme.foreground}/>
+            <View
+                style={styles.titleContainer}
+            >
+                <View
+                    onTouchEnd={() => 
+                        contextProps.setIsOnMovie(false)
+                    }
+                >
+                    <AntDesign
+                        name="arrowleft"
+                        size={30}
+                        color={theme.foreground}
+                    />
                 </View>
 
-                <Text style={styles.movieTitle}>
+                <Text
+                    style={styles.movieTitle}
+                >
                     {movieData.title}
                 </Text>
+
                 <AntDesign
                 name="plus" size={30}
-                color={theme.foreground}/>
+                color={theme.foreground}
+                />
+
             </View>
 
             {/* tagline */}
-            <Text style={{width: 30, height: 20, ...styles.tagline}}>
+            <Text
+                style={{
+                    width: 30,
+                    height: 20,
+                    ...styles.tagline
+                }}
+            >
                 {movieData.tagline}
             </Text>
 
@@ -344,97 +371,169 @@ export default function MovieScreen({id}){
 {/*  */}
 {/* RATINGS */}
 
-            <View style={{...styles.section, ...styles.rating}}>
+            <View
+                style={{
+                    ...styles.section,
+                    ...styles.rating
+                }}
+            >
                 <View>
-                    <Text style={styles.ratingAverage}>
-                        {movieData.vote_average ? movieData.vote_average : 'This movie has no ratings yet'}
+                    <Text
+                        style={styles.ratingAverage}
+                    >
+                        {movieData.vote_average ?
+                        movieData.vote_average : 'This movie has no ratings yet'}
                     </Text>
-                    {movieData.vote_average != 0 &&
-                    <Text style={styles.smallText}>Rating</Text>
+                    
+                    {
+                    movieData.vote_average != 0 &&
+                    <Text
+                        style={styles.smallText}
+                    >
+                            Rating
+                    </Text>
                     }
                 </View>
 
                 <View>
-                    <Text style={styles.smallText}>{productionCompanies}</Text>
+                    <Text
+                        style={styles.smallText}
+                    >
+                        {productionCompanies}
+                    </Text>
                 </View>
 
-                {movieData.runtime > 0 &&
+                {
+                movieData.runtime > 0 &&
                 <View>
-                    <Text style={styles.smallText}>
+                    <Text
+                        style={styles.smallText}
+                    >
                         {movieData.runtime} min
                     </Text>
-                </View>}
+                </View>
+                }
             </View>
 
 {/*  */}
 {/* OVERVIEW */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Overview</Text>
-                <Text style={styles.overviewText}>
+            <View
+                style={styles.section}
+            >
+                <Text
+                    style={styles.sectionTitle}
+                >
+                        Overview
+                </Text>
+                <Text
+                    style={styles.overviewText}
+                >
                     {movieData.overview}
                 </Text>
             </View>
 
 {/*  */}
 {/* IMAGES */}
-            {movieImages && <View style={{marginBottom: 35}}>
-                <Text style={{...styles.sectionTitle, paddingHorizontal: '7%'}}>
+            {
+            movieImages.length > 0 &&
+            <View
+                style={{
+                    marginBottom: 35
+                }}
+            >
+                <Text
+                    style={{
+                        ...styles.sectionTitle,
+                        paddingHorizontal: '7%'
+                    }}
+                >
                     Images
                 </Text>
+
                 <Carousel
-                data={movieImages.slice(0, 4)}
-                sliderWidth={width}
-                itemWidth={width*0.85}
-                layout="stack"
-                layoutCardOffset={10}
-                renderItem={ (item) =>
-                {
-                    return(
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Image key={item.index} style={styles.image} source={{uri: `${imgPrefixOriginal}${item.item.file_path}`}}/>
-                        {item.index === 0 &&
-                        <SimpleLineIcons name="arrow-right" color={theme.foreground} size={16}
-                        style={{left: 5}}
-                        />}
-                    </View>
-                )}}
+                    data={movieImages.slice(0, 4)}
+                    sliderWidth={width}
+                    itemWidth={width*0.85}
+                    layout="default"
+                    layoutCardOffset={10}
+                    renderItem={ (item) =>
+                    {
+                        return(
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                            <Image
+                                key={item.index}
+                                style={styles.image}
+                                source={{
+                                    uri:
+                                    `${imgPrefixOriginal}${item.item.file_path}`
+                                }}/>
+                        </View>
+                    )}}
                 />
-            </View>}
+            </View>
+            }
 
 {/*  */}
 {/* CAST */}
             {cast.acting &&
             <View>
-                {console.log(cast.acting)}
-            <Text style={{...styles.sectionTitle, ...styles.section}}>Cast</Text>
-            <ScrollView
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            style={{...styles.section, flexDirection: 'row'}}
-            contentContainerStyle={{paddingRight: '7%'}}
-            >
-                {cast.acting && cast.acting.map((item, index) => {
-                    if (index < 10) return(
-                        <View style={styles.cast} key={index}>
-                            <Image style={styles.profileImage}
-                            source={{uri: `${imgPrefix}${item.profile_path}`}}
-                            />
-                            <Text style={{...styles.smallText, marginTop: 10, fontFamily: theme.fontBold}}>
-                                {item.name}
-                            </Text>
-                            <Text style={{...styles.smallText, marginTop: 0, opacity: 0.3}}>
-                                {item.character}
-                            </Text>
-                        </View>
-                    )
-                })
-                }
-            </ScrollView>
+                <Text
+                    style={{
+                        ...styles.sectionTitle,
+                        ...styles.section
+                    }}
+                >
+                    Cast
+                </Text>
+
+                <ScrollView
+                    showsHorizontalScrollIndicator={false}
+                    horizontal
+                    style={{...styles.section, flexDirection: 'row'}}
+                    contentContainerStyle={{paddingRight: '7%'}}
+                >
+                    {cast.acting &&
+                    cast.acting.map((item, index) => {
+                        if(item.profile_path)
+                        return(
+                            <View
+                            style={styles.cast}
+                            key={index}>
+                                <Image
+                                style={styles.profileImage}
+                                source={{uri:`${imgPrefixLow}${item.profile_path}`}}
+                                />
+
+                                <Text style={{
+                                    ...styles.smallText,
+                                    marginTop: 10,
+                                    fontFamily: theme.fontBold,
+                                }}>
+                                    {item.name}
+                                </Text>
+
+                                <Text
+                                style={{
+                                    ...styles.smallText,
+                                    marginTop: 0,
+                                    color: theme.foreground,
+                                    opacity: 0.5
+                                }}>
+                                    {item.character}
+                                </Text>
+                            </View>
+                        )
+                    })
+                    }
+                </ScrollView>
             </View>}
 
 {/*  */}
 {/* VIDEO */}
-            {movieVideo.key !== undefined &&
+            {movieVideo &&
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>
                     Featured Video
