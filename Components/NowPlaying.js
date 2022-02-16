@@ -64,7 +64,7 @@ export default function NowPlaying(){
                     resizeMode: 'cover',
                 }}
                 key={index}
-                source={{uri: `https://image.tmdb.org/t/p/w500${item.item.backdrop_path}`}}/>
+                source={{uri: `https://image.tmdb.org/t/p/w500${item.item.backdrop_path ? item.item.backdrop_path : item.item.poster_path}`}}/>
                 <Text style={{
                     textAlign: 'center',
                     fontFamily: theme.fontRegular,
