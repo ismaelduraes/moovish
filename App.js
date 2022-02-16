@@ -1,36 +1,60 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useState, createContext } from 'react'
 import { View, StyleSheet, TextInput, StatusBar, SafeAreaView } from 'react-native'
-import Nav from './Components/Nav'
+
 import { ThemeContext } from './Components/Contexts/ThemeContext'
 import { themes } from './Components/Contexts/ThemeContext'
+
+import Nav from './Components/Nav'
 import Main from './Components/Main'
-import { BlurView } from '@react-native-community/blur'
 import MovieScreen from './Components/MovieScreen'
+import Search from './Components/Screens/Search'
 
 export const MovieContext = createContext()
 export default function App(){
   const [currentTheme, setCurrentTheme] = useState(themes.default)
   const [isOnMovie, setIsOnMovie] = useState(false)
+  const [isOnSearch, setIsOnSearch] = useState(false)
   const [selectedMovie, setSelectedMovie] = useState(550)
 
   return(
-    <MovieContext.Provider value={{setSelectedMovie, setIsOnMovie}}>
+    <MovieContext.Provider
+      value={{
+        setSelectedMovie,
+        isOnMovie,
+        setIsOnMovie,
+        isOnSearch,
+        setIsOnSearch}}
+    >
     <ThemeContext.Provider value={currentTheme}>
     <StatusBar
     backgroundColor={currentTheme.accent}
     />
-    <SafeAreaView style={{...styles.container, backgroundColor: currentTheme.background}}>
+    <SafeAreaView
+      style={{
+        ...styles.container,
+        backgroundColor: currentTheme.background}}
+    >
       <Nav/>
-      {!isOnMovie &&
+      {
+      !isOnMovie && !isOnSearch &&
         <Main
-        setIsOnMovie={setIsOnMovie}
-        setSelectedMovie={setSelectedMovie}/>
+          setIsOnMovie={setIsOnMovie}
+          setSelectedMovie={setSelectedMovie}
+        />
       }
-      {isOnMovie && <MovieScreen
-      id={selectedMovie}
-      // selectedMovie={selectedMovie}
-      />}
+
+      {
+      isOnSearch &&
+      <Search/>
+      }
+
+      {
+      isOnMovie &&
+      <MovieScreen
+        id={selectedMovie}
+      />
+      }
     </SafeAreaView>
     <View style={styles.bgGradient}/>
     </ThemeContext.Provider>
