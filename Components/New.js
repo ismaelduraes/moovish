@@ -1,9 +1,11 @@
 import React from 'react'
 import { useContext, useState, useEffect } from 'react'
-import { View, Text, Image, ScrollView, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { ThemeContext } from './Contexts/ThemeContext'
 import NewMovie from './NewMovie'
 import { MovieContext } from '../App'
+
+import { TMDB_API_KEY } from '@env'
 
 export default function New(){
     const theme = useContext(ThemeContext)
@@ -11,7 +13,7 @@ export default function New(){
     const [newMoviesData, setNewMoviesData] = useState([])
 
     function fetchData(){
-        fetch('https://api.themoviedb.org/3/movie/upcoming?api_key=cd2313ca79ff33e56d832cf18a212b69&page=1')
+        fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${TMDB_API_KEY}&page=1`)
         .then(result => result.json()
         .then(data => setNewMoviesData(data.results))
         )
@@ -68,8 +70,26 @@ export default function New(){
             <Text style={styles.caption}>
                 Just released or upcoming
             </Text>
-            {/* <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.gradient}/> */}
-            <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollView} horizontal>
+
+            <FlatList
+                contentContainerStyle={styles.scrollView}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+                data={newMoviesData}
+                renderItem={(item, index) => {
+                    {console.log(item.item.title)}
+                    return(
+                        <View key={item.index}>
+                            <NewMovie
+                                movie={item.item}
+                                delay={item.index*100}
+                            />
+                        </View>
+                    )
+                }}
+            />
+
+            {/* <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollView} horizontal>
                 {newMoviesData.map((item, index) => {
                     return(
                         <View key={index} onTouchEnd={() => {
@@ -77,13 +97,12 @@ export default function New(){
                             contextProps.setIsOnMovie(true)
                         }}>
                             <NewMovie
-                            movieName={item.title}
-                            imageLink={item.poster_path}
+                                movie={item}
                             />
                         </View>
                     )
                 })}
-            </ScrollView>
+            </ScrollView> */}
         </View>
     )
 }
