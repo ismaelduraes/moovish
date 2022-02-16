@@ -1,6 +1,6 @@
 import React from "react";
-import { useState, useContext, useEffect } from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { useState, useContext, useEffect, useRef } from "react";
+import { Animated, View, Text, StyleSheet, Image, Dimensions, Easing } from "react-native";
 
 import { ThemeContext } from "./Contexts/ThemeContext";
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
@@ -14,10 +14,25 @@ const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 
 export default function Trending(){
+    //states
     const theme = useContext(ThemeContext)
     const contextProps = useContext(MovieContext)
 
+    const opacityAnimRef = useRef(new Animated.Value(0)).current
+    const topAnimRef = useRef(new Animated.Value(25)).current
+
     const [trendingMovies, setTrendingMovies] = useState([])
+    const [activeSlide, setActiveSlide] = useState(0)
+
+    //function
+    function playAnim(animRef, to = 0, duration = 1000, useNative = true){
+        Animated.timing(animRef, {
+            toValue: to,
+            duration,
+            useNativeDriver: true,
+            easing: Easing.out(Easing.exp)
+        }).start()
+    }
     function fetchData(){
         fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`)
         .then(result => result.json()
@@ -26,29 +41,37 @@ export default function Trending(){
     }
 
     useEffect(() => {
+        Animated.timing(opacityAnimRef).reset()
+        Animated.timing(topAnimRef).reset()
+        playAnim(opacityAnimRef, 1, 1000)
+        playAnim(topAnimRef, 0, 1000, false)
+    }, [activeSlide])
+
+    
+
+    useEffect(() => {
         fetchData();
     }, [])
 
     const styles = StyleSheet.create({
         container: {
-            marginBottom: '15%',
+            marginBottom: 25,
             alignItems: 'center',
             position: 'relative',
+            height: 750
         },
         sectionTitle: {
             fontSize: 26,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            alignSelf: 'center',
             paddingHorizontal: '7%',
-            marginBottom: 20
+            marginBottom: 20,
         },
         title: {
             marginTop: '5%',
             fontSize: 20,
             color: theme.foreground,
             fontFamily: theme.fontRegular,
-            alignSelf: 'center'
         },
         banner: {
             backgroundColor: theme.accent,
@@ -58,27 +81,22 @@ export default function Trending(){
             resizeMode: 'cover',
         },
         overview: {
-            textAlign: 'center',
+            textAlign: 'left',
             marginTop: 10,
             fontFamily: theme.fontRegular,
-            width: '80%',
+            width: '100%',
             alignSelf: 'center',
-            height: 100
+            height: 100,
         },
         trendingGradient: {
             width: '100%',
-            height: 100,
+            height: 200,
+            top: '35%',
             position: 'absolute'
-        },
-        trendingGradientBg: {
-            width: '100%',
-            height: 100,
-            zIndex: 2,
-            borderRadius: 50
         },
         seeMore: {
             position: 'absolute',
-            top: '88%',
+            top: '85%',
             width: '100%'
         },
         seeMoreText: {
@@ -92,35 +110,96 @@ export default function Trending(){
             color: theme.foreground,
             backgroundColor: theme.accent,
             top: '20%',
+        },
+        blur: {
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
         }
     })
     
     function Banner(item){
         return(
             <View>
-
-                <View onTouchEnd={() => {
+                <View
+                onTouchEnd={
+                    () => {
                     contextProps.setIsOnMovie(true)
                     contextProps.setSelectedMovie(item.item.id)
-                }} style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Image source={{uri: `https://image.tmdb.org/t/p/original${item.item.poster_path}`}} style={styles.banner}/>
+                }}
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                    }}
+                >
+                    <Image source={{uri: `https://image.tmdb.org/t/p/original${item.item.poster_path}`}} style={styles.banner}
+                    />
+
+                    {
+                    item.index === 0 &&
+                    <Icon
+                        name="arrow-right"
+                        size={24}
+                        style={{left: 5}}
+                    />
+                    }
                 </View>
 
-                <Text style={styles.title}>
-                    {item.item.title}
-                </Text>
+                {
+                activeSlide === item.index &&
+                <View>
+                    <Animated.Text
+                    style={{
+                        ...styles.title,
+                        opacity: opacityAnimRef,
+                        transform: [{translateY: topAnimRef}]
+                    }}>
+                        {item.item.title}
+                    </Animated.Text>
 
-                <Text style={styles.overview}>
-                    {item.item.overview}
-                </Text>
+                    <Animated.Text
+                    style={{
+                        ...styles.overview,
+                        opacity: opacityAnimRef,
+                        transform: [{translateY: topAnimRef}]
+                    }}>
+                        {item.item.overview}
+                    </Animated.Text>
 
-                <View style={styles.seeMore}>
-                    <LinearGradient style={styles.trendingGradient} colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 1)']}/>
+                    <LinearGradient
+                    style={styles.trendingGradient}
+                    colors={
+                        ['rgba(0, 0, 0, 0)',
+                         'rgba(0, 0, 0, 1)',
+                         'rgba(0, 0, 0, 1)']
+                    }/>
 
-                    <Text style={{...styles.seeMoreText, position: 'absolute'}}>
-                        See More
-                    </Text>
+                    <Animated.View
+                        //open movie if such is the active slide and clicked
+                        //this conditon prevents users from opening the wrong slide
+                        //accidentaly
+                        onTouchEnd={(() => {
+                            if (item.index === activeSlide){
+                                contextProps.setIsOnMovie(true)
+                                contextProps.setSelectedMovie(item.item.id)
+                            }
+                        })}
+                        style={{
+                            ...styles.seeMore,
+                            opacity: opacityAnimRef,
+                            transform: [{translateY: topAnimRef}]
+                    }}>
+                        
+                        <Text style={{
+                            ...styles.seeMoreText,
+                            position: 'absolute'
+                        }}>
+                            See More
+                        </Text>
+
+                    </Animated.View>
                 </View>
+                }
             </View>
         )
     }
@@ -131,12 +210,12 @@ export default function Trending(){
                 Trending
             </Text>
             <Carousel
-            data={trendingMovies}
-            renderItem={Banner}
-            sliderWidth={width}
-            itemWidth={width*0.85}
-            layout="default"
-            lockScrollWhileSnapping
+                data={trendingMovies}
+                renderItem={Banner}
+                sliderWidth={width}
+                itemWidth={width*0.85}
+                layout="stack"
+                onSnapToItem={e => setActiveSlide(e)}
             />
         </View>
     )
