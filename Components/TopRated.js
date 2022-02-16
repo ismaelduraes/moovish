@@ -51,7 +51,6 @@ export default function TopRated(){
             height: 300,
             width: 50,
             left: '86%',
-            // backgroundColor: 'blue',
             zIndex: 1,
         },
         scrollView: {
@@ -67,14 +66,16 @@ export default function TopRated(){
             <Text style={styles.caption}>
                 The best, according to you
             </Text>
-            {/* <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)']} style={styles.gradient}/> */}
-            <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollView} horizontal>
+            <ScrollView
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.scrollView}
+                horizontal
+            >
                 {topRated.map((item, index) => {
                     return(
                         <NewMovie
-                        movieName={item.title}
-                        imageLink={item.poster_path}
-                        key={index}
+                            movie={item}
+                            key={index}
                         />
                     )
                 })}
