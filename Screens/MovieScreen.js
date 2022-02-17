@@ -22,7 +22,12 @@ import { TMDB_API_KEY } from '@env'
 import { imgPrefixOriginal, imgPrefixLow } from '../Components/Utilities/Utilities'
 
 import Nav from "../Components/Nav";
+
+import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
+
 import { Link, useParams } from "react-router-native";
+import Header from "../Components/Header";
+
 
 const width = Dimensions.get('window').width
 
@@ -66,120 +71,10 @@ export default function MovieScreen(){
         fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
         .then(r => r.json())
         .then(d => {
-            sortCast(d.cast)
-            sortCrew(d.crew)
+            sortCast(d.cast, setCast)
+            sortCrew(d.crew, setCrew)
         })
         setIsLoading(false)
-    }
-
-    function sortCrew(credits){
-        //separates cast and crew by department.
-        //makes easier to show only the data that is relevant since
-        //tmdb doesnt sort crew and cast by their departments themselves
-
-        const tempCrew = {
-            acting: [],
-            art: [],
-            camera: [],
-            costume: [],
-            directing: [],
-            editing: [],
-            sound: [],
-            soundEffects: [],
-            production: [],
-            visualEffects: [],
-        }
-
-
-        credits.forEach(item => {
-            switch (item.department.toLowerCase()){
-                case 'art':
-                    tempCrew.art.push(item)
-                    break
-                case 'acting':
-                    tempCrew.acting.push(item)
-                    break
-                case 'sound':
-                    tempCrew.sound.push(item)
-                    break
-                case 'production':
-                    tempCrew.production.push(item)
-                    break
-                case 'costume':
-                    tempCrew.costume.push(item)
-                    break
-                case 'visual effects':
-                    tempCrew.visualEffects.push(item)
-                    break
-                case 'sound effects':
-                    tempCrew.soundEffects.push(item)
-                    break
-                case 'editing':
-                    tempCrew.editing.push(item)
-                    break
-                case 'directing':
-                    tempCrew.directing.push(item)
-                    break
-                case 'camera':
-                    tempCrew.camera.push(item)
-                    break
-            }
-        })
-
-        setCrew(tempCrew)
-    }
-
-    function sortCast(credits){
-
-
-        const tempCast = {
-            acting: [],
-            art: [],
-            camera: [],
-            costume: [],
-            directing: [],
-            editing: [],
-            sound: [],
-            soundEffects: [],
-            production: [],
-            visualEffects: [],
-        }
-
-        credits.forEach(item => {
-            switch (item.known_for_department.toLowerCase()){
-                case 'art':
-                    tempCast.art.push(item)
-                    break
-                case 'acting':
-                    tempCast.acting.push(item)
-                    break
-                case 'sound':
-                    tempCast.sound.push(item)
-                    break
-                case 'production':
-                    tempCast.production.push(item)
-                    break
-                case 'costume':
-                    tempCast.costume.push(item)
-                    break
-                case 'visual effects':
-                    tempCast.visualEffects.push(item)
-                    break
-                case 'sound effects':
-                    tempCast.soundEffects.push(item)
-                    break
-                case 'editing':
-                    tempCast.editing.push(item)
-                    break
-                case 'directing':
-                    tempCast.directing.push(item)
-                    break
-                case 'camera':
-                    tempCast.camera.push(item)
-                    break
-            }
-            })
-        setCast(tempCast)
     }
 
     function ratingColor(rating){
@@ -199,31 +94,11 @@ export default function MovieScreen(){
             width: '100%',
             backgroundColor: theme.background
         },
-        poster: {
-            width: '100%',
-            height: 350,
-        },
         smallText: {
             color: theme.foreground,
             maxWidth: 150,
             textAlign: 'center',
             paddingHorizontal: '3%',
-        },
-        titleContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: theme.defaultPadding,
-            top: -25,
-            zIndex: 2
-        },
-        movieTitle: {
-            color: theme.accentLight,
-            fontFamily: theme.fontBold,
-            fontSize: 30,
-            maxWidth: width*0.5,
-            textAlign: 'center',
-            marginBottom: 5
         },
         tagline: {
             width: '80%',
@@ -232,13 +107,6 @@ export default function MovieScreen(){
             textAlign: 'center',
             alignSelf: 'center',
             color: theme.foreground
-        },
-        posterGradient: {
-            height: 350,
-            width: '100%',
-            position: 'absolute',
-            left: 0,
-            zIndex: 1,
         },
         ratingCircle: {
             alignItems: 'center',
@@ -319,55 +187,14 @@ export default function MovieScreen(){
     else return(
         <View style={styles.container}>
             <Nav/>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-            >
-            
-            {/*  */}
-            {/* POSTER */}
-                <LinearGradient
-                    style={styles.posterGradient}
-                    colors={[
-                        'rgba(0, 0, 0, 0)',
-                        'rgba(0, 0, 0, 0)',
-                        'rgba(0, 0, 0, 0)',
-                        'rgba(0, 0, 0, 0)',
-                        'rgba(0, 0, 0, 0)',
-                        theme.background,
-                    ]}
+            <ScrollView showsVerticalScrollIndicator={false}>
+                
+                <Header
+                imagePath={movieData.backdrop_path}
+                title={movieData.title}
                 />
-                <Image
-                    style={styles.poster}
-                    source={{uri:
-                    `${imgPrefixOriginal}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}`
-                    }}
-                />
-            
-                {/* title */}
-                <View
-                    style={styles.titleContainer}
-                >
-                    <View>
-                    <Link to="/" activeOpacity={1}>
-                        <AntDesign
-                            name="arrowleft"
-                            size={30}
-                            color={theme.foreground}
-                        />
-                    </Link>
-                    </View>
-                    <Text
-                        style={styles.movieTitle}
-                    >
-                        {movieData.title}
-                    </Text>
 
-                    <AntDesign
-                        name="plus" size={30}
-                        color={theme.foreground}
-                    />
 
-                </View>
                 {/* tagline */}
                 <Text
                     style={{
