@@ -16,12 +16,9 @@ import {
 import { ThemeContext } from './Contexts/ThemeContext'
 import Carousel from 'react-native-snap-carousel';
 
-import { Link } from 'react-router-native';
-
-import NewMovie from './NewMovie'
+import Poster from './Poster'
 
 import { TMDB_API_KEY } from '@env'
-import { imgPrefixOriginal } from './Utilities/Utilities';
 import SlideAnimationFunction from './Utilities/SlideAnimationFuncion';
 import { MovieContext } from '../App';
 
@@ -104,7 +101,7 @@ export default function NowPlaying(){
                     item => {
                     return(
                     <View>
-                    <NewMovie
+                    <Poster
                         movie={item.item}
                         width={width-(theme.defaultPadding*2)}
                         useBackdrop
