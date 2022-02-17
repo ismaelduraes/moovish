@@ -18,7 +18,7 @@ import { ThemeContext } from "./Contexts/ThemeContext";
 
 const width = Dimensions.get('window').width
 
-export default function Header({imagePath, title}){
+export default function Header({imagePath, title, subtitle}){
     const theme = useContext(ThemeContext)
     const styles = StyleSheet.create({
         poster: {
@@ -41,6 +41,14 @@ export default function Header({imagePath, title}){
             textAlign: 'center',
             marginBottom: 5
         },
+        subtitle: {
+            width: '80%',
+            paddingHorizontal: 30,
+            top: -20,
+            textAlign: 'center',
+            alignSelf: 'center',
+            color: theme.foreground,
+        },
         headerGradient: {
             height: 350,
             width: '100%',
@@ -52,22 +60,19 @@ export default function Header({imagePath, title}){
 
     return(
         <View>
+            <Image
+                style={styles.poster}
+                source={{uri:
+                    `${imgPrefixOriginal}${imagePath}`
+                }}
+            />
             <LinearGradient
             style={styles.headerGradient}
             colors={[
                 'rgba(0, 0, 0, 0)',
                 'rgba(0, 0, 0, 0)',
-                'rgba(0, 0, 0, 0)',
-                'rgba(0, 0, 0, 0)',
-                'rgba(0, 0, 0, 0)',
                 theme.background,
             ]}
-            />
-            <Image
-                style={styles.poster}
-                source={{uri:
-                `${imgPrefixOriginal}${imagePath}`
-                }}
             />
                     
             {/* title */}
@@ -91,7 +96,12 @@ export default function Header({imagePath, title}){
                 name="plus" size={30}
                 color={theme.foreground}
                 />
+
             </View>
+            {subtitle &&
+            <Text style={styles.subtitle}>
+                {subtitle}
+            </Text>}
         </View>
     )
 }
