@@ -1,16 +1,19 @@
 import React from 'react'
-import { useContext, useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { useContext, useRef, useState, useEffect } from 'react'
+import { View, Text, StyleSheet, FlatList, Animated } from 'react-native'
 import { ThemeContext } from './Contexts/ThemeContext'
 import NewMovie from './NewMovie'
-import { MovieContext } from '../App'
+
+import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
 import { TMDB_API_KEY } from '@env'
 
-export default function New(){
+export default function New(props){
     const theme = useContext(ThemeContext)
-    const contextProps = useContext(MovieContext)
     const [newMoviesData, setNewMoviesData] = useState([])
+
+    const containerSlideAnim = useRef(new Animated.Value(150)).current
+    const containerOpacityAnim = useRef(new Animated.Value(0)).current
 
     function fetchData(){
         fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${TMDB_API_KEY}&page=1`)
@@ -21,26 +24,29 @@ export default function New(){
 
     useEffect(() => {
         fetchData()
+        SlideAnimationFunction(containerSlideAnim, 0, 1000)
+        SlideAnimationFunction(containerOpacityAnim, 1, 1000)
     }, [])
 
     const styles = StyleSheet.create({
         container: {
-            marginBottom: '15%',
-            overflow: 'hidden'
+            marginBottom: theme.homeComponentsBottomMargin,
+            marginTop: '20%',
+            overflow: 'hidden',
+            transform: [{'translateY': containerSlideAnim}],
+            opacity: containerOpacityAnim
         },
         sectionTitle: {
             fontSize: 26,
             fontFamily: theme.fontBold,
-            color: theme.foreground,
-            //third of border radius
-            left: 15/3,
-            paddingHorizontal: '7%',
+            color: theme.accentLight,
+            paddingHorizontal: theme.defaultPadding,
         },
         caption: {
-            marginBottom: '5%',
-            left: 15/3,
             fontFamily: theme.fontRegular,
-            paddingHorizontal: '7%',
+            marginBottom: '5%',
+            paddingHorizontal: theme.defaultPadding,
+            color: theme.foreground
         },
         banner: {
             backgroundColor: theme.accent,
@@ -49,21 +55,13 @@ export default function New(){
             borderRadius: 15,
             resizeMode: 'cover',
         },
-        gradient: {
-            position: 'absolute',
-            height: 300,
-            width: 50,
-            left: '86%',
-            // backgroundColor: 'blue',
-            zIndex: 1,
-        },
         scrollView: {
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
         }
     })
 
     return (
-        <View style={styles.container}>
+        <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
                 New and fresh
             </Text>
@@ -72,37 +70,32 @@ export default function New(){
             </Text>
 
             <FlatList
+                removeClippedSubviews
                 contentContainerStyle={styles.scrollView}
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 data={newMoviesData}
                 renderItem={(item, index) => {
-                    {console.log(item.item.title)}
                     return(
-                        <View key={item.index}>
+                        <View
+                            key={item.index}
+                            onLayout={() => {
+                                //if first item is loaded
+                                //and layout is prepared,
+                                //set setNewLoaded to true
+                                //so rest of home screen can
+                                //load (see Main.js)
+                                props.setNewLoaded(true)
+                            }}
+                        >
                             <NewMovie
                                 movie={item.item}
-                                delay={item.index*100}
+                                animDelay={item.index*100}
                             />
                         </View>
                     )
                 }}
             />
-
-            {/* <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollView} horizontal>
-                {newMoviesData.map((item, index) => {
-                    return(
-                        <View key={index} onTouchEnd={() => {
-                            contextProps.setSelectedMovie(item.id)
-                            contextProps.setIsOnMovie(true)
-                        }}>
-                            <NewMovie
-                                movie={item}
-                            />
-                        </View>
-                    )
-                })}
-            </ScrollView> */}
-        </View>
+        </Animated.View>
     )
 }
