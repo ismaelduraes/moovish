@@ -1,13 +1,27 @@
 import React from 'react'
-import { useContext, useState, useEffect } from 'react'
-import { View, Text, Image, ScrollView, StyleSheet } from 'react-native'
+import { useContext, useState, useEffect, useRef } from 'react'
+import {
+    View,
+    Text,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Animated
+} from 'react-native'
+
+import { default as Ionicons } from 'react-native-vector-icons/Ionicons'
+
 import { ThemeContext } from './Contexts/ThemeContext'
 import NewMovie from './NewMovie'
 import { TMDB_API_KEY } from '@env'
+import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
 export default function TopRated(){
     const theme = useContext(ThemeContext)
     const [topRated, setTopRated] = useState([])
+
+    const containerSlideAnim = useRef(new Animated.Value(150)).current
+    const containerOpacityAnim = useRef(new Animated.Value(0)).current
 
     function fetchData(){
         fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${TMDB_API_KEY}&page=1`)
@@ -18,26 +32,28 @@ export default function TopRated(){
 
     useEffect(() => {
         fetchData()
+        SlideAnimationFunction(containerSlideAnim, 0, 1000,)
+        SlideAnimationFunction(containerOpacityAnim, 1, 1000)
     }, [])
 
     const styles = StyleSheet.create({
         container: {
-            marginBottom: '10%',
-            overflow: 'hidden'
+            marginBottom: theme.homeComponentsBottomMargin,
+            overflow: 'hidden',
+            transform: [{'translateY': containerSlideAnim}],
+            opacity: containerOpacityAnim
         },
         sectionTitle: {
             fontSize: 26,
             fontFamily: theme.fontBold,
-            color: theme.foreground,
-            //third of border radius
-            left: 15/3,
-            paddingHorizontal: '7%',
+            color: theme.accentLight,
+            paddingHorizontal: theme.defaultPadding,
         },
         caption: {
             fontFamily: theme.fontRegular,
             marginBottom: '5%',
-            left: 15/3,
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
+            color: theme.foreground
         },
         banner: {
             backgroundColor: theme.accent,
@@ -54,12 +70,12 @@ export default function TopRated(){
             zIndex: 1,
         },
         scrollView: {
-            paddingLeft: '7%'
+            paddingLeft: theme.defaultPadding
         }
     })
 
     return (
-        <View style={styles.container}>
+        <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
                 Top Rated
             </Text>
@@ -67,19 +83,22 @@ export default function TopRated(){
                 The best, according to you
             </Text>
             <ScrollView
+                removeClippedSubviews
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.scrollView}
                 horizontal
             >
-                {topRated.map((item, index) => {
+                {topRated.map(
+                    (item,
+                    index) => {
                     return(
-                        <NewMovie
-                            movie={item}
-                            key={index}
-                        />
+                    <NewMovie
+                        movie={item}
+                        key={index}
+                    />
                     )
                 })}
             </ScrollView>
-        </View>
+        </Animated.View>
     )
 }
