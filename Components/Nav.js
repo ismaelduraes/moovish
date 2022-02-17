@@ -43,7 +43,7 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
                 ]}
             >
 
-                <View/>
+                <View style={{width: 30}}/>
 
                 <Text style={styles.title}>
                     {title}
