@@ -55,13 +55,6 @@ export default function TopRated(){
             paddingHorizontal: theme.defaultPadding,
             color: theme.foreground
         },
-        banner: {
-            backgroundColor: theme.accent,
-            width: '100%',
-            height: 200,
-            borderRadius: 15,
-            resizeMode: 'cover',
-        },
         gradient: {
             position: 'absolute',
             height: 300,
