@@ -2,7 +2,7 @@ import React from 'react'
 import { useContext, useRef, useState, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, Animated } from 'react-native'
 import { ThemeContext } from './Contexts/ThemeContext'
-import NewMovie from './NewMovie'
+import Poster from './Poster'
 
 import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
@@ -88,7 +88,7 @@ export default function New(props){
                                 props.setNewLoaded(true)
                             }}
                         >
-                            <NewMovie
+                            <Poster
                                 movie={item.item}
                                 animDelay={item.index*100}
                             />
