@@ -10,9 +10,6 @@ import {
 } from "react-native";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
-import { default as AntDesign } from "react-native-vector-icons/AntDesign";
-
-import LinearGradient from "react-native-linear-gradient";
 import Carousel from "react-native-snap-carousel";
 import YouTube from "react-native-youtube";
 
@@ -27,6 +24,8 @@ import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
 
 import { Link, useParams } from "react-router-native";
 import Header from "../Components/Header";
+import TextBody from "../Components/TextBody";
+import HorizontalProfileList from "../Components/HorizontalProfileList";
 
 
 const width = Dimensions.get('window').width
@@ -135,37 +134,19 @@ export default function MovieScreen(){
             textAlign: 'center',
             color: theme.accent
         },
-        section: {
-            paddingHorizontal: theme.defaultPadding,
-            marginBottom: 35
-        },
         sectionTitle: {
             fontSize: 20,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             marginBottom: 10,
         },
-        overviewText: {
-            textAlign: 'left',
-            color: theme.foreground,
-        },
         image: {
             height: 190,
             width: width-(theme.defaultPadding*2),
-            borderRadius: 15,
+            borderRadius: theme.borderRadius,
             backgroundColor: theme.accent,
             alignSelf: 'center',
             overflow: 'hidden'
-        },
-        cast: {
-            marginRight: 30,
-            alignItems: 'center'
-        },
-        profileImage: {
-            height: 100,
-            width: 100,
-            borderRadius: width*0.85,
-            backgroundColor: theme.accent,
         },
         crew: {
             flexDirection: 'column',
@@ -175,7 +156,7 @@ export default function MovieScreen(){
         video: {
             height: 180,
             width: width-(theme.defaultPadding*2),
-            borderRadius: 15,
+            borderRadius: theme.borderRadius,
             backgroundColor: theme.background,
             alignSelf: 'center',
             overflow: 'hidden',
@@ -192,32 +173,30 @@ export default function MovieScreen(){
                 <Header
                 imagePath={movieData.backdrop_path}
                 title={movieData.title}
+                subtitle={movieData.tagline}
                 />
 
-
                 {/* tagline */}
-                <Text
+                {/* <Text
                     style={{
                         width: 30,
                         ...styles.tagline
                     }}
                 >
                     {movieData.tagline}
-                </Text>
-            
-            
+                </Text> */}
+
             {/*  */}
             {/* RATINGS */}
                 <View
-                    style={{
-                        ...styles.section,
-                        ...styles.rating
-                    }}
+                style={{
+                    ...styles.section,
+                    ...styles.rating
+                }}
                 >
                     <View>
                         <Text style={styles.ratingAverage}>
-                            {movieData.vote_average ?
-                            movieData.vote_average : 'This movie has no ratings yet'}
+                            {movieData.vote_average ? movieData.vote_average : 'This movie has no ratings yet'}
                         </Text>
             
                         {
@@ -227,6 +206,7 @@ export default function MovieScreen(){
                         </Text>
                         }
                     </View>
+
                     {
                     productionCompany &&
                         <Text style={styles.smallText}>
@@ -246,12 +226,10 @@ export default function MovieScreen(){
                 {
                 movieData.overview !== '' &&
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>
-                            Overview
-                    </Text>
-                    <Text style={styles.overviewText}>
-                        {movieData.overview}
-                    </Text>
+                    <TextBody
+                    title="Overview"
+                    text={movieData.overview}
+                    />
                 </View>
                 }
             
@@ -303,58 +281,10 @@ export default function MovieScreen(){
             
             {/*  */}
             {/* CAST */}
-                {cast.acting &&
-                <View>
-                    <Text
-                        style={{
-                            ...styles.sectionTitle,
-                            ...styles.section
-                        }}
-                    >
-                        Cast
-                    </Text>
-                    <ScrollView
-                        showsHorizontalScrollIndicator={false}
-                        horizontal
-                        style={{
-                            ...styles.section,
-                            flexDirection: 'row'
-                        }}
-                        contentContainerStyle={{paddingRight: 30}}
-                    >
-                        {cast.acting &&
-                        cast.acting.map((item, index) => {
-                            if(item.profile_path)
-                            return(
-                                <View
-                                style={styles.cast}
-                                key={index}>
-                                    <Image
-                                    style={styles.profileImage}
-                                    source={{uri:`${imgPrefixLow}${item.profile_path}`}}
-                                    />
-                                    <Text style={{
-                                        ...styles.smallText,
-                                        marginTop: 10,
-                                        fontFamily: theme.fontBold,
-                                    }}>
-                                        {item.name}
-                                    </Text>
-                                    <Text
-                                    style={{
-                                        ...styles.smallText,
-                                        marginTop: 0,
-                                        color: theme.accentLight,
-                                        opacity: 0.5
-                                    }}>
-                                        {item.character}
-                                    </Text>
-                                </View>
-                            )
-                        })
-                        }
-                    </ScrollView>
-                </View>}
+            <HorizontalProfileList
+            data={cast.acting}
+            title="Cast"
+            />
             
             {/*  */}
             {/* VIDEO */}
