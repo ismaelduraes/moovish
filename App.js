@@ -10,14 +10,15 @@ import {
   LayoutAnimation
 } from 'react-native'
 
-import { NativeRouter, Switch, Route, Routes } from 'react-router-native'
+import { NativeRouter, Route, Routes } from 'react-router-native'
 
 import { ThemeContext } from './Components/Contexts/ThemeContext'
 import { themes } from './Components/Contexts/ThemeContext'
 
 import Main from './Screens/Main'
 import MovieScreen from './Screens/MovieScreen'
-import Search from './Screens/Search'
+import SearchScreen from './Screens/SearchScreen'
+import ProfileScreen from './Screens/ProfileScreen'
 
 export const MovieContext = createContext()
 export default function App(){
@@ -37,7 +38,8 @@ export default function App(){
         
           <Route path="/" element={<Main/>}/>
           <Route path="/movie/:movieId" element={<MovieScreen/>}/>
-          <Route path="/search" element={<Search/>}/>
+          <Route path="/profile/:profileId" element={<ProfileScreen/>}/>
+          <Route path="/search" element={<SearchScreen/>}/>
 
       </Routes>
 
