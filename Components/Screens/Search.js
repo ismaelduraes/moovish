@@ -15,8 +15,7 @@ import {
     Dimensions
 } from 'react-native'
 
-import { BlurView } from '@react-native-community/blur'
-import LinearGradient from "react-native-linear-gradient"
+import { Link, useNavigate } from "react-router-native"
 
 import { ThemeContext } from "../Contexts/ThemeContext"
 
@@ -25,6 +24,7 @@ import axios from "axios"
 import { TMDB_API_KEY } from '@env'
 import { imgPrefix } from "../Utilities/Utilities"
 import { MovieContext } from "../../App"
+import Nav from "../Nav"
 
 const width = Dimensions.get('window').width
 
@@ -35,6 +35,7 @@ export default function Search(){
     const [results, setResults] = useState([])
     const [query, setQuery] = useState('')
     const [input, setInput] = useState('')
+    const navigate = useNavigate()
 
     function fetchData(){
         axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${query}&page=1`)
@@ -62,10 +63,10 @@ export default function Search(){
             flexWrap: 'wrap',
         },
         sectionTitleText: {
-            marginTop: '25%',
-            paddingHorizontal: '7%',
+            marginTop: '20%',
+            paddingHorizontal: theme.defaultPadding,
             fontFamily: theme.fontBold,
-            color: theme.foreground,
+            color: theme.accentLight,
             fontSize: 30,
             marginBottom: 15
         },
@@ -95,21 +96,15 @@ export default function Search(){
             fontFamily: theme.fontBold,
             fontSize: 20,
             color: theme.foreground,
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
             marginTop: 20,
             marginBottom: 20
         },
     })
 
     return(
-        <View
-            style={styles.container}
-            >
-            {/* <BlurView
-                blurRadius={25}
-                blurType={'xlight'}
-                style={{...styles.container}}
-            /> */}
+        <View style={styles.container}>
+            <Nav isOnSearch/>
             <View
                 colors={[
                     theme.accent,
@@ -126,6 +121,7 @@ export default function Search(){
                     <TextInput
                         style={styles.searchBarInput}
                         placeholder="My favorite movie is..."
+                        placeholderTextColor={theme.foreground}
                         onChangeText={e => {
                             setInput(e)
                         }}
@@ -145,28 +141,27 @@ export default function Search(){
                         if (item.backdrop_path || item.poster_path)
                         return(
                             <View
-                                onTouchEnd={() => {
-                                    contextProps.setSelectedMovie(item.id)
-                                    contextProps.setIsOnSearch(false)
-                                    contextProps.setIsOnMovie(true)
-                                }}
-                                key={index}
-                                style={{
-                                    ...styles.result,
-                                    width: item.popularity > 150 ? '100%' : '50%',
-                                    height: item.popularity > 200 ? 300 : 400
-                                    }}>
-                                    <Image
+                            key={index}
+                            style={{
+                                ...styles.result,
+                                width: item.popularity > 150 ? '100%' : '50%',
+                                height: item.popularity > 200 ? 300 : 400
+                            }}
+                            >
+                                <Link to={`/movie/${item.id}`}>
+                                <View>
+                                        <Image
                                         source={{uri: `${imgPrefix}${item.popularity > 150 ? item.backdrop_path : item.poster_path}`}}
                                         style={{
                                             ...styles.resultImage,
                                             width: item.popularity > 150 ? width-30 : (width/2)-30,
                                         }}
-                                    />
-
-                                <Text style={styles.resultText}>
-                                    {item.title}
-                                </Text>
+                                        />
+                                    <Text style={styles.resultText}>
+                                        {item.title}
+                                    </Text>
+                                </View>
+                                </Link>
                             </View>
                         )
                     })
