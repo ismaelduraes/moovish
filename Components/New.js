@@ -1,6 +1,18 @@
 import React from 'react'
-import { useContext, useRef, useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList, Animated } from 'react-native'
+import {
+    useContext,
+    useRef, 
+    useState,
+    useEffect
+} from 'react'
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    Animated
+} from 'react-native'
+
 import { ThemeContext } from './Contexts/ThemeContext'
 import Poster from './Poster'
 
@@ -47,13 +59,6 @@ export default function New(props){
             marginBottom: '5%',
             paddingHorizontal: theme.defaultPadding,
             color: theme.foreground
-        },
-        banner: {
-            backgroundColor: theme.accent,
-            width: '100%',
-            height: 200,
-            borderRadius: 15,
-            resizeMode: 'cover',
         },
         scrollView: {
             paddingHorizontal: theme.defaultPadding,
