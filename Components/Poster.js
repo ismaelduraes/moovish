@@ -1,6 +1,16 @@
 import React from "react";
-import { useContext, useRef, useEffect } from "react";
-import { Image, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native'
+import {
+    useContext,
+    useRef,
+    useEffect
+} from "react";
+import {
+    Image,
+    StyleSheet,
+    Animated,
+    Easing,
+    Dimensions
+} from 'react-native'
 
 import { Link } from "react-router-native";
 
@@ -52,9 +62,9 @@ export default function Poster({
             fontFamily: theme.fontRegular,
         },
         banner: {
-            height: useBackdrop ? width*0.55 : width*1.6,
+            height: useBackdrop ? width*0.55 : width*1.5,
             width: width,
-            borderRadius: 15,
+            borderRadius: theme.borderRadius,
             backgroundColor: theme.accent,
         }
     })
