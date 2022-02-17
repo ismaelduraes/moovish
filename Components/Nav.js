@@ -52,7 +52,7 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
                 <View>
                     {
                         !isOnSearch ?
-                        <Link to={{pathname: "/search", push: true}}>
+                        <Link activeOpacity={1} to="/search">
                             <Ionicons
                             name="ios-search-outline"
                             size={30}
@@ -60,7 +60,7 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
                             />
                         </Link>
                         :
-                        <Link to="/">
+                        <Link activeOpacity={1} to="/">
                             <Ionicons
                             name="close-outline"
                             size={30}
