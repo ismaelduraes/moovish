@@ -1,64 +1,48 @@
 import React from 'react'
 import { useState, createContext } from 'react'
-import { View, StyleSheet, TextInput, StatusBar, SafeAreaView } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  StatusBar,
+  SafeAreaView,
+  UIManager,
+  LayoutAnimation
+} from 'react-native'
+
+import { NativeRouter, Switch, Route, Routes } from 'react-router-native'
 
 import { ThemeContext } from './Components/Contexts/ThemeContext'
 import { themes } from './Components/Contexts/ThemeContext'
 
-import Nav from './Components/Nav'
 import Main from './Components/Main'
 import MovieScreen from './Components/MovieScreen'
 import Search from './Components/Screens/Search'
 
 export const MovieContext = createContext()
 export default function App(){
-  const [currentTheme, setCurrentTheme] = useState(themes.default)
-  const [isOnMovie, setIsOnMovie] = useState(false)
-  const [isOnSearch, setIsOnSearch] = useState(false)
-  const [selectedMovie, setSelectedMovie] = useState(550)
+  const [currentTheme, setCurrentTheme] = useState(themes.dark)
+
+  if (Platform.OS === 'android') {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
 
   return(
-    <MovieContext.Provider
-      value={{
-        setSelectedMovie,
-        isOnMovie,
-        setIsOnMovie,
-        isOnSearch,
-        setIsOnSearch}}
-    >
     <ThemeContext.Provider value={currentTheme}>
-    <StatusBar
-    backgroundColor={currentTheme.accent}
-    />
-    <SafeAreaView
-      style={{
-        ...styles.container,
-        backgroundColor: currentTheme.background}}
-    >
-      <Nav/>
-      {
-      !isOnMovie && !isOnSearch &&
-        <Main
-          setIsOnMovie={setIsOnMovie}
-          setSelectedMovie={setSelectedMovie}
-        />
-      }
+    <StatusBar backgroundColor={currentTheme.accent} barStyle={currentTheme.type == 'light' ? 'dark-content' : 'light-content'}/>
+    <NativeRouter>
+      <Routes>
+        
+          <Route path="/" element={<Main/>}/>
+          <Route path="/movie/:movieId" element={<MovieScreen/>}/>
+          <Route path="/search" element={<Search/>}/>
 
-      {
-      isOnSearch &&
-      <Search/>
-      }
+      </Routes>
 
-      {
-      isOnMovie &&
-      <MovieScreen
-        id={selectedMovie}
-      />
-      }
-    </SafeAreaView>
-    <View style={styles.bgGradient}/>
+    </NativeRouter>
     </ThemeContext.Provider>
-    </MovieContext.Provider>
   )
 }
 
