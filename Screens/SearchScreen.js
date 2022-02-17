@@ -28,7 +28,7 @@ import Nav from "../Components/Nav"
 
 const width = Dimensions.get('window').width
 
-export default function Search(){
+export default function SearchScreen(){
     const theme = useContext(ThemeContext)
     const contextProps = useContext(MovieContext)
 
@@ -89,7 +89,7 @@ export default function Search(){
         resultImage: {
             // width: '85%',
             height: '75%',
-            borderRadius: 15,
+            borderRadius: theme.borderRadius,
             alignSelf: 'center'
         },
         resultText: {
