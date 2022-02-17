@@ -14,6 +14,7 @@ import Nav from "../Components/Nav";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
 const width = Dimensions.get('window').width
+const height = Dimensions.get('window').height
 
 export default function Main({navigation}){
     const [newLoaded, setNewLoaded] = useState(false)
@@ -47,6 +48,7 @@ export default function Main({navigation}){
 const styles = StyleSheet.create({
     container: {
         width: width,
+        height: height,
     },
     contentContainer: {
         paddingBottom: '20%',
