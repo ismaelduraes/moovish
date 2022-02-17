@@ -12,7 +12,7 @@ import {
 import { default as Ionicons } from 'react-native-vector-icons/Ionicons'
 
 import { ThemeContext } from './Contexts/ThemeContext'
-import NewMovie from './NewMovie'
+import Poster from './Poster'
 import { TMDB_API_KEY } from '@env'
 import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
@@ -92,7 +92,7 @@ export default function TopRated(){
                     (item,
                     index) => {
                     return(
-                    <NewMovie
+                    <Poster
                         movie={item}
                         key={index}
                     />
