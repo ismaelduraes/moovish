@@ -50,8 +50,4 @@ const styles = StyleSheet.create({
         width: width,
         height: height,
     },
-    contentContainer: {
-        paddingBottom: '20%',
-        overflow: 'visible'
-    }
 })
