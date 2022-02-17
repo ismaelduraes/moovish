@@ -17,14 +17,14 @@ import {
 
 import { Link, useNavigate } from "react-router-native"
 
-import { ThemeContext } from "../Contexts/ThemeContext"
+import { ThemeContext } from "../Components/Contexts/ThemeContext"
 
 import axios from "axios"
 
 import { TMDB_API_KEY } from '@env'
-import { imgPrefix } from "../Utilities/Utilities"
-import { MovieContext } from "../../App"
-import Nav from "../Nav"
+import { imgPrefix } from "../Components/Utilities/Utilities"
+import { MovieContext } from "../App"
+import Nav from "../Components/Nav"
 
 const width = Dimensions.get('window').width
 

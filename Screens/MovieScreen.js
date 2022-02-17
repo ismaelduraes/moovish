@@ -8,7 +8,7 @@ import {
     StyleSheet,
     Dimensions
 } from "react-native";
-import { ThemeContext } from "./Contexts/ThemeContext";
+import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
 import { default as AntDesign } from "react-native-vector-icons/AntDesign";
 
@@ -19,9 +19,9 @@ import YouTube from "react-native-youtube";
 import { YT_API_KEY } from '@env'
 import { TMDB_API_KEY } from '@env'
 
-import { imgPrefixOriginal, imgPrefixLow } from './Utilities/Utilities'
+import { imgPrefixOriginal, imgPrefixLow } from '../Components/Utilities/Utilities'
 
-import Nav from "./Nav";
+import Nav from "../Components/Nav";
 import { Link, useParams } from "react-router-native";
 
 const width = Dimensions.get('window').width

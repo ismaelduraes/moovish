@@ -6,12 +6,12 @@ import {
     View,
     Dimensions
 } from "react-native";
-import TopRated from "./TopRated";
-import Trending from "./Trending";
-import New from "./New";
-import NowPlaying from "./NowPlaying";
-import Nav from "./Nav";
-import { ThemeContext } from "./Contexts/ThemeContext";
+import TopRated from "../Components/TopRated";
+import Trending from "../Components/Trending";
+import New from "../Components/New";
+import NowPlaying from "../Components/NowPlaying";
+import Nav from "../Components/Nav";
+import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
 const width = Dimensions.get('window').width
 

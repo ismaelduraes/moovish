@@ -15,9 +15,9 @@ import { NativeRouter, Switch, Route, Routes } from 'react-router-native'
 import { ThemeContext } from './Components/Contexts/ThemeContext'
 import { themes } from './Components/Contexts/ThemeContext'
 
-import Main from './Components/Main'
-import MovieScreen from './Components/MovieScreen'
-import Search from './Components/Screens/Search'
+import Main from './Screens/Main'
+import MovieScreen from './Screens/MovieScreen'
+import Search from './Screens/Search'
 
 export const MovieContext = createContext()
 export default function App(){
