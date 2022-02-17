@@ -4,79 +4,72 @@ import { ThemeContext } from './Contexts/ThemeContext'
 import { Text, StyleSheet, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { default as Ionicons } from 'react-native-vector-icons/Ionicons'
-import { MovieContext } from '../App'
+import { Link } from 'react-router-native'
 
-export default function Nav({title = 'moovish'}){
+export default function Nav({isOnSearch = false, title = 'moovish'}){
     const theme = useContext(ThemeContext)
-    const contextProps = useContext(MovieContext)
 
     const styles = StyleSheet.create({
         container :{
-            height: '15%',
+            zIndex: 10,
+            position: 'absolute',
+            height: '100%',
             width: '100%',
-            justifyContent: 'space-evenly',
-            zIndex: 10
         },
         title: {
-            fontSize: 28,
+            fontSize: 32,
             fontFamily: theme.fontBold,
-            color: theme.foreground
+            color: theme.accentLight,
         },
         navigation: {
             flexDirection: 'row',
-            alignItems: 'center',
+            paddingTop: 5,
             justifyContent: 'space-between',
-            padding: '11%',
-            top: -30,
-        }
+            height: 90,
+            overflow: 'hidden',
+            zIndex: 1,
+            paddingHorizontal: theme.defaultPadding,
+        },
     })
 
     return(
-        <LinearGradient
-            colors={[
-                theme.accent,
-                'rgba(0, 0, 0, 0)'
+        <View style={styles.container} pointerEvents='box-none'>
+            <LinearGradient
+                style={styles.navigation}
+                colors={[
+                    theme.accent,
+                    theme.accent+'B3',
+                    'rgba(0, 0, 0, 0)',
                 ]}
-            style={styles.container}
-        >
-            <View style={styles.navigation}>
-                <Ionicons
-                    name="ios-person-outline"
-                    size={30}
-                    color={theme.foreground}
-                />
+            >
 
-                <Text
-                    onTouchEnd={() => {
-                        contextProps.setIsOnSearch(false)
-                        contextProps.setIsOnMovie(false)
-                    }}
-                    style={styles.title}
-                >
+                <View/>
+
+                <Text style={styles.title}>
                     {title}
                 </Text>
                 
-                <View
-                    onTouchEnd={() => {
-                        contextProps.setIsOnSearch(!contextProps.isOnSearch)
-                        contextProps.setIsOnMovie(false)
-                    }}
-                >
+                <View>
                     {
-                    contextProps.isOnSearch ?
-                    <Ionicons
-                        name="close-outline"
-                        size={30}
-                        color={theme.foreground}
-                    /> :
-                    <Ionicons
-                    name="ios-search-outline"
-                    size={30}
-                    color={theme.foreground}
-                    />
+                        !isOnSearch ?
+                        <Link to={{pathname: "/search", push: true}}>
+                            <Ionicons
+                            name="ios-search-outline"
+                            size={30}
+                            color={theme.accentLight}
+                            />
+                        </Link>
+                        :
+                        <Link to="/">
+                            <Ionicons
+                            name="close-outline"
+                            size={30}
+                            color={theme.accentLight}
+                            />
+                        </Link>
                     }
                 </View>
-            </View>
-        </LinearGradient>
+            </LinearGradient>
+        </View>
     )
 }
