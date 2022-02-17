@@ -9,7 +9,7 @@ import { imgPrefix, imgPrefixOriginal } from "./Utilities/Utilities";
 
 const width = Dimensions.get('window').width
 
-export default function NewMovie({
+export default function Poster({
     movie,
     showText = true,
     //↓disable if you want to add custom text
