@@ -1,19 +1,42 @@
 import React from 'react'
-import { useContext, useState, useEffect } from 'react'
-import { View, Text, Image, ScrollView, StyleSheet, Dimensions } from 'react-native'
+import {
+    useContext,
+    useState,
+    useEffect,
+    useRef
+} from 'react'
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    Dimensions,
+    Animated
+} from 'react-native'
 import { ThemeContext } from './Contexts/ThemeContext'
 import Carousel from 'react-native-snap-carousel';
+
+import { Link } from 'react-router-native';
 
 import NewMovie from './NewMovie'
 
 import { TMDB_API_KEY } from '@env'
+import { imgPrefixOriginal } from './Utilities/Utilities';
+import SlideAnimationFunction from './Utilities/SlideAnimationFuncion';
+import { MovieContext } from '../App';
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 
 export default function NowPlaying(){
     const theme = useContext(ThemeContext)
+    const contextProps = useContext(MovieContext)
+
     const [nowPlaying, setNowPlaying] = useState([])
+    const [activeSlide, setActiveSlide] = useState(0)
+    
+    const containerSlideAnim = useRef(new Animated.Value(250)).current
+    const titleSlideAnim = useRef(new Animated.Value(15)).current
 
     function fetchData(){
         fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
@@ -23,27 +46,38 @@ export default function NowPlaying(){
     }
 
     useEffect(() => {
+        SlideAnimationFunction(containerSlideAnim, 0, 500, true, 500)
         fetchData()
     }, [])
+    
+    useEffect(() => {
+        Animated.timing(titleSlideAnim).reset()
+        SlideAnimationFunction(titleSlideAnim, 0, 500)
+    }, [activeSlide])
 
     const styles = StyleSheet.create({
         container: {
-            marginBottom: '10%',
-            overflow: 'hidden'
+            marginBottom: theme.homeComponentsBottomMargin,
+            overflow: 'hidden',
+            transform: [{'translateY': containerSlideAnim}]
         },
         sectionTitle: {
             fontSize: 26,
             fontFamily: theme.fontBold,
-            color: theme.foreground,
-            //third of border radius
-            left: 15/3,
-            paddingHorizontal: '7%',
+            color: theme.accentLight,
+            paddingHorizontal: theme.defaultPadding,
         },
         caption: {
             fontFamily: theme.fontRegular,
             marginBottom: '5%',
-            left: 15/3,
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
+            color: theme.foreground
+        },
+        movieTitle: {
+            textAlign: 'center',
+            color: theme.foreground,
+            marginTop: 5,
+            transform: [{'translateY': titleSlideAnim}]
         },
         gradient: {
             position: 'absolute',
@@ -54,32 +88,8 @@ export default function NowPlaying(){
         }
     })
 
-    function Banner(item, index){
-        return(
-            <View style={{alignItems: 'center', backgroundColor: theme.background}}>
-                <Image style={{
-                    height: width/2,
-                    width: width*0.85,
-                    borderRadius: 15,
-                    resizeMode: 'cover',
-                }}
-                key={index}
-                source={{uri: `https://image.tmdb.org/t/p/w500${item.item.backdrop_path ? item.item.backdrop_path : item.item.poster_path}`}}/>
-                <Text style={{
-                    textAlign: 'center',
-                    fontFamily: theme.fontRegular,
-                    color: theme.foreground,
-                    marginTop: 10,
-                    backgroundColor: theme.background,
-                    width: '100%'}}>
-                    {item.item.title}
-                </Text>
-            </View>
-        )
-    }
-
     return (
-        <View style={styles.container}>
+        <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
                 Now Playing
             </Text>
@@ -90,12 +100,31 @@ export default function NowPlaying(){
             <Carousel
                 data={nowPlaying}
                 horizontal
-                renderItem={Banner}
+                renderItem={
+                    item => {
+                    return(
+                    <View>
+                    <NewMovie
+                        movie={item.item}
+                        width={width-(theme.defaultPadding*2)}
+                        useBackdrop
+                        originalQuality
+                        showText={false}
+                        animDelay={item.index * 100}
+                    />
+                    <Animated.Text style={styles.movieTitle}>
+                        {activeSlide === item.index ? item.item.title : null}
+                    </Animated.Text>
+                    </View>
+                    )
+                }}
                 sliderWidth={width}
-                itemWidth={width*0.85}
-                layout="default"
+                itemWidth={width-(theme.defaultPadding*2)}
+                layout="stack"
                 layoutCardOffset={10}
+                removeClippedSubviews
+                onSnapToItem={e => setActiveSlide(e)}
             />
-        </View>
+        </Animated.View>
     )
 }
