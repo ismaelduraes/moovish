@@ -1,6 +1,13 @@
 import React from "react";
 import { useState, useLayoutEffect as useEffect, useContext } from "react";
-import { View, Text, Image, TextInput, ScrollView, StyleSheet, Dimensions } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Dimensions
+} from "react-native";
 import { ThemeContext } from "./Contexts/ThemeContext";
 
 import { default as AntDesign } from "react-native-vector-icons/AntDesign";
@@ -12,44 +19,51 @@ import YouTube from "react-native-youtube";
 import { YT_API_KEY } from '@env'
 import { TMDB_API_KEY } from '@env'
 
-import { imgPrefix, imgPrefixOriginal, imgPrefixLow } from './Utilities/Utilities'
+import { imgPrefixOriginal, imgPrefixLow } from './Utilities/Utilities'
 
-import { MovieContext } from "../App";
+import Nav from "./Nav";
+import { Link, useParams } from "react-router-native";
 
 const width = Dimensions.get('window').width
 
-export default function MovieScreen({id}){
+export default function MovieScreen(){
     const [movieData, setMovieData] = useState({})
-    const [productionCompanies, setProductionCompanies] = useState('Unknown Production Company')
+    const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
     const [movieImages, setMovieImages] = useState([])
     const [movieVideo, setMovieVideo] = useState([])
     const [cast, setCast] = useState({})
     const [crew, setCrew] = useState({})
     const [isLoading, setIsLoading] = useState(false)
-
+    
     const theme = useContext(ThemeContext)
-    const contextProps = useContext(MovieContext)
+    const movieId = useParams().movieId
+    
+    useEffect(() => {
+        setIsLoading(true)
+        fetchData()
+    }, [])
+
 
     function fetchData(){
         //fetch movie data
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API_KEY}`)
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
         .then(r => r.json()
         .then(d => {
             setMovieData(d); setProductionCompanies(d.production_companies[0].name)
         })).catch(e => console.log(`COULDN'T FETCH: ${e}`))
 
         //fetch movie images
-        fetch(`https://api.themoviedb.org/3/movie/${id}/images?api_key=${TMDB_API_KEY}`)
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${TMDB_API_KEY}`)
         .then(r => r.json())
         .then(d => setMovieImages(d.backdrops))
         
         //fetch videos
-        fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${TMDB_API_KEY}`)
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
         .then(r => r.json())
         .then(d => setMovieVideo(d.results[0]))
         
         //fetch credits
-        fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${TMDB_API_KEY}`)
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
         .then(r => r.json())
         .then(d => {
             sortCast(d.cast)
@@ -173,20 +187,17 @@ export default function MovieScreen({id}){
         //(red if low rating, yellow if average, green if good)
         if (rating < 5) return 'red'
         else if (rating < 7) return 'yellow'
-        else return 'lightgreen'
+        else return 'green'
     }
 
-    useEffect(() => {
-        setIsLoading(true)
-        fetchData()
-    }, [])
 
 
     const styles = StyleSheet.create({
         container: {
+            position: 'absolute',
             height: '100%',
             width: '100%',
-            position: 'absolute'
+            backgroundColor: theme.background
         },
         poster: {
             width: '100%',
@@ -202,12 +213,12 @@ export default function MovieScreen({id}){
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
             top: -25,
             zIndex: 2
         },
         movieTitle: {
-            color: theme.foreground,
+            color: theme.accentLight,
             fontFamily: theme.fontBold,
             fontSize: 30,
             maxWidth: width*0.5,
@@ -215,10 +226,12 @@ export default function MovieScreen({id}){
             marginBottom: 5
         },
         tagline: {
-            width: '100%',
-            paddingHorizontal: '7%',
-            top: -25,
+            width: '80%',
+            paddingHorizontal: 30,
+            top: -20,
             textAlign: 'center',
+            alignSelf: 'center',
+            color: theme.foreground
         },
         posterGradient: {
             height: 350,
@@ -247,15 +260,15 @@ export default function MovieScreen({id}){
         rating: {
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
             justifyContent: 'space-evenly',
         },
         companies: {
             textAlign: 'center',
-            color: theme.foreground
+            color: theme.accent
         },
         section: {
-            paddingHorizontal: '7%',
+            paddingHorizontal: theme.defaultPadding,
             marginBottom: 35
         },
         sectionTitle: {
@@ -269,8 +282,8 @@ export default function MovieScreen({id}){
             color: theme.foreground,
         },
         image: {
-            height: 180,
-            width: width*0.85,
+            height: 190,
+            width: width-(theme.defaultPadding*2),
             borderRadius: 15,
             backgroundColor: theme.accent,
             alignSelf: 'center',
@@ -293,7 +306,7 @@ export default function MovieScreen({id}){
         },
         video: {
             height: 180,
-            width: width*0.85,
+            width: width-(theme.defaultPadding*2),
             borderRadius: 15,
             backgroundColor: theme.background,
             alignSelf: 'center',
@@ -304,250 +317,235 @@ export default function MovieScreen({id}){
     if (isLoading) return null
 
     else return(
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={styles.container}
-        >
-
-{/*  */}
-{/* POSTER */}
-            <LinearGradient
-                style={styles.posterGradient}
-                colors={[
-                    'rgba(0, 0, 0, 0)',
-                    'rgba(0, 0, 0, 0)',
-                    'rgba(0, 0, 0, 1)',
-                ]}
-            />
-
-            <Image
-                style={styles.poster}
-                source={{uri:
-                `${imgPrefixOriginal}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}`
-                }}
-            />
-            
-            {/* title */}
-            <View
-                style={styles.titleContainer}
+        <View style={styles.container}>
+            <Nav/>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
             >
+            
+            {/*  */}
+            {/* POSTER */}
+                <LinearGradient
+                    style={styles.posterGradient}
+                    colors={[
+                        'rgba(0, 0, 0, 0)',
+                        'rgba(0, 0, 0, 0)',
+                        'rgba(0, 0, 0, 0)',
+                        'rgba(0, 0, 0, 0)',
+                        'rgba(0, 0, 0, 0)',
+                        theme.background,
+                    ]}
+                />
+                <Image
+                    style={styles.poster}
+                    source={{uri:
+                    `${imgPrefixOriginal}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}`
+                    }}
+                />
+            
+                {/* title */}
                 <View
-                    onTouchEnd={() => 
-                        contextProps.setIsOnMovie(false)
-                    }
+                    style={styles.titleContainer}
                 >
+                    <View>
+                    <Link to="/" activeOpacity={1}>
+                        <AntDesign
+                            name="arrowleft"
+                            size={30}
+                            color={theme.foreground}
+                        />
+                    </Link>
+                    </View>
+                    <Text
+                        style={styles.movieTitle}
+                    >
+                        {movieData.title}
+                    </Text>
+
                     <AntDesign
-                        name="arrowleft"
-                        size={30}
+                        name="plus" size={30}
                         color={theme.foreground}
                     />
+
                 </View>
-
+                {/* tagline */}
                 <Text
-                    style={styles.movieTitle}
+                    style={{
+                        width: 30,
+                        ...styles.tagline
+                    }}
                 >
-                    {movieData.title}
+                    {movieData.tagline}
                 </Text>
-
-                <AntDesign
-                name="plus" size={30}
-                color={theme.foreground}
-                />
-
-            </View>
-
-            {/* tagline */}
-            <Text
-                style={{
-                    width: 30,
-                    height: 20,
-                    ...styles.tagline
-                }}
-            >
-                {movieData.tagline}
-            </Text>
-
-
-{/*  */}
-{/* RATINGS */}
-
-            <View
-                style={{
-                    ...styles.section,
-                    ...styles.rating
-                }}
-            >
-                <View>
-                    <Text
-                        style={styles.ratingAverage}
-                    >
-                        {movieData.vote_average ?
-                        movieData.vote_average : 'This movie has no ratings yet'}
-                    </Text>
-                    
+            
+            
+            {/*  */}
+            {/* RATINGS */}
+                <View
+                    style={{
+                        ...styles.section,
+                        ...styles.rating
+                    }}
+                >
+                    <View>
+                        <Text style={styles.ratingAverage}>
+                            {movieData.vote_average ?
+                            movieData.vote_average : 'This movie has no ratings yet'}
+                        </Text>
+            
+                        {
+                        movieData.vote_average != 0 &&
+                        <Text style={styles.smallText}>
+                                Rating
+                        </Text>
+                        }
+                    </View>
                     {
-                    movieData.vote_average != 0 &&
-                    <Text
-                        style={styles.smallText}
-                    >
-                            Rating
-                    </Text>
+                    productionCompany &&
+                        <Text style={styles.smallText}>
+                            {productionCompany}
+                        </Text>
+                    }
+                    {
+                    movieData.runtime > 0 &&
+                        <Text style={styles.smallText}>
+                            {movieData.runtime} min
+                        </Text>
                     }
                 </View>
-
-                <View>
-                    <Text
-                        style={styles.smallText}
-                    >
-                        {productionCompanies}
-                    </Text>
-                </View>
-
+            
+            {/*  */}
+            {/* OVERVIEW */}
                 {
-                movieData.runtime > 0 &&
-                <View>
-                    <Text
-                        style={styles.smallText}
-                    >
-                        {movieData.runtime} min
+                movieData.overview !== '' &&
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>
+                            Overview
+                    </Text>
+                    <Text style={styles.overviewText}>
+                        {movieData.overview}
                     </Text>
                 </View>
                 }
-            </View>
-
-{/*  */}
-{/* OVERVIEW */}
-            <View
-                style={styles.section}
-            >
-                <Text
-                    style={styles.sectionTitle}
-                >
-                        Overview
-                </Text>
-                <Text
-                    style={styles.overviewText}
-                >
-                    {movieData.overview}
-                </Text>
-            </View>
-
-{/*  */}
-{/* IMAGES */}
-            {
-            movieImages.length > 0 &&
-            <View
-                style={{
-                    marginBottom: 35
-                }}
-            >
-                <Text
+            
+            {/*  */}
+            {/* IMAGES */}
+                {
+                movieImages.length > 0 &&
+                <View
                     style={{
-                        ...styles.sectionTitle,
-                        paddingHorizontal: '7%'
+                        marginBottom: 35
                     }}
                 >
-                    Images
-                </Text>
-
-                <Carousel
-                    data={movieImages.slice(0, 4)}
-                    sliderWidth={width}
-                    itemWidth={width*0.85}
-                    layout="default"
-                    layoutCardOffset={10}
-                    renderItem={ (item) =>
-                    {
-                        return(
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center'
-                        }}>
-                            <Image
-                                key={item.index}
-                                style={styles.image}
-                                source={{
-                                    uri:
-                                    `${imgPrefixOriginal}${item.item.file_path}`
-                                }}/>
-                        </View>
-                    )}}
-                />
-            </View>
-            }
-
-{/*  */}
-{/* CAST */}
-            {cast.acting &&
-            <View>
-                <Text
-                    style={{
-                        ...styles.sectionTitle,
-                        ...styles.section
-                    }}
-                >
-                    Cast
-                </Text>
-
-                <ScrollView
-                    showsHorizontalScrollIndicator={false}
-                    horizontal
-                    style={{...styles.section, flexDirection: 'row'}}
-                    contentContainerStyle={{paddingRight: '7%'}}
-                >
-                    {cast.acting &&
-                    cast.acting.map((item, index) => {
-                        if(item.profile_path)
-                        return(
-                            <View
-                            style={styles.cast}
-                            key={index}>
+                    <Text
+                        style={{
+                            ...styles.sectionTitle,
+                            paddingHorizontal: theme.defaultPadding
+                        }}
+                    >
+                        Images
+                    </Text>
+                    <Carousel
+                        data={movieImages}
+                        removeClippedSubviews
+                        sliderWidth={width}
+                        itemWidth={width-(theme.defaultPadding*2)}
+                        layout="default"
+                        layoutCardOffset={10}
+                        renderItem={ (item) =>
+                        {
+                            return(
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}
+                            removeClippedSubviews
+                            >
                                 <Image
-                                style={styles.profileImage}
-                                source={{uri:`${imgPrefixLow}${item.profile_path}`}}
-                                />
-
-                                <Text style={{
-                                    ...styles.smallText,
-                                    marginTop: 10,
-                                    fontFamily: theme.fontBold,
-                                }}>
-                                    {item.name}
-                                </Text>
-
-                                <Text
-                                style={{
-                                    ...styles.smallText,
-                                    marginTop: 0,
-                                    color: theme.foreground,
-                                    opacity: 0.5
-                                }}>
-                                    {item.character}
-                                </Text>
+                                    key={item.index}
+                                    style={styles.image}
+                                    source={{
+                                        uri:
+                                        `${imgPrefixOriginal}${item.item.file_path}`
+                                    }}/>
                             </View>
-                        )
-                    })
-                    }
-                </ScrollView>
-            </View>}
-
-{/*  */}
-{/* VIDEO */}
-            {movieVideo &&
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>
-                    Featured Video
+                        )}}
+                    />
+                </View>
+                }
+            
+            {/*  */}
+            {/* CAST */}
+                {cast.acting &&
+                <View>
+                    <Text
+                        style={{
+                            ...styles.sectionTitle,
+                            ...styles.section
+                        }}
+                    >
+                        Cast
+                    </Text>
+                    <ScrollView
+                        showsHorizontalScrollIndicator={false}
+                        horizontal
+                        style={{
+                            ...styles.section,
+                            flexDirection: 'row'
+                        }}
+                        contentContainerStyle={{paddingRight: 30}}
+                    >
+                        {cast.acting &&
+                        cast.acting.map((item, index) => {
+                            if(item.profile_path)
+                            return(
+                                <View
+                                style={styles.cast}
+                                key={index}>
+                                    <Image
+                                    style={styles.profileImage}
+                                    source={{uri:`${imgPrefixLow}${item.profile_path}`}}
+                                    />
+                                    <Text style={{
+                                        ...styles.smallText,
+                                        marginTop: 10,
+                                        fontFamily: theme.fontBold,
+                                    }}>
+                                        {item.name}
+                                    </Text>
+                                    <Text
+                                    style={{
+                                        ...styles.smallText,
+                                        marginTop: 0,
+                                        color: theme.accentLight,
+                                        opacity: 0.5
+                                    }}>
+                                        {item.character}
+                                    </Text>
+                                </View>
+                            )
+                        })
+                        }
+                    </ScrollView>
+                </View>}
+            
+            {/*  */}
+            {/* VIDEO */}
+                {movieVideo &&
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>
+                        Featured Video
+                    </Text>
+                    <YouTube
+                        apiKey={YT_API_KEY}
+                        videoId={movieVideo.key}
+                        style={styles.video}
+                    />
+                </View>}
+                <Text style={{textAlign: 'center', marginBottom: 20, color: 'gray', fontFamily: theme.fontRegular}}>
+                    Movie ID: {movieData.id}
                 </Text>
-                <YouTube
-                    apiKey={YT_API_KEY}
-                    videoId={movieVideo.key}
-                    style={styles.video}
-                />
-            </View>}
-
-            <Text style={{textAlign: 'center', marginBottom: 20, color: 'gray', fontFamily: theme.fontRegular}}>
-                Movie ID: {movieData.id}
-            </Text>
-        </ScrollView>
+            </ScrollView>
+        </View>
     )
 }
