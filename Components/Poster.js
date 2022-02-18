@@ -78,7 +78,6 @@ export default function Poster({
                     style={styles.banner}
                     source={{uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop? movie.backdrop_path : movie.poster_path}`}}
                     progressiveRenderingEnabled
-                    onError={e => console.log(e.nativeEvent)}
                 />
             {showText && 
             <Animated.Text style={styles.title}>
