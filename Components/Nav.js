@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { ThemeContext } from './Contexts/ThemeContext'
 import { Text, StyleSheet, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import { default as Ionicons } from 'react-native-vector-icons/Ionicons'
+import { default as Ionicons } from 'react-native-vector-icons/FontAwesome'
 import { Link } from 'react-router-native'
 
 export default function Nav({isOnSearch = false, title = 'moovish'}){
@@ -19,16 +19,16 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
         title: {
             fontSize: 32,
             fontFamily: theme.fontBold,
-            color: theme.accentLight,
+            color: theme.foreground,
         },
         navigation: {
             flexDirection: 'row',
-            paddingTop: 5,
-            justifyContent: 'space-between',
-            height: 90,
+            justifyContent: 'center',
+            height: 130,
             overflow: 'hidden',
             zIndex: 1,
             paddingHorizontal: theme.defaultPadding,
+            alignItems: 'center'
         },
     })
 
@@ -37,38 +37,15 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
             <LinearGradient
                 style={styles.navigation}
                 colors={[
-                    theme.accent,
-                    theme.accent+'B3',
+                    theme.accentAlt,
+                    theme.accentAlt+'B3',
                     'rgba(0, 0, 0, 0)',
                 ]}
             >
 
-                <View style={{width: 30}}/>
-
                 <Text style={styles.title}>
                     {title}
                 </Text>
-                
-                <View>
-                    {
-                        !isOnSearch ?
-                        <Link activeOpacity={1} to="/search">
-                            <Ionicons
-                            name="ios-search-outline"
-                            size={30}
-                            color={theme.accentLight}
-                            />
-                        </Link>
-                        :
-                        <Link activeOpacity={1} to="/">
-                            <Ionicons
-                            name="close-outline"
-                            size={30}
-                            color={theme.accentLight}
-                            />
-                        </Link>
-                    }
-                </View>
             </LinearGradient>
         </View>
     )
