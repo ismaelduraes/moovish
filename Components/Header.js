@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 
 import { default as AntDesign } from "react-native-vector-icons/AntDesign";
-import LinearGradient from "react-native-linear-gradient";
+import { default as Ionicons } from "react-native-vector-icons/Ionicons";
 import { imgPrefixOriginal } from "./Utilities/Utilities";
 
 import { Link } from "react-router-native";
@@ -18,25 +18,27 @@ import { ThemeContext } from "./Contexts/ThemeContext";
 
 const width = Dimensions.get('window').width
 
-export default function Header({imagePath, title, subtitle}){
+export default function Header({imagePath, fallbackImagePath, title, subtitle}){
     const theme = useContext(ThemeContext)
     const styles = StyleSheet.create({
         poster: {
             width: '100%',
             height: 350,
+            backgroundColor: theme.accent,
+            marginBottom: 30,
         },
         titleContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             paddingHorizontal: theme.defaultPadding,
-            top: -25,
+            // top: -25,
             zIndex: 2
         },
         headerTitle: {
-            color: theme.accentLight,
+            color: theme.foreground,
             fontFamily: theme.fontBold,
-            fontSize: 30,
+            fontSize: 24,
             maxWidth: width*0.5,
             textAlign: 'center',
             marginBottom: 5
@@ -44,10 +46,11 @@ export default function Header({imagePath, title, subtitle}){
         subtitle: {
             width: '80%',
             paddingHorizontal: 30,
-            top: -20,
+            // top: -20,
             textAlign: 'center',
             alignSelf: 'center',
             color: theme.foreground,
+            marginBottom: 20
         },
         headerGradient: {
             height: 350,
@@ -62,46 +65,36 @@ export default function Header({imagePath, title, subtitle}){
         <View>
             <Image
                 style={styles.poster}
-                source={{uri:
-                    `${imgPrefixOriginal}${imagePath}`
-                }}
+                source={imagePath ? {uri:
+                    `${imgPrefixOriginal}${imagePath ? imagePath : fallbackImagePath}`
+                } : require('../assets/images/profile_default.png')}
             />
-            <LinearGradient
+            {/* <LinearGradient
             style={styles.headerGradient}
             colors={[
+                'rgba(0, 0, 0, 0)',
+
                 'rgba(0, 0, 0, 0)',
                 'rgba(0, 0, 0, 0)',
                 theme.background,
             ]}
-            />
+            /> */}
                     
             {/* title */}
             <View style={styles.titleContainer}>
                 <View>
 
-                <Link to="/" activeOpacity={1}>
-                    <AntDesign
-                    name="arrowleft"
-                    size={30}
-                    color={theme.foreground}
-                    />
-                </Link>
-
                 </View>
                 <Text style={styles.headerTitle}>
                     {title}
                 </Text>
-        
-                <AntDesign
-                name="plus" size={30}
-                color={theme.foreground}
-                />
 
             </View>
-            {subtitle &&
+            {subtitle ?
             <Text style={styles.subtitle}>
                 {subtitle}
-            </Text>}
+            </Text> : null
+            }
         </View>
     )
 }
