@@ -1,13 +1,9 @@
 import React from 'react'
 import { useState, createContext } from 'react'
 import {
-  View,
   StyleSheet,
-  TextInput,
   StatusBar,
-  SafeAreaView,
   UIManager,
-  LayoutAnimation
 } from 'react-native'
 
 import { NativeRouter, Route, Routes } from 'react-router-native'
@@ -22,7 +18,7 @@ import ProfileScreen from './Screens/ProfileScreen'
 
 export const MovieContext = createContext()
 export default function App(){
-  const [currentTheme, setCurrentTheme] = useState(themes.dark)
+  const [currentTheme, setCurrentTheme] = useState(themes.light)
 
   if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -32,7 +28,11 @@ export default function App(){
 
   return(
     <ThemeContext.Provider value={currentTheme}>
-    <StatusBar backgroundColor={currentTheme.accent} barStyle={currentTheme.type == 'light' ? 'dark-content' : 'light-content'}/>
+    <StatusBar
+    backgroundColor={'transparent'}
+    barStyle={currentTheme.type == 'light' ? 'dark-content' : 'light-content'}
+    translucent
+    />
     <NativeRouter>
       <Routes>
         
