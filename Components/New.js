@@ -43,22 +43,22 @@ export default function New(props){
     const styles = StyleSheet.create({
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
-            marginTop: '20%',
+            marginTop: 120,
             overflow: 'hidden',
             transform: [{'translateY': containerSlideAnim}],
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 26,
+            fontSize: 20,
             fontFamily: theme.fontBold,
-            color: theme.accentLight,
+            color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
         },
         caption: {
             fontFamily: theme.fontRegular,
             marginBottom: '5%',
             paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground
+            color: theme.foreground,
         },
         scrollView: {
             paddingHorizontal: theme.defaultPadding,
@@ -96,6 +96,8 @@ export default function New(props){
                             <Poster
                                 movie={item.item}
                                 animDelay={item.index*100}
+                                width={250}
+                                useBackdrop
                             />
                         </View>
                     )
