@@ -3,8 +3,6 @@ import { useContext } from 'react'
 import { ThemeContext } from './Contexts/ThemeContext'
 import { Text, StyleSheet, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import { default as Ionicons } from 'react-native-vector-icons/FontAwesome'
-import { Link } from 'react-router-native'
 
 export default function Nav({isOnSearch = false, title = 'moovish'}){
     const theme = useContext(ThemeContext)
