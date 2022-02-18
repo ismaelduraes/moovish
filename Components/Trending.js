@@ -20,7 +20,6 @@ import { Link } from "react-router-native";
 import SlideAnimationFunction from "./Utilities/SlideAnimationFuncion";
 
 import { ThemeContext } from "./Contexts/ThemeContext";
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Carousel from "react-native-snap-carousel";
 import { MovieContext } from "../App";
 import { TMDB_API_KEY } from '@env'
@@ -31,8 +30,6 @@ const width = Dimensions.get('window').width
 export default function Trending(){
     //states
     const theme = useContext(ThemeContext)
-    const contextProps = useContext(MovieContext)
-
     const slideAnim = useRef(new Animated.Value(25)).current
     const containerSlideAnim = useRef(new Animated.Value(150)).current
 
@@ -69,28 +66,28 @@ export default function Trending(){
             transform: [{'translateY': containerSlideAnim}]
         },
         sectionTitle: {
-            fontSize: 26,
+            fontSize: 20,
             fontFamily: theme.fontBold,
-            color: theme.accentLight,
+            color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
         },
         title: {
-            fontSize: 20,
+            fontSize: 16,
             color: theme.foreground,
             fontFamily: theme.fontBold,
             marginTop: 20,
         },
         caption: {
             fontFamily: theme.fontRegular,
-            marginBottom: '7%',
+            marginBottom: 15,
             paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground
+            color: theme.foreground,
         },
         banner: {
             backgroundColor: theme.accent,
             width: '100%',
             height: 510,
-            borderRadius: 15,
+            borderRadius: theme.borderRadius,
             resizeMode: 'cover',
         },
         overview: {
