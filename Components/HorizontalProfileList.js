@@ -13,19 +13,16 @@ import { ThemeContext } from './Contexts/ThemeContext'
 
 import { imgPrefixLow } from './Utilities/Utilities'
 
-const width = Dimensions.get('window').width
-const height = Dimensions.get('window').height
-
-export default function HorizontalProfileList({data = [], title}){
+export default function HorizontalProfileList({data, title = 'Untitled List', showCharacter = false}){
     const theme = useContext(ThemeContext)
     
     const styles = StyleSheet.create({
         section: {
             paddingHorizontal: theme.defaultPadding,
-            marginBottom: 35
+            // backgroundColor: 'blue',
         },
         sectionTitle: {
-            fontSize: 20,
+            fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             marginBottom: 10,
@@ -37,24 +34,25 @@ export default function HorizontalProfileList({data = [], title}){
             backgroundColor: theme.accent,
         },
         profileItem: {
-            marginRight: 30,
+            marginRight: 25,
             alignItems: 'center'
         },
         name: {
             color: theme.foreground,
-            maxWidth: 150,
+            width: 90,
             textAlign: 'center',
-            paddingHorizontal: '3%',
+            // backgroundColor: 'red',
         },
     })
 
-    return(
+    return (
         <View>
 
             <Text
             style={{
                 ...styles.sectionTitle,
-                ...styles.section
+                ...styles.section,
+                marginTop: '10%'
             }}
             >
                 {title}
@@ -79,9 +77,10 @@ export default function HorizontalProfileList({data = [], title}){
                         <Link to={`/profile/${item.item.id}`}>
                             <Image
                             style={styles.profileImage}
-                            source={item.item.profile_path ?
-                                {uri:`${imgPrefixLow}${item.item.profile_path}`}
-                                : require('../assets/images/profile_default.png')}
+                            source={
+                                 item.item.profile_path ?
+                                {uri:`${imgPrefixLow}${item.item.profile_path}`} :
+                                 require('../assets/images/profile_default.png')}
                             />
                         </Link>
 
@@ -90,19 +89,17 @@ export default function HorizontalProfileList({data = [], title}){
                         marginTop: 10,
                         fontFamily: theme.fontBold,
                         }}>
-                            {item.item.name}
+                            {item.item.name ? item.item.name : 'Unknown name'}
                         </Text>
                         
-                        {item.item.character &&
+                        {item.item.character && showCharacter ?
                         <Text
                         style={{
                             ...styles.name,
-                            marginTop: 0,
                             color: theme.accentLight,
-                            opacity: 0.5
                         }}>
-                            {item.item.character}
-                        </Text>
+                            {item.item.character ? item.item.character : 'Unknown Character'}
+                        </Text> : null
                         }
                     </View>
                 )
