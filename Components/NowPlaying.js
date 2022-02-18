@@ -59,16 +59,16 @@ export default function NowPlaying(){
             transform: [{'translateY': containerSlideAnim}]
         },
         sectionTitle: {
-            fontSize: 26,
+            fontSize: 20,
             fontFamily: theme.fontBold,
-            color: theme.accentLight,
+            color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
         },
         caption: {
             fontFamily: theme.fontRegular,
-            marginBottom: '5%',
+            marginBottom: 15,
             paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground
+            color: theme.foreground,
         },
         movieTitle: {
             textAlign: 'center',
