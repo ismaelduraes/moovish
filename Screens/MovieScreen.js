@@ -10,23 +10,24 @@ import {
 } from "react-native";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
-import Carousel from "react-native-snap-carousel";
 import YouTube from "react-native-youtube";
 
 import { YT_API_KEY } from '@env'
 import { TMDB_API_KEY } from '@env'
 
-import { imgPrefixOriginal, imgPrefixLow } from '../Components/Utilities/Utilities'
-
-import Nav from "../Components/Nav";
+import { BlurView } from "@react-native-community/blur";
 
 import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
 
-import { Link, useParams } from "react-router-native";
+import { useParams } from "react-router-native";
 import Header from "../Components/Header";
 import TextBody from "../Components/TextBody";
 import HorizontalProfileList from "../Components/HorizontalProfileList";
+import ImageCarousel from "../Components/ImageCarousel";
+import AndroidStatusBarBlur from '../Components/AndroidStatusBarBlur'
 
+import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
+import NavButtons from "../Components/NavButtons";
 
 const width = Dimensions.get('window').width
 
@@ -46,6 +47,11 @@ export default function MovieScreen(){
         setIsLoading(true)
         fetchData()
     }, [])
+    useEffect(() => {
+        //remove first image as it's already
+        //used by the header (avoids redundancy in images)
+        movieImages.shift()
+    }, [movieImages])
 
 
     function fetchData(){
@@ -54,7 +60,7 @@ export default function MovieScreen(){
         .then(r => r.json()
         .then(d => {
             setMovieData(d); setProductionCompanies(d.production_companies[0].name)
-        })).catch(e => console.log(`COULDN'T FETCH: ${e}`))
+        }))
 
         //fetch movie images
         fetch(`https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${TMDB_API_KEY}`)
@@ -72,15 +78,15 @@ export default function MovieScreen(){
         .then(d => {
             sortCast(d.cast, setCast)
             sortCrew(d.crew, setCrew)
+            setIsLoading(false)
         })
-        setIsLoading(false)
     }
 
     function ratingColor(rating){
         //return appropriate color for rating text
         //(red if low rating, yellow if average, green if good)
         if (rating < 5) return 'red'
-        else if (rating < 7) return 'yellow'
+        else if (rating < 7) return '#d94f00'
         else return 'green'
     }
 
@@ -91,25 +97,24 @@ export default function MovieScreen(){
             position: 'absolute',
             height: '100%',
             width: '100%',
-            backgroundColor: theme.background
+            backgroundColor: theme.background,
         },
         smallText: {
             color: theme.foreground,
             maxWidth: 150,
             textAlign: 'center',
             paddingHorizontal: '3%',
+            // backgroundColor: 'red'
         },
-        tagline: {
-            width: '80%',
-            paddingHorizontal: 30,
-            top: -20,
-            textAlign: 'center',
-            alignSelf: 'center',
-            color: theme.foreground
-        },
-        ratingCircle: {
+        rating: {
+            flexDirection: 'row',
             alignItems: 'center',
+            marginHorizontal: '5%',
             justifyContent: 'center',
+            backgroundColor: theme.background+'40',
+            borderRadius: 50,
+            overflow: 'hidden',
+            paddingVertical: 15
         },
         ratingAverage: {
             fontFamily: theme.fontBold,
@@ -117,6 +122,7 @@ export default function MovieScreen(){
             maxWidth: 120,
             textAlign: 'center',
             paddingHorizontal: '3%',
+            // backgroundColor: 'red'
         },
         text: {
             color: theme.foreground,
@@ -124,34 +130,16 @@ export default function MovieScreen(){
             textAlign: 'center',
             paddingHorizontal: '3%',
         },
-        rating: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: theme.defaultPadding,
-            justifyContent: 'space-evenly',
-        },
         companies: {
             textAlign: 'center',
             color: theme.accent
         },
         sectionTitle: {
-            fontSize: 20,
+            fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             marginBottom: 10,
-        },
-        image: {
-            height: 190,
-            width: width-(theme.defaultPadding*2),
-            borderRadius: theme.borderRadius,
-            backgroundColor: theme.accent,
-            alignSelf: 'center',
-            overflow: 'hidden'
-        },
-        crew: {
-            flexDirection: 'column',
-            marginRight: 25,
-            justifyContent: 'center'
+            paddingHorizontal: theme.defaultPadding
         },
         video: {
             height: 180,
@@ -160,148 +148,109 @@ export default function MovieScreen(){
             backgroundColor: theme.background,
             alignSelf: 'center',
             overflow: 'hidden',
+        },
+        imageBg: {
+            height: '100%',
+            width: '100%',
+            position: 'absolute',
+            zIndex: -1,
+            opacity: theme.type === 'light' ? 0.3 : 0.1
         }
     })
-
+    
     if (isLoading) return null
-
+    
     else return(
         <View style={styles.container}>
-            <Nav/>
+            {/* <Nav/> */}
+            <AndroidStatusBarBlur/>
+            <NavButtons/>
             <ScrollView showsVerticalScrollIndicator={false}>
-                
+                <Image
+                style={styles.imageBg}
+                source={movieData.backdrop_path ? 
+                       {uri: `${imgPrefixOriginal}${movieData.backdrop_path}`} :
+                       require('../assets/images/profile_default.png')}
+                blurRadius={10}
+                progressiveRenderingEnabled
+                />
+                {/* Poster */}
                 <Header
                 imagePath={movieData.backdrop_path}
+                fallbackImagePath={movieData.poster_path}
                 title={movieData.title}
                 subtitle={movieData.tagline}
                 />
 
-                {/* tagline */}
-                {/* <Text
-                    style={{
-                        width: 30,
-                        ...styles.tagline
-                    }}
-                >
-                    {movieData.tagline}
-                </Text> */}
-
-            {/*  */}
-            {/* RATINGS */}
-                <View
-                style={{
-                    ...styles.section,
-                    ...styles.rating
-                }}
-                >
+                {/* Ratings */}
+                <View style={{...styles.rating}}>
                     <View>
                         <Text style={styles.ratingAverage}>
-                            {movieData.vote_average ? movieData.vote_average : 'This movie has no ratings yet'}
+                            {movieData.vote_average ?
+                             movieData.vote_average :
+                            'This movie has no ratings yet'
+                            }
+
                         </Text>
-            
-                        {
-                        movieData.vote_average != 0 &&
+                        {movieData.vote_average !== 0 ?
                         <Text style={styles.smallText}>
-                                Rating
-                        </Text>
+                            Rating
+                        </Text> : null
                         }
                     </View>
 
-                    {
-                    productionCompany &&
+                        {productionCompany ?
                         <Text style={styles.smallText}>
-                            {productionCompany}
-                        </Text>
-                    }
-                    {
-                    movieData.runtime > 0 &&
+                            {productionCompany ?
+                             productionCompany :
+                            'Unknown Production Company'
+                            }
+                        </Text> : null
+                        }
+
+                        {movieData.runtime > 0 ?
                         <Text style={styles.smallText}>
                             {movieData.runtime} min
-                        </Text>
-                    }
+                        </Text> : null
+                        }
                 </View>
             
-            {/*  */}
-            {/* OVERVIEW */}
-                {
-                movieData.overview !== '' &&
-                <View style={styles.section}>
-                    <TextBody
-                    title="Overview"
-                    text={movieData.overview}
-                    />
-                </View>
+                {/* Overview */}
+                {movieData.overview ?
+                <TextBody title="Overview" text={movieData.overview}/> : null
                 }
             
-            {/*  */}
-            {/* IMAGES */}
-                {
-                movieImages.length > 0 &&
-                <View
-                    style={{
-                        marginBottom: 35
-                    }}
-                >
-                    <Text
-                        style={{
-                            ...styles.sectionTitle,
-                            paddingHorizontal: theme.defaultPadding
-                        }}
-                    >
-                        Images
-                    </Text>
-                    <Carousel
-                        data={movieImages}
-                        removeClippedSubviews
-                        sliderWidth={width}
-                        itemWidth={width-(theme.defaultPadding*2)}
-                        layout="default"
-                        layoutCardOffset={10}
-                        renderItem={ (item) =>
-                        {
-                            return(
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center'
-                            }}
-                            removeClippedSubviews
-                            >
-                                <Image
-                                    key={item.index}
-                                    style={styles.image}
-                                    source={{
-                                        uri:
-                                        `${imgPrefixOriginal}${item.item.file_path}`
-                                    }}/>
-                            </View>
-                        )}}
-                    />
-                </View>
+                {/* Images carousel */}
+                {movieImages.length > 0 ?
+                <ImageCarousel data={movieImages}/> : null
                 }
             
-            {/*  */}
-            {/* CAST */}
-            <HorizontalProfileList
-            data={cast.acting}
-            title="Cast"
-            />
+                {/* Cast */}
+                {cast.acting ?
+                <HorizontalProfileList
+                data={cast.acting}
+                title="Cast"
+                /> : null
+                }
             
-            {/*  */}
-            {/* VIDEO */}
-                {movieVideo &&
-                <View style={styles.section}>
+                {/* Video */}
+                {/* {movieVideo ?
+                <View style={{
+                    ...styles.section,
+                    marginTop: '10%',
+                    }}>
+
                     <Text style={styles.sectionTitle}>
                         Featured Video
                     </Text>
                     <YouTube
-                        apiKey={YT_API_KEY}
-                        videoId={movieVideo.key}
-                        style={styles.video}
+                    apiKey={YT_API_KEY}
+                    videoId={movieVideo.key}
+                    style={styles.video}
                     />
-                </View>}
-                <Text style={{textAlign: 'center', marginBottom: 20, color: 'gray', fontFamily: theme.fontRegular}}>
-                    Movie ID: {movieData.id}
-                </Text>
+
+                </View> : null
+                } */}
             </ScrollView>
         </View>
     )
