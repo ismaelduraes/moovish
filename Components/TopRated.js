@@ -44,9 +44,9 @@ export default function TopRated(){
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 26,
+            fontSize: 20,
             fontFamily: theme.fontBold,
-            color: theme.accentLight,
+            color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
         },
         caption: {
@@ -81,7 +81,7 @@ export default function TopRated(){
                 contentContainerStyle={styles.scrollView}
                 horizontal
             >
-                {topRated.map(
+                {topRated.splice(0, 10).map(
                     (item,
                     index) => {
                     return(
