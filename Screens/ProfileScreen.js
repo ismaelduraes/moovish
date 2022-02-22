@@ -19,13 +19,12 @@ import ImageCarousel from "../Components/ImageCarousel";
 import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
 
-export default function ProfileScreen(){
-    const profileId = useParams().profileId
+export default function ProfileScreen({route}){
+    const profileId = route.params.profileId
     const theme = useContext(ThemeContext)
 
     const [profileData, setProfileData] = useState({})
     const [loaded, setLoaded] = useState(false)
-    
     
     function fetchData(){
         axios.get(`https://api.themoviedb.org/3/person/${profileId}?api_key=${TMDB_API_KEY}&append_to_response=images`)
@@ -49,7 +48,7 @@ export default function ProfileScreen(){
             width: '100%',
             height: '100%',
             position: 'absolute',
-            opacity: 0.3
+            opacity: theme.type === 'light' ? 0.3 : 0.1
         }
     })
 
