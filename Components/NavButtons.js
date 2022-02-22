@@ -5,18 +5,19 @@ import {
     NativeModules,
     Platform
 } from 'react-native'
+import { useNavigation } from "@react-navigation/native";
 
-import { Link } from "react-router-native";
 const { StatusBarManager } = NativeModules;
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBarManager.HEIGHT;
 
 import { default as Feather } from 'react-native-vector-icons/Feather'
 import { ThemeContext } from "./Contexts/ThemeContext";
-import { BlurView } from "@react-native-community/blur";
 
 export default function NavButtons(){
     const theme = useContext(ThemeContext)
+    const { goBack } = useNavigation()
+
     const styles = StyleSheet.create({
         container: {
             height: 90,
@@ -36,35 +37,38 @@ export default function NavButtons(){
             textAlign: 'center',
             lineHeight: 35,
             borderRadius: 35,
-            backgroundColor: theme.gray+'33'
+            backgroundColor: theme.gray+'b3'
         },
     })
 
     return(
-        <View renderToHardwareTextureAndroid style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.navigation}>
-                <Link to='/'>
+                <View onTouchEnd={() => goBack()}>
                     <Feather
                     style={styles.icon}
                     name="arrow-left"
                     size={20}
-                    color="white"
+                    color={theme.foreground}
                     />
-                </Link>
+                </View>
                 <View style={{flexDirection: 'row'}}>
-                    <Feather
-                    style={{...styles.icon, marginRight: 15}}
-                    name="plus"
-                    size={20}
-                    color="white"
-                    >
-                    </Feather>
-                    <Feather
-                    style={styles.icon}
-                    name="share"
-                    size={20}
-                    color="white"
-                    />
+                    <View>
+                        <Feather
+                        style={{...styles.icon, marginRight: 15}}
+                        name="plus"
+                        size={20}
+                        color={theme.foreground}
+                        />
+                    </View>
+                    <View>
+                        <Feather
+                        style={styles.icon}
+                        name="share"
+                        size={20}
+                        color={theme.foreground}
+                        />
+                    </View>
                 </View>
             </View>
         </View>

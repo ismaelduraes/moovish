@@ -6,15 +6,16 @@ import {
     Text,
     StyleSheet,
     FlatList,
-    Dimensions,
 } from 'react-native'
-import { Link } from 'react-router-native'
+import { useNavigation } from '@react-navigation/native'
+
 import { ThemeContext } from './Contexts/ThemeContext'
 
 import { imgPrefixLow } from './Utilities/Utilities'
 
 export default function HorizontalProfileList({data, title = 'Untitled List', showCharacter = false}){
     const theme = useContext(ThemeContext)
+    const navigation = useNavigation()
     
     const styles = StyleSheet.create({
         section: {
@@ -73,16 +74,15 @@ export default function HorizontalProfileList({data, title = 'Untitled List', sh
                     <View
                     style={styles.profileItem}
                     key={item.index}
+                    onTouchEnd={() => navigation.push('profile', {profileId: item.item.id})}
                     >
-                        <Link to={`/profile/${item.item.id}`}>
-                            <Image
-                            style={styles.profileImage}
-                            source={
-                                 item.item.profile_path ?
-                                {uri:`${imgPrefixLow}${item.item.profile_path}`} :
-                                 require('../assets/images/profile_default.png')}
-                            />
-                        </Link>
+                        <Image
+                        style={styles.profileImage}
+                        source={
+                                item.item.profile_path ?
+                            {uri:`${imgPrefixLow}${item.item.profile_path}`} :
+                                require('../assets/images/profile_default.png')}
+                        />
 
                         <Text style={{
                         ...styles.name,
