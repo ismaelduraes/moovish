@@ -5,23 +5,20 @@ import {
     Platform,
     NativeModules
 } from 'react-native'
-import { BlurView } from "@react-native-community/blur";
+
+import LinearGradient from "react-native-linear-gradient";
 import { ThemeContext } from "./Contexts/ThemeContext";
 
 const { StatusBarManager } = NativeModules;
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBarManager.HEIGHT;
 
-export default function AndroidStatusBarBlur(){
+export default function AndroidStatusBarGradient(){
     const theme = useContext(ThemeContext)
 
     const styles = StyleSheet.create({
-        blurView: {
-            width: '100%',
-            height: 1000,
-        },
         container: {
-            height: statusBarHeight,
+            height: statusBarHeight*4,
             width: '100%',
             position: 'absolute',
             zIndex: 1,
@@ -31,11 +28,13 @@ export default function AndroidStatusBarBlur(){
 
     return(
         <View style={styles.container}>
-            <BlurView
-            style={styles.blurView}
-            blurAmount={10}
-            overlayColor={`${theme.type === 'light' ? '#ffffff80' : '#00000033'}`}
-            />
+            <LinearGradient
+            colors={[
+                theme.background+'b3',
+                'rgba(0, 0, 0, 0)',
+                'rgba(0, 0, 0, 0)',
+            ]}
+            style={styles.container}/>
         </View>
     )
 }
