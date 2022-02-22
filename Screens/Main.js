@@ -4,7 +4,7 @@ import {
     ScrollView,
     StyleSheet,
     View,
-    Dimensions
+    Dimensions,
 } from "react-native";
 import TopRated from "../Components/TopRated";
 import Trending from "../Components/Trending";
@@ -13,15 +13,21 @@ import NowPlaying from "../Components/NowPlaying";
 import Nav from "../Components/Nav";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
-const width = Dimensions.get('window').width
-const height = Dimensions.get('window').height
-
 export default function Main({navigation}){
     const [newLoaded, setNewLoaded] = useState(false)
     const theme = useContext(ThemeContext)
 
+    const styles = StyleSheet.create({
+        container: {
+            width: '100%',
+            height: '100%',
+            backgroundColor: theme.background,
+            position: 'absolute',
+        },
+    })
+
     return(
-        <View style={{...styles.container, backgroundColor: theme.background}}>
+        <View style={{...styles.container}}>
             <ScrollView
             showsVerticalScrollIndicator={false}
             style={{
@@ -44,10 +50,3 @@ export default function Main({navigation}){
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        width: width,
-        height: height,
-    },
-})
