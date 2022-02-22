@@ -10,28 +10,22 @@ import {
 } from "react-native";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
-import YouTube from "react-native-youtube";
-
-import { YT_API_KEY } from '@env'
 import { TMDB_API_KEY } from '@env'
-
-import { BlurView } from "@react-native-community/blur";
 
 import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
 
-import { useParams } from "react-router-native";
 import Header from "../Components/Header";
 import TextBody from "../Components/TextBody";
 import HorizontalProfileList from "../Components/HorizontalProfileList";
 import ImageCarousel from "../Components/ImageCarousel";
-import AndroidStatusBarBlur from '../Components/AndroidStatusBarBlur'
+import AndroidStatusBarGradient from '../Components/AndroidStatusBarGradient'
 
 import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
 
 const width = Dimensions.get('window').width
 
-export default function MovieScreen(){
+export default function MovieScreen({route}){
     const [movieData, setMovieData] = useState({})
     const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
     const [movieImages, setMovieImages] = useState([])
@@ -41,7 +35,7 @@ export default function MovieScreen(){
     const [isLoading, setIsLoading] = useState(false)
     
     const theme = useContext(ThemeContext)
-    const movieId = useParams().movieId
+    const { movieId } = route.params
     
     useEffect(() => {
         setIsLoading(true)
@@ -154,6 +148,8 @@ export default function MovieScreen(){
             width: '100%',
             position: 'absolute',
             zIndex: -1,
+            //dark theme has less opacity on blurred image
+            //to keep theme darker
             opacity: theme.type === 'light' ? 0.3 : 0.1
         }
     })
@@ -163,7 +159,7 @@ export default function MovieScreen(){
     else return(
         <View style={styles.container}>
             {/* <Nav/> */}
-            <AndroidStatusBarBlur/>
+            <AndroidStatusBarGradient/>
             <NavButtons/>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Image
@@ -171,7 +167,8 @@ export default function MovieScreen(){
                 source={movieData.backdrop_path ? 
                        {uri: `${imgPrefixOriginal}${movieData.backdrop_path}`} :
                        require('../assets/images/profile_default.png')}
-                blurRadius={10}
+                // dark theme looks better with more blur
+                blurRadius={theme.type === 'light' ? 10 : 25}
                 progressiveRenderingEnabled
                 />
                 {/* Poster */}
