@@ -15,7 +15,8 @@ import {
     LayoutAnimation
 } from "react-native";
 
-import { Link } from "react-router-native";
+import { useNavigation } from "@react-navigation/native";
+import FastImage from 'react-native-fast-image'
 
 import SlideAnimationFunction from "./Utilities/SlideAnimationFuncion";
 
@@ -35,6 +36,8 @@ export default function Trending(){
 
     const [trendingMovies, setTrendingMovies] = useState([])
     const [activeSlide, setActiveSlide] = useState(0)
+
+    const navigation = useNavigation()
 
     //functions
     function fetchData(){
@@ -96,18 +99,24 @@ export default function Trending(){
             fontFamily: theme.fontRegular,
             width: '100%',
             alignSelf: 'center',
-            color: theme.foreground
+            color: theme.foreground,
+            opacity: 0.5
         },
     })
     
     function Banner(item){
         return(
-            <Link to={`/movie/${item.item.id}`}>
-            <View removeClippedSubviews>
+            <View
+            onTouchEnd={() => navigation.push('movie', {movieId: item.item.id})}
+            removeClippedSubviews
+            renderToHardwareTextureAndroid
+            >
                     <Image
-                        source={{uri: `${imgPrefixOriginal}${item.item.poster_path}`}}
+                        source={{
+                            uri: `${imgPrefixOriginal}${item.item.poster_path}`,
+                            priority: FastImage.priority.high
+                        }}
                         style={styles.banner}
-                        progressiveRenderingEnabled
                     />
                 {
                 activeSlide === item.index &&
@@ -131,7 +140,6 @@ export default function Trending(){
                 </View>
                 }
             </View>
-            </Link>
         )
     }
 
