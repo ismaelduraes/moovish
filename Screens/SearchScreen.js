@@ -14,8 +14,7 @@ import {
     Image,
     Dimensions
 } from 'react-native'
-
-import { Link, useNavigate } from "react-router-native"
+import { useNavigation } from "@react-navigation/native"
 
 import { ThemeContext } from "../Components/Contexts/ThemeContext"
 
@@ -25,17 +24,15 @@ import { TMDB_API_KEY } from '@env'
 import { imgPrefix } from "../Components/Utilities/Utilities"
 import { MovieContext } from "../App"
 import Nav from "../Components/Nav"
-
 const width = Dimensions.get('window').width
 
 export default function SearchScreen(){
     const theme = useContext(ThemeContext)
-    const contextProps = useContext(MovieContext)
+    const navigation = useNavigation()
 
     const [results, setResults] = useState([])
     const [query, setQuery] = useState('')
     const [input, setInput] = useState('')
-    const navigate = useNavigate()
 
     function fetchData(){
         axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${query}&page=1`)
@@ -63,10 +60,10 @@ export default function SearchScreen(){
             flexWrap: 'wrap',
         },
         sectionTitleText: {
-            marginTop: '20%',
+            marginTop: 120,
             paddingHorizontal: theme.defaultPadding,
             fontFamily: theme.fontBold,
-            color: theme.accentLight,
+            color: theme.foreground,
             fontSize: 30,
             marginBottom: 15
         },
@@ -148,8 +145,7 @@ export default function SearchScreen(){
                                 height: item.popularity > 200 ? 300 : 400
                             }}
                             >
-                                <Link to={`/movie/${item.id}`}>
-                                <View>
+                                <View onTouchEnd={() => navigation.push('movie', {movieId: item.id})}>
                                         <Image
                                         source={{uri: `${imgPrefix}${item.popularity > 150 ? item.backdrop_path : item.poster_path}`}}
                                         style={{
@@ -161,13 +157,11 @@ export default function SearchScreen(){
                                         {item.title}
                                     </Text>
                                 </View>
-                                </Link>
                             </View>
                         )
                     })
                 }
             </ScrollView>
-
         </View>
     )
 }
