@@ -8,6 +8,8 @@ import {
     Dimensions
 } from 'react-native'
 
+import FastImage from "react-native-fast-image"
+
 import Carousel from 'react-native-snap-carousel'
 import { ThemeContext } from "./Contexts/ThemeContext"
 
@@ -73,19 +75,20 @@ export default function ImageCarousel({data = [], isSquare = false, canChangeRes
                 }}
                 key={item.index}
                 removeClippedSubviews
-                >   
+                >
                     <View
                     onTouchEnd={() => {
-                        setResizeMode(resizeMode === 'cover' ? 'contain' : 'cover')
+                        if (canChangeResize) setResizeMode(resizeMode === 'cover' ? 'contain' : 'cover')
                     }}
                     style={styles.imageContainer}
                     >
                     <Image
                     style={styles.image}
                     source={{
-                        uri:
-                        `${imgPrefixOriginal}${item.item.file_path}`
+                        uri: `${imgPrefixOriginal}${item.item.file_path}`,
+                        priority: FastImage.priority.low,
                     }}
+                    resizeMode={resizeMode}
                     />
                     {resizeMode === 'contain' && <Image
                     style={styles.imageBackground}

@@ -5,14 +5,14 @@ import {
     useEffect
 } from "react";
 import {
-    Image,
     StyleSheet,
     Animated,
     Easing,
     Dimensions
 } from 'react-native'
 
-import { Link } from "react-router-native";
+import FastImage from "react-native-fast-image";
+import { useNavigation } from "@react-navigation/native";
 
 import { ThemeContext } from "./Contexts/ThemeContext";
 import { imgPrefix, imgPrefixOriginal } from "./Utilities/Utilities";
@@ -31,6 +31,7 @@ export default function Poster({
     animDelay = 0
     }){
     const theme = useContext(ThemeContext)
+    const navigation = useNavigation()
 
     const slideAnim = useRef(new Animated.Value(200)).current
     
@@ -51,7 +52,7 @@ export default function Poster({
 
     const styles = StyleSheet.create({
         container: {
-            marginRight: 9,
+            marginRight: 10,
             transform: [{'translateY': slideAnim}],
             width: width,
         },
@@ -70,14 +71,19 @@ export default function Poster({
     })
     
     return(
-        <Link to={`/movie/${movie.id}`} state={{id: movie.id}}>
         <Animated.View
-            style={styles.container}
+        style={styles.container}
+        onTouchEnd={() => {
+            navigation.push('movie', {movieId: movie.id})
+        }}
         >
-                <Image
+                <FastImage
                     style={styles.banner}
-                    source={{uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop? movie.backdrop_path : movie.poster_path}`}}
-                    progressiveRenderingEnabled
+                    source={{
+                        uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop? movie.backdrop_path : movie.poster_path}`,
+                        priority: FastImage.priority.low
+                    }
+                }
                 />
             {showText && 
             <Animated.Text style={styles.title}>
@@ -85,6 +91,5 @@ export default function Poster({
             </Animated.Text>}
 
         </Animated.View>
-        </Link>
     )
 }
