@@ -13,6 +13,9 @@ import {
     Dimensions,
     Animated
 } from 'react-native'
+
+import axios from 'axios'
+
 import { ThemeContext } from './Contexts/ThemeContext'
 import Carousel from 'react-native-snap-carousel';
 
@@ -31,22 +34,20 @@ export default function NowPlaying(){
 
     const [nowPlaying, setNowPlaying] = useState([])
     const [activeSlide, setActiveSlide] = useState(0)
-    
+
     const containerSlideAnim = useRef(new Animated.Value(250)).current
     const titleSlideAnim = useRef(new Animated.Value(15)).current
 
-    function fetchData(){
-        fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
-        .then(result => result.json()
-        .then(data => setNowPlaying(data.results))
-        )
+    function fetchData() {
+        axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
+        .then(result => setNowPlaying(result.data.results))
     }
 
     useEffect(() => {
         SlideAnimationFunction(containerSlideAnim, 0, 500, true, 500)
         fetchData()
     }, [])
-    
+
     useEffect(() => {
         Animated.timing(titleSlideAnim).reset()
         SlideAnimationFunction(titleSlideAnim, 0, 500)
@@ -56,10 +57,10 @@ export default function NowPlaying(){
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
             overflow: 'hidden',
-            transform: [{'translateY': containerSlideAnim}]
+            transform: [{ 'translateY': containerSlideAnim }]
         },
         sectionTitle: {
-            fontSize: 20,
+            fontSize: 22,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
@@ -69,12 +70,13 @@ export default function NowPlaying(){
             marginBottom: 15,
             paddingHorizontal: theme.defaultPadding,
             color: theme.foreground,
+            opacity: 0.6,
         },
         movieTitle: {
             textAlign: 'center',
             color: theme.foreground,
             marginTop: 5,
-            transform: [{'translateY': titleSlideAnim}]
+            transform: [{ 'translateY': titleSlideAnim }]
         },
         gradient: {
             position: 'absolute',
@@ -99,28 +101,32 @@ export default function NowPlaying(){
                 horizontal
                 renderItem={
                     item => {
-                    return(
-                    <View>
-                    <Poster
-                        movie={item.item}
-                        width={width-(theme.defaultPadding*2)}
-                        useBackdrop
-                        originalQuality
-                        showText={false}
-                        animDelay={item.index * 100}
-                    />
-                    <Animated.Text style={styles.movieTitle}>
-                        {activeSlide === item.index ? item.item.title : null}
-                    </Animated.Text>
-                    </View>
-                    )
-                }}
+                        return (
+                            <View style={{ alignSelf: 'flex-start' }}>
+                                <Poster
+                                    movie={item.item}
+                                    width={(width - (theme.defaultPadding * 2))}
+                                    useBackdrop
+                                    originalQuality
+                                    showText={false}
+                                    animDelay={item.index * 100}
+                                />
+                                <Animated.Text style={styles.movieTitle}>
+                                    {activeSlide === item.index ? item.item.title : null}
+                                </Animated.Text>
+                            </View>
+                        )
+                    }}
                 sliderWidth={width}
-                itemWidth={width-(theme.defaultPadding*2)}
+                itemWidth={(width - (theme.defaultPadding * 2))}
                 layout="stack"
                 layoutCardOffset={10}
+                activeSlideAlignment='center'
                 removeClippedSubviews
                 onSnapToItem={e => setActiveSlide(e)}
+                autoplay
+                autoplayDelay={0}
+                autoplayInterval={5000}
             />
         </Animated.View>
     )
