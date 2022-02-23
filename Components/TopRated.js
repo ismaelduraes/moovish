@@ -53,7 +53,8 @@ export default function TopRated(){
             fontFamily: theme.fontRegular,
             marginBottom: '5%',
             paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground
+            color: theme.foreground,
+            opacity: 0.6,
         },
         gradient: {
             position: 'absolute',

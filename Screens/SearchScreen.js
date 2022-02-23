@@ -2,7 +2,8 @@ import React from "react"
 import {
     useContext,
     useState,
-    useEffect
+    useEffect,
+    useRef
 } from "react"
 
 import {
@@ -16,19 +17,22 @@ import {
 } from 'react-native'
 import { useNavigation } from "@react-navigation/native"
 
+import { default as MaterialIcons } from 'react-native-vector-icons/MaterialIcons'
+import { default as Feather } from 'react-native-vector-icons/Feather'
+
 import { ThemeContext } from "../Components/Contexts/ThemeContext"
 
 import axios from "axios"
 
 import { TMDB_API_KEY } from '@env'
 import { imgPrefix } from "../Components/Utilities/Utilities"
-import { MovieContext } from "../App"
-import Nav from "../Components/Nav"
+import { SafeAreaView } from "react-native-safe-area-context"
 const width = Dimensions.get('window').width
 
 export default function SearchScreen(){
     const theme = useContext(ThemeContext)
     const navigation = useNavigation()
+    const searchInput = useRef()
 
     const [results, setResults] = useState([])
     const [query, setQuery] = useState('')
@@ -48,7 +52,14 @@ export default function SearchScreen(){
             position: 'absolute',
             height: '100%',
             width: '100%',
-            backgroundColor: theme.background
+            backgroundColor: theme.background,
+            paddingTop: 25
+        },
+        searchBarContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignSelf: 'center',
+            paddingHorizontal: theme.defaultPadding
         },
         scrollView: {
             marginTop: 40,
@@ -60,20 +71,24 @@ export default function SearchScreen(){
             flexWrap: 'wrap',
         },
         sectionTitleText: {
-            marginTop: 120,
             paddingHorizontal: theme.defaultPadding,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             fontSize: 30,
-            marginBottom: 15
+            marginBottom: 15,
+            marginTop: 50
         },
         searchBar: {
             paddingHorizontal: 15,
-            justifyContent: 'center',
+            height: 40,
+
+            flexDirection: 'row',
             alignSelf: 'center',
-            width: '90%',
-            height: 50,
-            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+
+            width: '80%',
+            borderRadius: theme.borderRadius,
             overflow: 'hidden',
             backgroundColor: theme.gray,
         },
@@ -81,10 +96,11 @@ export default function SearchScreen(){
             overflow: 'hidden',
             fontFamily: theme.fontRegular,
             fontSize: 18,
-            color: theme.foreground
+            color: theme.foreground,
+            height: '100%',
+            width: '90%',
         },
         resultImage: {
-            // width: '85%',
             height: '75%',
             borderRadius: theme.borderRadius,
             alignSelf: 'center'
@@ -100,24 +116,27 @@ export default function SearchScreen(){
     })
 
     return(
-        <View style={styles.container}>
-            <Nav isOnSearch/>
-            <View
-                colors={[
-                    theme.accent,
-                    'rgba(0, 0, 0, 0)',
-                ]}
-                style={styles.sectionTitle}
-            >
-                <Text style={styles.sectionTitleText}>
-                    Search
-                </Text>
-            </View>
+        <SafeAreaView style={styles.container}>
 
-            <View style={styles.searchBar}>
+            <View style={styles.searchBarContainer}>
+                <Feather
+                name="arrow-left"
+                size={25}
+                color={theme.foreground}
+                style={{width: '10%'}}
+                onTouchEnd={() => navigation.navigate('home')}
+                />
+                <View style={styles.searchBar}>
+                    <MaterialIcons
+                    name='search'
+                    size={15}
+                    color={theme.foreground}
+                    style={{marginRight: 15}}
+                    />
                     <TextInput
+                        ref={searchInput}
                         style={styles.searchBarInput}
-                        placeholder="My favorite movie is..."
+                        placeholder="Search..."
                         placeholderTextColor={theme.foreground}
                         onChangeText={e => {
                             setInput(e)
@@ -125,7 +144,9 @@ export default function SearchScreen(){
                         onEndEditing={() => {
                             setQuery(input)
                         }}
+                        onLayout={() => {searchInput.current.focus()}}
                     />
+                </View>
             </View>
 
             <ScrollView
@@ -162,6 +183,6 @@ export default function SearchScreen(){
                     })
                 }
             </ScrollView>
-        </View>
+        </SafeAreaView>
     )
 }

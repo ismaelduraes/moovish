@@ -24,6 +24,7 @@ import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
 
 const width = Dimensions.get('window').width
+const height = Dimensions.get('screen').height
 
 export default function MovieScreen({route}){
     const [movieData, setMovieData] = useState({})
@@ -84,13 +85,11 @@ export default function MovieScreen({route}){
         else return 'green'
     }
 
-
-
     const styles = StyleSheet.create({
         container: {
             position: 'absolute',
-            height: '100%',
-            width: '100%',
+            height,
+            width,
             backgroundColor: theme.background,
         },
         smallText: {
@@ -162,6 +161,8 @@ export default function MovieScreen({route}){
             <AndroidStatusBarGradient/>
             <NavButtons/>
             <ScrollView showsVerticalScrollIndicator={false}>
+
+                {/* background image */}
                 <Image
                 style={styles.imageBg}
                 source={movieData.backdrop_path ? 
@@ -171,6 +172,8 @@ export default function MovieScreen({route}){
                 blurRadius={theme.type === 'light' ? 10 : 25}
                 progressiveRenderingEnabled
                 />
+
+
                 {/* Poster */}
                 <Header
                 imagePath={movieData.backdrop_path}

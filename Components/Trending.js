@@ -69,10 +69,17 @@ export default function Trending(){
             transform: [{'translateY': containerSlideAnim}]
         },
         sectionTitle: {
-            fontSize: 20,
+            fontSize: 22,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
+        },
+        caption: {
+            fontFamily: theme.fontRegular,
+            marginBottom: 15,
+            paddingHorizontal: theme.defaultPadding,
+            color: theme.foreground,
+            opacity: 0.6,
         },
         title: {
             fontSize: 16,
@@ -80,16 +87,11 @@ export default function Trending(){
             fontFamily: theme.fontBold,
             marginTop: 20,
         },
-        caption: {
-            fontFamily: theme.fontRegular,
-            marginBottom: 15,
-            paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground,
-        },
         banner: {
             backgroundColor: theme.accent,
-            width: '100%',
-            height: 510,
+            width: width-(theme.defaultPadding*2),
+            //aspect-ratio is 1/1.4; as in height is width + 40% of width
+            height: (width-(theme.defaultPadding*2))*1.4,
             borderRadius: theme.borderRadius,
             resizeMode: 'cover',
         },
@@ -100,7 +102,7 @@ export default function Trending(){
             width: '100%',
             alignSelf: 'center',
             color: theme.foreground,
-            opacity: 0.5
+            opacity: 0.6
         },
     })
     
