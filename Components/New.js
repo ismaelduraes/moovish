@@ -20,7 +20,7 @@ import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
 import { TMDB_API_KEY } from '@env'
 
-export default function New(props){
+export default function New(){
     const theme = useContext(ThemeContext)
     const [newMoviesData, setNewMoviesData] = useState([])
 
@@ -43,13 +43,12 @@ export default function New(props){
     const styles = StyleSheet.create({
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
-            marginTop: 120,
             overflow: 'hidden',
             transform: [{'translateY': containerSlideAnim}],
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 20,
+            fontSize: 22,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
@@ -59,6 +58,7 @@ export default function New(props){
             marginBottom: '5%',
             paddingHorizontal: theme.defaultPadding,
             color: theme.foreground,
+            opacity: 0.6,
         },
         scrollView: {
             paddingHorizontal: theme.defaultPadding,
@@ -82,22 +82,11 @@ export default function New(props){
                 data={newMoviesData}
                 renderItem={(item, index) => {
                     return(
-                        <View
-                            key={item.index}
-                            onLayout={() => {
-                                //if first item is loaded
-                                //and layout is prepared,
-                                //set setNewLoaded to true
-                                //so rest of home screen can
-                                //load (see Main.js)
-                                props.setNewLoaded(true)
-                            }}
-                        >
+                        <View key={item.index}>
                             <Poster
                                 movie={item.item}
                                 animDelay={item.index*100}
-                                width={250}
-                                useBackdrop
+                                width={100}
                             />
                         </View>
                     )
