@@ -215,6 +215,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    compile project(':react-native-radial-gradient')
+    compile project(':react-native-secure-key-store')
 }
 
 // Run this once to be able to run the application with BUCK

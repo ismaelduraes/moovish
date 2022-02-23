@@ -73,6 +73,17 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>Inter-Bold.ttf</string>
+		<string>Inter-Regular.ttf</string>
+		<string>ZillaSlab-Bold.ttf</string>
+		<string>ZillaSlab-Regular.ttf</string>
+		<string>WorkSans-Bold.ttf</string>
+		<string>WorkSans-Regular.ttf</string>
+		<string>Manrope-Bold.ttf</string>
+		<string>Manrope-ExtraBold.ttf</string>
+		<string>Manrope-Light.ttf</string>
+		<string>SFUIText-Heavy.otf</string>
+		<string>SFUIText-Regular.otf</string>
 	</array>
 </dict>
 </plist>
