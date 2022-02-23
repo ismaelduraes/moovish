@@ -13,6 +13,11 @@ import NowPlaying from "../Components/NowPlaying";
 import Nav from "../Components/Nav";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
+import LinearGradient from "react-native-linear-gradient";
+
+const height = Dimensions.get('screen').height
+
+
 export default function Main({navigation}){
     const [newLoaded, setNewLoaded] = useState(false)
     const theme = useContext(ThemeContext)
@@ -24,29 +29,39 @@ export default function Main({navigation}){
             backgroundColor: theme.background,
             position: 'absolute',
         },
+        contentContainer: {
+            paddingTop: '38%',
+        },
     })
-
+    
     return(
         <View style={{...styles.container}}>
+            <Nav/>
             <ScrollView
             showsVerticalScrollIndicator={false}
             style={{
-                backgroundColor: theme.background
+                // backgroundColor: theme.background
             }}
             contentContainerStyle={styles.contentContainer}
             >
                 {/* render new images before anything else */}
+                <NowPlaying/>
                 <New setNewLoaded={setNewLoaded}/>
-
-                {newLoaded &&
-                <View>
-                    <Trending/>
-                    <NowPlaying/>
-                    <TopRated/>
-                </View>
-                }
+                <Trending/>
+                <TopRated/>
             </ScrollView>
-            <Nav/>
+            <LinearGradient
+            style={{
+                width: '100%', height: '20%',
+                position: 'absolute'
+            }}
+            colors={[
+                theme.background,
+                theme.background,
+                // theme.background,
+                'rgba(0, 0, 0, 0)',
+            ]}
+            />
         </View>
     )
 }
