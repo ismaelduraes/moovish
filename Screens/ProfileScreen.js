@@ -6,18 +6,17 @@ import {
     View,
     Image
 } from 'react-native'
-import { useParams } from "react-router-native";
 import axios from "axios";
 
 import { TMDB_API_KEY } from '@env'
 import Header from "../Components/Header";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 import TextBody from "../Components/TextBody";
-import Nav from "../Components/Nav";
 import ImageCarousel from "../Components/ImageCarousel";
 
 import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
+import AndroidStatusBarGradient from "../Components/AndroidStatusBarGradient";
 
 export default function ProfileScreen({route}){
     const profileId = route.params.profileId
@@ -36,7 +35,6 @@ export default function ProfileScreen({route}){
     
     useLayoutEffect(() => {
         fetchData()
-        console.log(profileData)
     }, [])
     
     const styles = StyleSheet.create({
@@ -54,6 +52,7 @@ export default function ProfileScreen({route}){
 
     return loaded ? (
         <View style={{backgroundColor: theme.background}}>
+            <AndroidStatusBarGradient/>
             <NavButtons/>
             <Image
             style={styles.imageBg}
