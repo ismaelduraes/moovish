@@ -4,14 +4,17 @@ import { ThemeContext } from './Contexts/ThemeContext'
 import {
     Text,
     StyleSheet,
-    View
+    View,
+    Platform,
+    NativeModules
 } from 'react-native'
+const { StatusBarManager } = NativeModules;
+const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 
 import { useNavigation } from '@react-navigation/native'
 import { default as MaterialIcons } from 'react-native-vector-icons/MaterialIcons'
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { PropsContext } from './Contexts/PropsContext'
 import { AuthContext } from './Contexts/AuthContext'
 import { themes } from './Contexts/ThemeContext'
@@ -26,15 +29,17 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
         container :{
             zIndex: 1,
             width: '100%',
+            // height: 130,
 
-            marginTop: 20,
-            marginBottom: 10,
+            paddingTop: statusBarHeight + 20,
+            paddingBottom: 20,
             position: 'absolute',
 
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingHorizontal: theme.defaultPadding,
+            backgroundColor: theme.background,
         },
         title: {
             fontSize: 30,
@@ -61,15 +66,14 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
         },
         searchBarText: {
             color: theme.foreground,
-            fontFamily: theme.fontRegular
+            fontFamily: theme.fontRegular,
         }
     })
 
     return(
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View
                 onTouchEnd={() => {
-                    console.log('sad')
                     contextProps.setCurrentTheme(contextProps.currentTheme.type === 'light' ?
                     themes.dark : themes.light
                     )
@@ -79,12 +83,8 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
                 <MaterialCommunityIcons
                 name='movie-open'
                 size={25}
-                color={theme.foreground}
-                style={{marginRight: 15}}
+                color={theme.accent}
                 />
-                {/* <Text style={styles.title}>
-                    {title}
-                </Text> */}
             </View>
             <View
             onTouchEnd={() => navigation.navigate('search')}
@@ -104,9 +104,9 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
             <MaterialCommunityIcons
             name='bookshelf'
             size={25}
-            color={theme.foreground}
+            color={theme.accent}
             onTouchEnd={() => contextAuth.isAuth ? navigation.push('library') : navigation.push('login')}
             />
-        </SafeAreaView>
+        </View>
     )
 }
