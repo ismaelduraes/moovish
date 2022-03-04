@@ -29,11 +29,14 @@ export default function LoginScreen(){
         axios.post('http://192.168.15.10:8080/login',
         {username, password})
         .then(res => {
-            contextAuth.setIsAuth(true)
             RNSecureKeyStore.set('auth_token', res.data, {accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK})
-            navigation.navigate('home')
+            .then(() => {
+                contextAuth.setToken(res.data)
+                contextAuth.setIsAuth(true)
+                navigation.navigate('home')
+            })
         })
-        .catch(err => alert('Something went wrong. Please check your credentials'))
+        .catch(err => alert('Something went wrong. Please check your credentials/\n'+err))
     }
 
 
