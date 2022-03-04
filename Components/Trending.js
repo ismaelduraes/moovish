@@ -66,7 +66,6 @@ export default function Trending(){
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
             position: 'relative',
-            transform: [{'translateY': containerSlideAnim}]
         },
         sectionTitle: {
             fontSize: 22,
@@ -78,8 +77,7 @@ export default function Trending(){
             fontFamily: theme.fontRegular,
             marginBottom: 15,
             paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground,
-            opacity: 0.6,
+            color: theme.accent,
         },
         title: {
             fontSize: 16,
@@ -112,8 +110,9 @@ export default function Trending(){
             onTouchEnd={() => navigation.push('movie', {movieId: item.item.id})}
             removeClippedSubviews
             renderToHardwareTextureAndroid
+            key={item.item.movie_id}
             >
-                    <Image
+                    <FastImage
                         source={{
                             uri: `${imgPrefixOriginal}${item.item.poster_path}`,
                             priority: FastImage.priority.high
