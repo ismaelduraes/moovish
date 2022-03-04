@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
     View,
     StyleSheet,
@@ -11,12 +11,45 @@ const { StatusBarManager } = NativeModules;
 
 const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBarManager.HEIGHT;
 
+import BottomPopUp from "./BottomPopUp";
+
 import { default as Feather } from 'react-native-vector-icons/Feather'
 import { ThemeContext } from "./Contexts/ThemeContext";
+import axios from "axios";
+import { AuthContext } from "./Contexts/AuthContext";
 
-export default function NavButtons(){
+export default function NavButtons({movieId, isInLibrary, setIsInLibrary}){
     const theme = useContext(ThemeContext)
-    const { goBack } = useNavigation()
+    const contextAuth = useContext(AuthContext)
+
+    const [pendingPopUp, setPendingPopUp] = useState({isActive: false})
+
+    const navigation = useNavigation()
+
+    function addToWatchLater(){
+        axios.post
+        (`http://192.168.15.10:8080/profile/library`, {
+            movie_id: movieId,
+            watched: false
+        },
+        {headers: {'auth-token': contextAuth.token}}
+        )
+        .then(r => {
+            setIsInLibrary(true)
+            setPendingPopUp({isActive: true, text: "Added to Library"})
+        })
+        .catch(e => alert(e))
+    }
+
+    function removeFromLibrary(){
+        axios.delete(`http://192.168.15.10:8080/profile/library/${movieId}`,
+        {headers: {'auth-token': contextAuth.token}})
+        .then(() => {
+            setIsInLibrary(false)
+            setPendingPopUp({isActive: true, text: "Removed from Library"})
+        })
+        .catch(e => console.warn('error:', e))
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -43,8 +76,14 @@ export default function NavButtons(){
 
     return(
         <View style={styles.container}>
+            {pendingPopUp.isActive ?
+            <BottomPopUp
+            popUpState={pendingPopUp}
+            setPopUpState={setPendingPopUp}
+            /> : null
+            }
             <View style={styles.navigation}>
-                <View onTouchEnd={() => goBack()}>
+                <View onTouchEnd={() => navigation.goBack()}>
                     <Feather
                     style={styles.icon}
                     name="arrow-left"
@@ -53,14 +92,22 @@ export default function NavButtons(){
                     />
                 </View>
                 <View style={{flexDirection: 'row'}}>
-                    <View>
+                    {movieId ?
+                        <View>
                         <Feather
                         style={{...styles.icon, marginRight: 15}}
-                        name="plus"
+                        name={!isInLibrary ? 'plus' : 'minus'}
                         size={20}
                         color={theme.foreground}
+                        onTouchEnd={
+                            contextAuth.isAuth ?
+                            () => !isInLibrary ? addToWatchLater() : removeFromLibrary()
+                            :
+                            () => navigation.push('login')
+                        }
                         />
-                    </View>
+                    </View> : null
+                    }
                     <View>
                         <Feather
                         style={styles.icon}
