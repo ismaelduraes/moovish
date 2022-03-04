@@ -17,6 +17,7 @@ import ImageCarousel from "../Components/ImageCarousel";
 import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
 import AndroidStatusBarGradient from "../Components/AndroidStatusBarGradient";
+import Loading from "../Components/Loading";
 
 export default function ProfileScreen({route}){
     const profileId = route.params.profileId
@@ -49,8 +50,10 @@ export default function ProfileScreen({route}){
             opacity: theme.type === 'light' ? 0.3 : 0.1
         }
     })
+    
+    if (!loaded) return <Loading/>
 
-    return loaded ? (
+    else return (
         <View style={{backgroundColor: theme.background}}>
             <AndroidStatusBarGradient/>
             <NavButtons/>
@@ -95,5 +98,5 @@ export default function ProfileScreen({route}){
                 />
             </ScrollView>
         </View>
-    ) : null
+    )
 }
