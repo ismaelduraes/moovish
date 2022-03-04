@@ -5,6 +5,7 @@ import {
     StyleSheet,
     View,
     Dimensions,
+    NativeModules
 } from "react-native";
 import TopRated from "../Components/TopRated";
 import Trending from "../Components/Trending";
@@ -12,8 +13,10 @@ import New from "../Components/New";
 import NowPlaying from "../Components/NowPlaying";
 import Nav from "../Components/Nav";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
+import Loading from "../Components/Loading";
 
-import LinearGradient from "react-native-linear-gradient";
+const { StatusBarManager } = NativeModules;
+const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 
 const height = Dimensions.get('screen').height
 
@@ -30,7 +33,7 @@ export default function Main({navigation}){
             position: 'absolute',
         },
         contentContainer: {
-            paddingTop: '38%',
+            paddingTop: statusBarHeight+100,
         },
     })
     
@@ -43,25 +46,13 @@ export default function Main({navigation}){
                 // backgroundColor: theme.background
             }}
             contentContainerStyle={styles.contentContainer}
+            removeClippedSubviews
             >
-                {/* render new images before anything else */}
                 <NowPlaying/>
-                <New setNewLoaded={setNewLoaded}/>
-                <Trending/>
                 <TopRated/>
+                <Trending/>
+                <New/>
             </ScrollView>
-            <LinearGradient
-            style={{
-                width: '100%', height: '20%',
-                position: 'absolute'
-            }}
-            colors={[
-                theme.background,
-                theme.background,
-                // theme.background,
-                'rgba(0, 0, 0, 0)',
-            ]}
-            />
         </View>
     )
 }
