@@ -36,38 +36,41 @@ export default function App(){
   const [token, setToken] = useState('')
   const [loginData, setLoginData] = useState({})
 
-  async function checkAuth(){
-    await RNSecureKeyStore.get('auth_token')
+  function checkAuth(){
+    RNSecureKeyStore.get('auth_token')
     .then(r => {
       setToken(r)
+      console.log('token:',r)
       //check token with server
       axios.get('http://192.168.15.10:8080/profile/data', {headers: {'auth-token': r}})
       //if success
       .then(res => {
+          console.log('token apparently retrieved')
           setIsAuth(true)
           setLoginData(res.data)
-          console.log('authenticated')
-
-          axios.get('http://192.168.15.10:8080/profile/to_watch_list',
-          {headers: {'auth-token': r}})
-          .then(r => console.log(r.data))
+          setAuthTestDone(true)
       })
       //if error
       .catch(error => {
         if(error.code === 401){
-          ('Something went wrong and you have been logged out. Please log back in again.')
+          //conection has been denied by server; log user out
+          alert('Something went wrong and you have been logged out. Please log back in again.')
+          setIsAuth(false)
         }
         else{
+          //has token but couldnt connect to moovish servers
           alert('Something went wrong while trying to connect to moovish. Please check your internet connection.')
+          setIsAuth(true)
         }
-          console.log('not authenticated')
-          setIsAuth(false)
+          alert('not authenticated')
+          setAuthTestDone(true)
       })
     })
     .catch(err =>
-      {return}
+      {
+        setAuthTestDone(true)
+      }
     )
-    setAuthTestDone(true)
   }
 
   useEffect(() => {
