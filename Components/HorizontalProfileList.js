@@ -16,7 +16,7 @@ import { imgPrefixLow } from './Utilities/Utilities'
 export default function HorizontalProfileList({data, title = 'Untitled List', showCharacter = false}){
     const theme = useContext(ThemeContext)
     const navigation = useNavigation()
-    
+
     const styles = StyleSheet.create({
         section: {
             paddingHorizontal: theme.defaultPadding,
@@ -73,7 +73,7 @@ export default function HorizontalProfileList({data, title = 'Untitled List', sh
                 return(
                     <View
                     style={styles.profileItem}
-                    key={item.index}
+                    key={item.item.id+item.index}
                     onTouchEnd={() => navigation.push('profile', {profileId: item.item.id})}
                     >
                         <Image
