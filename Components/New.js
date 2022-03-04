@@ -19,6 +19,7 @@ import Poster from './Poster'
 import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
 import { TMDB_API_KEY } from '@env'
+import axios from 'axios'
 
 export default function New(){
     const theme = useContext(ThemeContext)
@@ -28,9 +29,8 @@ export default function New(){
     const containerOpacityAnim = useRef(new Animated.Value(0)).current
 
     function fetchData(){
-        fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${TMDB_API_KEY}&page=1`)
-        .then(result => result.json()
-        .then(data => setNewMoviesData(data.results))
+        axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${TMDB_API_KEY}&page=1`)
+        .then(result => setNewMoviesData(result.data.results)
         )
     }
 
@@ -57,8 +57,8 @@ export default function New(){
             fontFamily: theme.fontRegular,
             marginBottom: '5%',
             paddingHorizontal: theme.defaultPadding,
-            color: theme.foreground,
-            opacity: 0.6,
+            color: theme.accent,
+            // opacity: 0.6,
         },
         scrollView: {
             paddingHorizontal: theme.defaultPadding,
@@ -80,13 +80,14 @@ export default function New(){
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 data={newMoviesData}
-                renderItem={(item, index) => {
+                renderItem={item => {
                     return(
-                        <View key={item.index}>
+                        <View key={item.item.id}>
                             <Poster
                                 movie={item.item}
                                 animDelay={item.index*100}
                                 width={100}
+                                animate={false}
                             />
                         </View>
                     )
