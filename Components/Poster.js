@@ -8,7 +8,8 @@ import {
     StyleSheet,
     Animated,
     Easing,
-    Dimensions
+    Dimensions,
+    Image
 } from 'react-native'
 
 import FastImage from "react-native-fast-image";
@@ -28,12 +29,13 @@ export default function Poster({
     width = 100,
     //↓useful if instantiating many. you can set the delay to be a multiple of the
     //index/key
-    animDelay = 0
+    animDelay = 0,
+    animate = true
     }){
     const theme = useContext(ThemeContext)
     const navigation = useNavigation()
 
-    const slideAnim = useRef(new Animated.Value(200)).current
+    const slideAnim = useRef(new Animated.Value(animate ? 200 : 0)).current
     
     function playAnim(){
         Animated.timing(slideAnim, {
@@ -46,7 +48,7 @@ export default function Poster({
     }
 
     useEffect(() => {
-        playAnim()
+        if(animate) playAnim()
     }, [])
 
 
@@ -76,12 +78,14 @@ export default function Poster({
         onTouchEnd={() => {
             navigation.push('movie', {movieId: movie.id})
         }}
+        key={movie.id}
+        removeClippedSubviews
         >
                 <FastImage
                     style={styles.banner}
                     source={{
                         uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop? movie.backdrop_path : movie.poster_path}`,
-                        priority: FastImage.priority.low
+                        priority: FastImage.priority.high
                     }
                 }
                 />
