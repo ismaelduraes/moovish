@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useLayoutEffect as useEffect, useContext } from "react";
+import { useState, useLayoutEffect, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -22,6 +22,9 @@ import AndroidStatusBarGradient from '../Components/AndroidStatusBarGradient'
 
 import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
+import axios from "axios";
+import { AuthContext } from "../Components/Contexts/AuthContext";
+import Loading from "../Components/Loading";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
@@ -30,18 +33,28 @@ export default function MovieScreen({route}){
     const [movieData, setMovieData] = useState({})
     const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
     const [movieImages, setMovieImages] = useState([])
-    const [movieVideo, setMovieVideo] = useState([])
     const [cast, setCast] = useState({})
     const [crew, setCrew] = useState({})
-    const [isLoading, setIsLoading] = useState(false)
+    const [isInLibrary, setIsInLibrary] = useState(false)
+
+    const [isLoading, setIsLoading] = useState(true)
     
     const theme = useContext(ThemeContext)
+    const contextAuth = useContext(AuthContext)
+
     const { movieId } = route.params
     
     useEffect(() => {
-        setIsLoading(true)
         fetchData()
-    }, [])
+
+        return (() => {
+            setMovieData({})
+            setProductionCompanies('')
+            setCast({})
+            setCrew({})
+        })
+    }, [isInLibrary])
+
     useEffect(() => {
         //remove first image as it's already
         //used by the header (avoids redundancy in images)
@@ -49,32 +62,39 @@ export default function MovieScreen({route}){
     }, [movieImages])
 
 
-    function fetchData(){
+    async function fetchData(){
         //fetch movie data
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
-        .then(r => r.json()
+        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
         .then(d => {
-            setMovieData(d); setProductionCompanies(d.production_companies[0].name)
-        }))
+            setMovieData(d.data); setProductionCompanies(d.data.production_companies[0].name)
+        })
 
         //fetch movie images
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${TMDB_API_KEY}`)
-        .then(r => r.json())
-        .then(d => setMovieImages(d.backdrops))
+        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${TMDB_API_KEY}`)
+        .then(d => setMovieImages(d.data.backdrops))
         
         //fetch videos
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
-        .then(r => r.json())
-        .then(d => setMovieVideo(d.results[0]))
+        // axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
+        // .then(d => setMovieVideo(d.data.results[0]))
         
         //fetch credits
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
-        .then(r => r.json())
+        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
         .then(d => {
-            sortCast(d.cast, setCast)
-            sortCrew(d.crew, setCrew)
-            setIsLoading(false)
+            sortCast(d.data.cast, setCast)
+            sortCrew(d.data.crew, setCrew)
         })
+        
+        await axios.get('http://192.168.15.10:8080/profile/library',
+        {headers: {'auth-token': contextAuth.token}}
+        ).then(r => {
+            //check if any of the movies in library match current movieId
+            r.data.forEach(item => {
+                if(item.movie_id === movieId){
+                    setIsInLibrary(true)
+                }
+            })
+        })
+        setIsLoading(false)
     }
 
     function ratingColor(rating){
@@ -153,13 +173,17 @@ export default function MovieScreen({route}){
         }
     })
     
-    if (isLoading) return null
+    if (isLoading) return <Loading/>
     
     else return(
         <View style={styles.container}>
             {/* <Nav/> */}
             <AndroidStatusBarGradient/>
-            <NavButtons/>
+            <NavButtons
+            movieId={movieId}
+            isInLibrary={isInLibrary}
+            setIsInLibrary={setIsInLibrary}
+            />
             <ScrollView showsVerticalScrollIndicator={false}>
 
                 {/* background image */}
@@ -169,7 +193,7 @@ export default function MovieScreen({route}){
                        {uri: `${imgPrefixOriginal}${movieData.backdrop_path}`} :
                        require('../assets/images/profile_default.png')}
                 // dark theme looks better with more blur
-                blurRadius={theme.type === 'light' ? 10 : 25}
+                blurRadius={theme.type === 'light' ? 20 : 50}
                 progressiveRenderingEnabled
                 />
 
