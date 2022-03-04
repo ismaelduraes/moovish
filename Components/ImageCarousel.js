@@ -38,7 +38,7 @@ export default function ImageCarousel({data = [], isSquare = false, canChangeRes
             overflow: 'hidden',
         },
         image: {
-            height: isSquare ? width-(theme.defaultPadding*2) : 190,
+            height: isSquare ? width-(theme.defaultPadding*2) : width*0.5,
             width: width-(theme.defaultPadding*2),
             resizeMode: canChangeResize ? resizeMode : 'cover',
             zIndex: 1
@@ -66,6 +66,8 @@ export default function ImageCarousel({data = [], isSquare = false, canChangeRes
             itemWidth={width-(theme.defaultPadding*2)}
             layout="stack"
             layoutCardOffset={10}
+            enableMomentum={true}
+            decelerationRate={0.9}
             renderItem={ (item) =>
             {
                 return(
@@ -84,10 +86,7 @@ export default function ImageCarousel({data = [], isSquare = false, canChangeRes
                     >
                     <Image
                     style={styles.image}
-                    source={{
-                        uri: `${imgPrefixOriginal}${item.item.file_path}`,
-                        priority: FastImage.priority.low,
-                    }}
+                    source={{uri: `${imgPrefixOriginal}${item.item.file_path}`}}
                     resizeMode={resizeMode}
                     />
                     {resizeMode === 'contain' && <Image
