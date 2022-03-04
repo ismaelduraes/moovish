@@ -4,11 +4,11 @@ import { createContext } from "react";
 export const themes = {
     light: {
         type: 'light',
-        accent: '#b84239', //tomato-ish
+        accent: '#b56d19', //tomato-ish
         accentAlt: '#b84239', //white
         background: '#ffffff', //black
         foreground: '#000000', //white
-        gray: '#d6d6d6',
+        gray: '#e3e3e3',
         fontRegular: 'Manrope-Regular',
         fontBold: 'Manrope-ExtraBold',
         defaultPadding: 20,
@@ -17,8 +17,8 @@ export const themes = {
     },
     dark: {
         type: 'dark',
-        accent: '#b84239',
-        accentAlt: '#1a0706', // black
+        accent: '#9FC2CC',
+        accentAlt: '#266DD3',
         background: '#000000', //black
         foreground: '#f9e7e7',
         gray: '#0f0f0f',
