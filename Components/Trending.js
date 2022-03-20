@@ -112,6 +112,7 @@ export default function Trending() {
                 removeClippedSubviews
                 renderToHardwareTextureAndroid
                 key={item.item.movie_id}
+                underlayColor={theme.background}
             >
                 <View>
                     <FastImage
