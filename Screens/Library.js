@@ -22,7 +22,7 @@ import { useIsFocused } from '@react-navigation/native'
 import DropShadow from 'react-native-drop-shadow'
 import BottomPopUp from '../Components/BottomPopUp'
 
-export default function Library(){
+export default function Library() {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
 
@@ -37,9 +37,9 @@ export default function Library(){
     //function.
     //state is set by the MovieVerticalList component by passing setPendingModal
     //as props
-    const [pendingModal, setPendingModal] = useState({isActive: false})
+    const [pendingModal, setPendingModal] = useState({ isActive: false })
     //same concept as pending modal
-    const [pendingPopUpState, setPendingPopUpState] = useState({isActive: false})
+    const [pendingPopUpState, setPendingPopUpState] = useState({ isActive: false })
 
     //refetch when screen is focused. useful for when the user opens a movie,
     //removes it from library and then navigates back to this screen.
@@ -48,14 +48,14 @@ export default function Library(){
     const isFocused = useIsFocused()
 
     //separate movies into watched and to watch
-    function parseMovies(data){
+    function parseMovies(data) {
         let toWatch = []
         let watched = []
 
         //push not watched movies to toWatch list
         data.forEach(item => {
             console.log(item.watched)
-            if(item.watched) watched.push(item)
+            if (item.watched) watched.push(item)
             else toWatch.push(item)
         })
 
@@ -63,38 +63,38 @@ export default function Library(){
         setWatchedMovies(watched.reverse())
     }
 
-    async function fetchData(){
+    async function fetchData() {
         axios.get('http://192.168.15.10:8080/profile/library',
-        {headers: {'auth-token': contextAuth.token}})
-        .then(res => parseMovies(res.data))
-        .catch(e => console.warn('error:', e))
+            { headers: { 'auth-token': contextAuth.token } })
+            .then(res => parseMovies(res.data))
+            .catch(e => console.warn('error:', e))
     }
 
-    function deleteMovie(){
+    function deleteMovie() {
         axios.delete(`http://192.168.15.10:8080/profile/library/${pendingModal.movieId}`,
-        {headers: {'auth-token': contextAuth.token}})
-        .then(() => {
-            console.log('deleting movie', pendingModal.movieId)
-            fetchData()
-            setPendingModal({isActive: false})
-            setPendingPopUpState({isActive: true, text: 'Removed from library.'})
-        })
-        .catch(e => console.warn('error:', e))
+            { headers: { 'auth-token': contextAuth.token } })
+            .then(() => {
+                console.log('deleting movie', pendingModal.movieId)
+                fetchData()
+                setPendingModal({ isActive: false })
+                setPendingPopUpState({ isActive: true, text: 'Removed from library.' })
+            })
+            .catch(e => console.warn('error:', e))
     }
 
-    function setWatched(){
+    function setWatched() {
         //change watched to true
         axios.patch
-        (`http://192.168.15.10:8080/profile/library/`,
-        {movie_id: pendingModal.movieId, watched: true},
-        {headers: {'auth-token': contextAuth.token}}
-        ).then(() => {
-            console.log('then')
-            fetchData()
-            setPendingModal({isActive: false})
-            setPendingPopUpState({isActive: true, text: 'Moved to "Watched" list.'})
-        })
-        .catch(e => console.warn('error:', e))
+            (`http://192.168.15.10:8080/profile/library/`,
+                { movie_id: pendingModal.movieId, watched: true },
+                { headers: { 'auth-token': contextAuth.token } }
+            ).then(() => {
+                console.log('then')
+                fetchData()
+                setPendingModal({ isActive: false })
+                setPendingPopUpState({ isActive: true, text: 'Moved to "Watched" list.' })
+            })
+            .catch(e => console.warn('error:', e))
     }
 
     useEffect(() => {
@@ -114,7 +114,7 @@ export default function Library(){
             color: theme.foreground,
             width: '100%',
             paddingHorizontal: theme.defaultPadding,
-            marginTop: statusBarHeight+20,
+            marginTop: statusBarHeight + 20,
         },
         navigation: {
             width: '100%',
@@ -131,27 +131,27 @@ export default function Library(){
         navigationItem: {
             padding: 10,
             paddingHorizontal: 20,
-            borderRadius: theme.borderRadius
+            borderRadius: 30
         }
     })
 
-    return(
+    return (
         <View style={styles.container}>
 
             {pendingPopUpState.isActive ?
-            <BottomPopUp
-            popUpState={pendingPopUpState}
-            setPopUpState={setPendingPopUpState}
-            /> : null
+                <BottomPopUp
+                    popUpState={pendingPopUpState}
+                    setPopUpState={setPendingPopUpState}
+                /> : null
             }
 
             {pendingModal.isActive ?
-            <Modal
-            title={pendingModal.title}
-            text={pendingModal.text}
-            confirmAction={pendingModal.type === 'delete' ? deleteMovie : setWatched}
-            cancelAction={pendingModal.cancelAction}
-            /> : null
+                <Modal
+                    title={pendingModal.title}
+                    text={pendingModal.text}
+                    confirmAction={pendingModal.type === 'delete' ? deleteMovie : setWatched}
+                    cancelAction={pendingModal.cancelAction}
+                /> : null
             }
 
             <Text style={styles.screenTitle}>
@@ -163,21 +163,27 @@ export default function Library(){
                     style={{
                         shadowColor: theme.accent,
                         shadowOffset: {
-                        width: 0,
-                        height: 0,
+                            width: 0,
+                            height: 0,
                         },
                         shadowOpacity: currentScreen === 0 ? 0.3 : 0,
                         shadowRadius: 20,
                     }}
                 >
-                    <View onTouchEnd={() => setCurrentScreen(0)}>
-                        <Text
-                        style={{...styles.navigationItem,
+                    <View onTouchEnd={() => setCurrentScreen(0)}
+                        style={{
+                            ...styles.navigationItem,
                             marginRight: 15,
                             fontFamily: currentScreen === 0 ? theme.fontBold : theme.fontRegular,
                             backgroundColor: currentScreen === 0 ? theme.accent : 'transparent',
                             color: currentScreen === 0 ? theme.background : theme.foreground,
                         }}
+                    >
+                        <Text
+                            style={{
+                                fontFamily: theme.fontBold,
+                                color: currentScreen === 0 ? theme.background : theme.foreground,
+                            }}
                         >
                             To Watch
                         </Text>
@@ -187,22 +193,24 @@ export default function Library(){
                     style={{
                         shadowColor: theme.accent,
                         shadowOffset: {
-                        width: 0,
-                        height: 0,
+                            width: 0,
+                            height: 0,
                         },
                         shadowOpacity: currentScreen === 0 ? 0 : 0.3,
                         shadowRadius: 20,
                     }}
                 >
-                    <View onTouchEnd={() => setCurrentScreen(1)}>
-                        <Text
+                    <View onTouchEnd={() => setCurrentScreen(1)}
                         style={{
                             ...styles.navigationItem,
                             fontFamily: currentScreen === 1 ? theme.fontBold : theme.fontRegular,
                             backgroundColor: currentScreen === 1 ? theme.accent : 'transparent',
-                            color: currentScreen === 1 ? theme.background : theme.foreground,
                         }}
-                        >
+                    >
+                        <Text style={{
+                            fontFamily: theme.fontBold,
+                            color: currentScreen === 1 ? theme.background : theme.foreground,
+                        }}>
                             Watched
                         </Text>
                     </View>
@@ -210,25 +218,25 @@ export default function Library(){
             </View>
 
             <FlatList
-            contentContainerStyle={{
-                paddingTop: 20, paddingBottom: 20
-            }}
-            style={{zIndex: 0}}
-            
-            data={currentScreen === 0 ? toWatchMovies : watchedMovies}
-            renderItem={(item) => {
-                return(
-                    <MovieVerticalList
-                    movieId={item.item.movie_id}
-                    key={item.item.item_id}
-                    //pass pendingModal state to component
-                    //so it can communicate with this through modal
-                    setPendingModal={setPendingModal}
-                    //let component know if it should behave as watched or to watch
-                    isWatched={currentScreen === 1 ? true : false}
-                    />
-                )
-            }}
+                contentContainerStyle={{
+                    paddingTop: 20, paddingBottom: 20
+                }}
+                style={{ zIndex: 0 }}
+
+                data={currentScreen === 0 ? toWatchMovies : watchedMovies}
+                renderItem={(item) => {
+                    return (
+                        <MovieVerticalList
+                            movieId={item.item.movie_id}
+                            key={item.item.item_id}
+                            //pass pendingModal state to component
+                            //so it can communicate with this through modal
+                            setPendingModal={setPendingModal}
+                            //let component know if it should behave as watched or to watch
+                            isWatched={currentScreen === 1 ? true : false}
+                        />
+                    )
+                }}
             >
             </FlatList>
 
