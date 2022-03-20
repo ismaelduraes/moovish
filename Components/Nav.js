@@ -19,14 +19,14 @@ import { PropsContext } from './Contexts/PropsContext'
 import { AuthContext } from './Contexts/AuthContext'
 import { themes } from './Contexts/ThemeContext'
 
-export default function Nav({isOnSearch = false, title = 'moovish'}){
+export default function Nav({ isOnSearch = false, title = 'moovish' }) {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
     const contextProps = useContext(PropsContext)
     const navigation = useNavigation()
 
     const styles = StyleSheet.create({
-        container :{
+        container: {
             zIndex: 1,
             width: '100%',
             // height: 130,
@@ -70,31 +70,31 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
         }
     })
 
-    return(
+    return (
         <View style={styles.container}>
             <View
                 onTouchEnd={() => {
                     contextProps.setCurrentTheme(contextProps.currentTheme.type === 'light' ?
-                    themes.dark : themes.light
+                        themes.dark : themes.light
                     )
                 }}
-                style={{flexDirection: 'row', alignItems: 'center'}}
+                style={{ flexDirection: 'row', alignItems: 'center' }}
             >
                 <MaterialCommunityIcons
-                name='movie-open'
-                size={25}
-                color={theme.accent}
+                    name='movie-open'
+                    size={25}
+                    color={theme.accent}
                 />
             </View>
             <View
-            onTouchEnd={() => navigation.navigate('search')}
-            style={styles.searchBar}
+                onTouchEnd={() => navigation.navigate('search')}
+                style={styles.searchBar}
             >
                 <MaterialIcons
-                name='search'
-                size={15}
-                color={theme.foreground}
-                style={{marginRight: 15}}
+                    name='search'
+                    size={15}
+                    color={theme.foreground}
+                    style={{ marginRight: 15 }}
                 />
                 <Text style={styles.searchBarText}>
                     My favorite movie is...
@@ -102,10 +102,10 @@ export default function Nav({isOnSearch = false, title = 'moovish'}){
             </View>
 
             <MaterialCommunityIcons
-            name='bookshelf'
-            size={25}
-            color={theme.accent}
-            onTouchEnd={() => contextAuth.isAuth ? navigation.push('library') : navigation.push('login')}
+                name='bookshelf'
+                size={25}
+                color={theme.accent}
+                onTouchEnd={() => contextAuth.isAuth ? navigation.push('library') : navigation.push('login')}
             />
         </View>
     )

@@ -17,7 +17,7 @@ import { ThemeContext } from '../Components/Contexts/ThemeContext'
 import { AuthContext } from '../Components/Contexts/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 
-export default function LoginScreen(){
+export default function LoginScreen() {
     const theme = useContext(ThemeContext)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -25,18 +25,18 @@ export default function LoginScreen(){
 
     const contextAuth = useContext(AuthContext)
 
-    async function postData(){
+    async function postData() {
         axios.post('http://192.168.15.10:8080/login',
-        {username, password})
-        .then(res => {
-            RNSecureKeyStore.set('auth_token', res.data, {accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK})
-            .then(() => {
-                contextAuth.setToken(res.data)
-                contextAuth.setIsAuth(true)
-                navigation.navigate('home')
+            { username, password })
+            .then(res => {
+                RNSecureKeyStore.set('auth_token', res.data, { accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK })
+                    .then(() => {
+                        contextAuth.setToken(res.data)
+                        contextAuth.setIsAuth(true)
+                        navigation.navigate('home')
+                    })
             })
-        })
-        .catch(err => alert('Something went wrong. Please check your credentials/\n'+err))
+            .catch(err => alert('Something went wrong. Please check your credentials\n' + err))
     }
 
 
@@ -69,8 +69,9 @@ export default function LoginScreen(){
             alignSelf: 'center',
 
             color: theme.foreground,
-            
+
             paddingHorizontal: '5%',
+            paddingVertical: 10,
 
             backgroundColor: theme.gray,
             borderRadius: theme.borderRadius
@@ -80,7 +81,7 @@ export default function LoginScreen(){
 
             width: '90%',
             alignSelf: 'center',
-            
+
             paddingHorizontal: '5%',
             marginBottom: 5,
 
@@ -100,13 +101,13 @@ export default function LoginScreen(){
         }
     })
 
-    return(
+    return (
         <SafeAreaView style={styles.container}>
-            
+
             <MaterialCommunityIcons
-            name="movie-open"
-            size={90}
-            color={theme.accent}
+                name="movie-open"
+                size={90}
+                color={theme.accent}
             />
             <Text style={styles.title}>
                 Your favorite movies, one button away.
@@ -117,10 +118,10 @@ export default function LoginScreen(){
                     E-mail/username
                 </Text>
                 <TextInput
-                placeholder='Your moovish username'
-                style={styles.input}
-                placeholderTextColor={theme.foreground}
-                onChangeText={text => setUsername(text)}
+                    placeholder='Your moovish username'
+                    style={styles.input}
+                    placeholderTextColor={theme.foreground}
+                    onChangeText={text => setUsername(text)}
                 />
             </View>
 
@@ -129,19 +130,19 @@ export default function LoginScreen(){
                     Password
                 </Text>
                 <TextInput
-                placeholder='Your password'
-                style={styles.input}
-                placeholderTextColor={theme.foreground}
-                onChangeText={text => setPassword(text)}
-                textContentType="password"
+                    placeholder='Your password'
+                    style={styles.input}
+                    placeholderTextColor={theme.foreground}
+                    onChangeText={text => setPassword(text)}
+                    textContentType="password"
                 />
             </View>
 
             <View
-            style={styles.signIn}
-            onTouchEnd={() => {
-                postData()
-            }}
+                style={styles.signIn}
+                onTouchEnd={() => {
+                    postData()
+                }}
             >
                 <Text style={styles.signInText}>
                     Sign in

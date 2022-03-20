@@ -28,7 +28,7 @@ import { MovieContext } from '../App';
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 
-export default function NowPlaying(){
+export default function NowPlaying() {
     const theme = useContext(ThemeContext)
 
     const [nowPlaying, setNowPlaying] = useState([])
@@ -38,7 +38,7 @@ export default function NowPlaying(){
 
     function fetchData() {
         axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
-        .then(result => setNowPlaying(result.data.results))
+            .then(result => setNowPlaying(result.data.results))
     }
 
     useEffect(() => {
@@ -89,37 +89,36 @@ export default function NowPlaying(){
                 Movies currently playing in theatres
             </Text>
 
-                <Carousel
-                    data={nowPlaying}
-                    horizontal
-                    renderItem={
-                        item => {
-                            return (
-                                <View style={{ alignSelf: 'flex-start' }}>
-                                    <Poster
-                                        movie={item.item}
-                                        width={(width - (theme.defaultPadding * 2))-10}
-                                        useBackdrop
-                                        showText={false}
-                                        animDelay={item.index * 100}
-                                        originalQuality
-                                        animate={false}
-                                        
-                                    />
-                                    <Animated.Text style={styles.movieTitle}>
-                                        {item.item.title}
-                                    </Animated.Text>
-                                </View>
-                            )
-                        }}
-                    sliderWidth={width}
-                    itemWidth={(width - (theme.defaultPadding * 2))-10}
-                    layout="default"
-                    layoutCardOffset={8}
-                    activeSlideAlignment='center'
-                    onSnapToItem={e => setActiveSlide(e)}
-                    loop
-                />
+            <Carousel
+                data={nowPlaying}
+                horizontal
+                renderItem={
+                    item => {
+                        return (
+                            <View style={{ alignSelf: 'flex-start' }}>
+                                <Poster
+                                    movie={item.item}
+                                    width={(width - (theme.defaultPadding * 2)) - 10}
+                                    useBackdrop
+                                    showText={false}
+                                    animDelay={item.index * 100}
+                                    originalQuality
+                                    animate={false}
+                                />
+                                <Animated.Text style={styles.movieTitle}>
+                                    {item.item.title}
+                                </Animated.Text>
+                            </View>
+                        )
+                    }}
+                sliderWidth={width}
+                itemWidth={(width - (theme.defaultPadding * 2)) - 10}
+                layout="default"
+                layoutCardOffset={8}
+                activeSlideAlignment='center'
+                onSnapToItem={e => setActiveSlide(e)}
+                loop
+            />
         </Animated.View>
     )
 }

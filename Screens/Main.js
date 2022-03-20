@@ -21,7 +21,7 @@ const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 const height = Dimensions.get('screen').height
 
 
-export default function Main({navigation}){
+export default function Main({ navigation }) {
     const [newLoaded, setNewLoaded] = useState(false)
     const theme = useContext(ThemeContext)
 
@@ -33,25 +33,25 @@ export default function Main({navigation}){
             position: 'absolute',
         },
         contentContainer: {
-            paddingTop: statusBarHeight+100,
+            paddingTop: statusBarHeight + 100,
         },
     })
-    
-    return(
-        <View style={{...styles.container}}>
-            <Nav/>
+
+    return (
+        <View style={{ ...styles.container }}>
+            <Nav />
             <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{
-                // backgroundColor: theme.background
-            }}
-            contentContainerStyle={styles.contentContainer}
-            removeClippedSubviews
+                showsVerticalScrollIndicator={false}
+                style={{
+                    // backgroundColor: theme.background
+                }}
+                contentContainerStyle={styles.contentContainer}
+                removeClippedSubviews
             >
-                <NowPlaying/>
-                <TopRated/>
-                <Trending/>
-                <New/>
+                <NowPlaying />
+                <TopRated />
+                <Trending />
+                <New />
             </ScrollView>
         </View>
     )

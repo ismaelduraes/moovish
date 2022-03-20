@@ -1,7 +1,7 @@
 import React from 'react'
 import {
     useContext,
-    useRef, 
+    useRef,
     useState,
     useEffect
 } from 'react'
@@ -21,17 +21,17 @@ import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 import { TMDB_API_KEY } from '@env'
 import axios from 'axios'
 
-export default function New(){
+export default function New() {
     const theme = useContext(ThemeContext)
     const [newMoviesData, setNewMoviesData] = useState([])
 
     const containerSlideAnim = useRef(new Animated.Value(150)).current
     const containerOpacityAnim = useRef(new Animated.Value(0)).current
 
-    function fetchData(){
+    function fetchData() {
         axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${TMDB_API_KEY}&page=1`)
-        .then(result => setNewMoviesData(result.data.results)
-        )
+            .then(result => setNewMoviesData(result.data.results)
+            )
     }
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export default function New(){
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
             overflow: 'hidden',
-            transform: [{'translateY': containerSlideAnim}],
+            transform: [{ 'translateY': containerSlideAnim }],
             opacity: containerOpacityAnim
         },
         sectionTitle: {
@@ -81,11 +81,11 @@ export default function New(){
                 horizontal
                 data={newMoviesData}
                 renderItem={item => {
-                    return(
+                    return (
                         <View key={item.item.id}>
                             <Poster
                                 movie={item.item}
-                                animDelay={item.index*100}
+                                animDelay={item.index * 100}
                                 width={100}
                                 animate={false}
                             />

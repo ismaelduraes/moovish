@@ -22,15 +22,15 @@ import { TMDB_API_KEY } from '@env'
 
 import axios from "axios";
 
-export default function MovieVerticalList({movieId, setPendingModal, isWatched}){
+export default function MovieVerticalList({ movieId, setPendingModal, isWatched }) {
     const [movieData, setMovieData] = useState({})
 
     const navigation = useNavigation()
     const theme = useContext(ThemeContext)
 
-    async function getMovies(){
+    async function getMovies() {
         await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
-        .then(r => setMovieData(r.data))
+            .then(r => setMovieData(r.data))
     }
 
     useEffect(() => {
@@ -104,17 +104,17 @@ export default function MovieVerticalList({movieId, setPendingModal, isWatched})
         <View style={styles.container} removeClippedSubviews>
 
             <View
-            style={styles.movieContainer}
+                style={styles.movieContainer}
             >
                 <FastImage
-                source={{uri: `${imgPrefixLow}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}`}}
-                resizeMode={FastImage.resizeMode.cover}
-                style={styles.image}
-                onTouchEnd={() => navigation.push('movie', {movieId})}
+                    source={{ uri: `${imgPrefixLow}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}` }}
+                    resizeMode={FastImage.resizeMode.cover}
+                    style={styles.image}
+                    onTouchEnd={() => navigation.push('movie', { movieId })}
                 />
                 <View
-                onTouchEnd={() => navigation.push('movie',  {movieId})}
-                style={styles.movieTitleContainer}
+                    onTouchEnd={() => navigation.push('movie', { movieId })}
+                    style={styles.movieTitleContainer}
                 >
                     <Text style={styles.movieTitle}>
                         {movieData.title}
@@ -125,42 +125,42 @@ export default function MovieVerticalList({movieId, setPendingModal, isWatched})
                 </View>
                 <View style={styles.buttons}>
                     {
-                    !isWatched ?
+                        !isWatched ?
+                            <View
+                                onTouchEnd={() => setPendingModal({
+                                    isActive: true,
+                                    title: "Set as watched",
+                                    text: `Do you want to set ${movieData.title} as watched?`,
+                                    type: 'set_watched',
+                                    movieId: movieId,
+                                    cancelAction: () => setPendingModal({ isActive: false })
+                                })}
+                                style={styles.button}
+                            >
+                                <Ionicons
+                                    name={'checkmark'}
+                                    size={20}
+                                    color={theme.accent}
+                                />
+                            </View>
+                            : null
+                    }
                     <View
-                    onTouchEnd={() => setPendingModal({
-                        isActive: true,
-                        title: "Set as watched",
-                        text: `Do you want to set ${movieData.title} as watched?`,
-                        type: 'set_watched',
-                        movieId: movieId,
-                        cancelAction: () => setPendingModal({isActive: false})
-                    })}
-                    style={styles.button}
-                    >
-                            <Ionicons
-                            name={'checkmark'}
-                            size={20}
-                            color={theme.accent}
-                            />
-                    </View>
-: null
-}
-                    <View
-                    onTouchEnd={() => setPendingModal({
-                        isActive: true,
-                        title: "Confirm deletion",
-                        text: `You are about to remove ${movieData.title} from this list. Are you sure you want to proceed?`,
-                        type: 'delete',
-                        movieId: movieId,
-                        cancelAction: () => setPendingModal({isActive: false})
-                    })}
-                    style={styles.button}
+                        onTouchEnd={() => setPendingModal({
+                            isActive: true,
+                            title: "Confirm deletion",
+                            text: `You are about to remove ${movieData.title} from this list. Are you sure you want to proceed?`,
+                            type: 'delete',
+                            movieId: movieId,
+                            cancelAction: () => setPendingModal({ isActive: false })
+                        })}
+                        style={styles.button}
                     >
                         <Ionicons
-                        name={'close'}
-                        size={20}
-                        color={theme.accent}
-                    
+                            name={'close'}
+                            size={20}
+                            color={theme.accent}
+
                         />
                     </View>
                 </View>

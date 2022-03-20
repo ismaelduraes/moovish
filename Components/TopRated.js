@@ -16,18 +16,18 @@ import Poster from './Poster'
 import { TMDB_API_KEY } from '@env'
 import SlideAnimationFunction from './Utilities/SlideAnimationFuncion'
 
-export default function TopRated(){
+export default function TopRated() {
     const theme = useContext(ThemeContext)
     const [topRated, setTopRated] = useState([])
 
     const containerSlideAnim = useRef(new Animated.Value(150)).current
     const containerOpacityAnim = useRef(new Animated.Value(0)).current
 
-    function fetchData(){
+    function fetchData() {
         fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${TMDB_API_KEY}&page=1`)
-        .then(result => result.json()
-        .then(data => setTopRated(data.results))
-        )
+            .then(result => result.json()
+                .then(data => setTopRated(data.results))
+            )
     }
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function TopRated(){
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
             overflow: 'hidden',
-            transform: [{'translateY': containerSlideAnim}],
+            transform: [{ 'translateY': containerSlideAnim }],
             opacity: containerOpacityAnim
         },
         sectionTitle: {
@@ -84,14 +84,14 @@ export default function TopRated(){
             >
                 {topRated.splice(0, 10).map(
                     (item,
-                    index) => {
-                    return(
-                    <Poster
-                        movie={item}
-                        key={index}
-                    />
-                    )
-                })}
+                        index) => {
+                        return (
+                            <Poster
+                                movie={item}
+                                key={index}
+                            />
+                        )
+                    })}
             </ScrollView>
         </Animated.View>
     )

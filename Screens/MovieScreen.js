@@ -29,7 +29,7 @@ import Loading from "../Components/Loading";
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
 
-export default function MovieScreen({route}){
+export default function MovieScreen({ route }) {
     const [movieData, setMovieData] = useState({})
     const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
     const [movieImages, setMovieImages] = useState([])
@@ -38,12 +38,12 @@ export default function MovieScreen({route}){
     const [isInLibrary, setIsInLibrary] = useState(false)
 
     const [isLoading, setIsLoading] = useState(true)
-    
+
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
 
     const { movieId } = route.params
-    
+
     useEffect(() => {
         fetchData()
 
@@ -62,42 +62,42 @@ export default function MovieScreen({route}){
     }, [movieImages])
 
 
-    async function fetchData(){
+    async function fetchData() {
         //fetch movie data
         await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
-        .then(d => {
-            setMovieData(d.data); setProductionCompanies(d.data.production_companies[0].name)
-        })
+            .then(d => {
+                setMovieData(d.data); setProductionCompanies(d.data.production_companies[0].name)
+            })
 
         //fetch movie images
         await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${TMDB_API_KEY}`)
-        .then(d => setMovieImages(d.data.backdrops))
-        
+            .then(d => setMovieImages(d.data.backdrops))
+
         //fetch videos
         // axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
         // .then(d => setMovieVideo(d.data.results[0]))
-        
+
         //fetch credits
         await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
-        .then(d => {
-            sortCast(d.data.cast, setCast)
-            sortCrew(d.data.crew, setCrew)
-        })
-        
+            .then(d => {
+                sortCast(d.data.cast, setCast)
+                sortCrew(d.data.crew, setCrew)
+            })
+
         await axios.get('http://192.168.15.10:8080/profile/library',
-        {headers: {'auth-token': contextAuth.token}}
+            { headers: { 'auth-token': contextAuth.token } }
         ).then(r => {
             //check if any of the movies in library match current movieId
             r.data.forEach(item => {
-                if(item.movie_id === movieId){
+                if (item.movie_id === movieId) {
                     setIsInLibrary(true)
                 }
             })
-        })
+        }).catch(() => setIsInLibrary(false))
         setIsLoading(false)
     }
 
-    function ratingColor(rating){
+    function ratingColor(rating) {
         //return appropriate color for rating text
         //(red if low rating, yellow if average, green if good)
         if (rating < 5) return 'red'
@@ -124,7 +124,7 @@ export default function MovieScreen({route}){
             alignItems: 'center',
             marginHorizontal: '5%',
             justifyContent: 'center',
-            backgroundColor: theme.background+'40',
+            backgroundColor: theme.background + '40',
             borderRadius: 50,
             overflow: 'hidden',
             paddingVertical: 15
@@ -156,7 +156,7 @@ export default function MovieScreen({route}){
         },
         video: {
             height: 180,
-            width: width-(theme.defaultPadding*2),
+            width: width - (theme.defaultPadding * 2),
             borderRadius: theme.borderRadius,
             backgroundColor: theme.background,
             alignSelf: 'center',
@@ -172,91 +172,91 @@ export default function MovieScreen({route}){
             opacity: theme.type === 'light' ? 0.3 : 0.1
         }
     })
-    
-    if (isLoading) return <Loading/>
-    
-    else return(
+
+    if (isLoading) return <Loading />
+
+    else return (
         <View style={styles.container}>
             {/* <Nav/> */}
-            <AndroidStatusBarGradient/>
+            <AndroidStatusBarGradient />
             <NavButtons
-            movieId={movieId}
-            isInLibrary={isInLibrary}
-            setIsInLibrary={setIsInLibrary}
+                movieId={movieId}
+                isInLibrary={isInLibrary}
+                setIsInLibrary={setIsInLibrary}
             />
             <ScrollView showsVerticalScrollIndicator={false}>
 
                 {/* background image */}
                 <Image
-                style={styles.imageBg}
-                source={movieData.backdrop_path ? 
-                       {uri: `${imgPrefixOriginal}${movieData.backdrop_path}`} :
-                       require('../assets/images/profile_default.png')}
-                // dark theme looks better with more blur
-                blurRadius={theme.type === 'light' ? 20 : 50}
-                progressiveRenderingEnabled
+                    style={styles.imageBg}
+                    source={movieData.backdrop_path ?
+                        { uri: `${imgPrefixOriginal}${movieData.backdrop_path}` } :
+                        require('../assets/images/profile_default.png')}
+                    // dark theme looks better with more blur
+                    blurRadius={theme.type === 'light' ? 20 : 50}
+                    progressiveRenderingEnabled
                 />
 
 
                 {/* Poster */}
                 <Header
-                imagePath={movieData.backdrop_path}
-                fallbackImagePath={movieData.poster_path}
-                title={movieData.title}
-                subtitle={movieData.tagline}
+                    imagePath={movieData.backdrop_path}
+                    fallbackImagePath={movieData.poster_path}
+                    title={movieData.title}
+                    subtitle={movieData.tagline}
                 />
 
                 {/* Ratings */}
-                <View style={{...styles.rating}}>
+                <View style={{ ...styles.rating }}>
                     <View>
                         <Text style={styles.ratingAverage}>
                             {movieData.vote_average ?
-                             movieData.vote_average :
-                            'This movie has no ratings yet'
+                                movieData.vote_average :
+                                'This movie has no ratings yet'
                             }
 
                         </Text>
                         {movieData.vote_average !== 0 ?
-                        <Text style={styles.smallText}>
-                            Rating
-                        </Text> : null
+                            <Text style={styles.smallText}>
+                                Rating
+                            </Text> : null
                         }
                     </View>
 
-                        {productionCompany ?
+                    {productionCompany ?
                         <Text style={styles.smallText}>
                             {productionCompany ?
-                             productionCompany :
-                            'Unknown Production Company'
+                                productionCompany :
+                                'Unknown Production Company'
                             }
                         </Text> : null
-                        }
+                    }
 
-                        {movieData.runtime > 0 ?
+                    {movieData.runtime > 0 ?
                         <Text style={styles.smallText}>
                             {movieData.runtime} min
                         </Text> : null
-                        }
+                    }
                 </View>
-            
+
                 {/* Overview */}
                 {movieData.overview ?
-                <TextBody title="Overview" text={movieData.overview}/> : null
+                    <TextBody title="Overview" text={movieData.overview} /> : null
                 }
-            
+
                 {/* Images carousel */}
                 {movieImages.length > 0 ?
-                <ImageCarousel data={movieImages}/> : null
+                    <ImageCarousel data={movieImages} /> : null
                 }
-            
+
                 {/* Cast */}
                 {cast.acting ?
-                <HorizontalProfileList
-                data={cast.acting}
-                title="Cast"
-                /> : null
+                    <HorizontalProfileList
+                        data={cast.acting}
+                        title="Cast"
+                    /> : null
                 }
-            
+
                 {/* Video */}
                 {/* {movieVideo ?
                 <View style={{
