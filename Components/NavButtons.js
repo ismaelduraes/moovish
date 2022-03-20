@@ -3,7 +3,7 @@ import {
     View,
     StyleSheet,
     NativeModules,
-    Platform
+    Platform,
 } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
@@ -17,38 +17,39 @@ import { default as Feather } from 'react-native-vector-icons/Feather'
 import { ThemeContext } from "./Contexts/ThemeContext";
 import axios from "axios";
 import { AuthContext } from "./Contexts/AuthContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function NavButtons({movieId, isInLibrary, setIsInLibrary}){
+export default function NavButtons({ movieId, isInLibrary, setIsInLibrary }) {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
 
-    const [pendingPopUp, setPendingPopUp] = useState({isActive: false})
+    const [pendingPopUp, setPendingPopUp] = useState({ isActive: false })
 
     const navigation = useNavigation()
 
-    function addToWatchLater(){
+    function addToWatchLater() {
         axios.post
-        (`http://192.168.15.10:8080/profile/library`, {
-            movie_id: movieId,
-            watched: false
-        },
-        {headers: {'auth-token': contextAuth.token}}
-        )
-        .then(r => {
-            setIsInLibrary(true)
-            setPendingPopUp({isActive: true, text: "Added to Library"})
-        })
-        .catch(e => alert(e))
+            (`http://192.168.15.10:8080/profile/library`, {
+                movie_id: movieId,
+                watched: false
+            },
+                { headers: { 'auth-token': contextAuth.token } }
+            )
+            .then(r => {
+                setIsInLibrary(true)
+                setPendingPopUp({ isActive: true, text: "Added to Library" })
+            })
+            .catch(e => alert(e))
     }
 
-    function removeFromLibrary(){
+    function removeFromLibrary() {
         axios.delete(`http://192.168.15.10:8080/profile/library/${movieId}`,
-        {headers: {'auth-token': contextAuth.token}})
-        .then(() => {
-            setIsInLibrary(false)
-            setPendingPopUp({isActive: true, text: "Removed from Library"})
-        })
-        .catch(e => console.warn('error:', e))
+            { headers: { 'auth-token': contextAuth.token } })
+            .then(() => {
+                setIsInLibrary(false)
+                setPendingPopUp({ isActive: true, text: "Removed from Library" })
+            })
+            .catch(e => console.warn('error:', e))
     }
 
     const styles = StyleSheet.create({
@@ -59,65 +60,67 @@ export default function NavButtons({movieId, isInLibrary, setIsInLibrary}){
             zIndex: 1
         },
         navigation: {
-            marginTop: statusBarHeight+15,
+            // marginTop: statusBarHeight + 15,
             paddingHorizontal: theme.defaultPadding,
             flexDirection: 'row',
             justifyContent: 'space-between'
         },
-        icon: {
+        iconBg: {
             width: 35,
             height: 35,
-            textAlign: 'center',
-            lineHeight: 35,
+            backgroundColor: theme.gray + '4c',
             borderRadius: 35,
-            backgroundColor: theme.gray+'b3'
+            justifyContent: 'center',
+            alignItems: 'center'
         },
     })
 
-    return(
-        <View style={styles.container}>
+    return (
+        <SafeAreaView style={styles.container}>
             {pendingPopUp.isActive ?
-            <BottomPopUp
-            popUpState={pendingPopUp}
-            setPopUpState={setPendingPopUp}
-            /> : null
+                <BottomPopUp
+                    popUpState={pendingPopUp}
+                    setPopUpState={setPendingPopUp}
+                /> : null
             }
             <View style={styles.navigation}>
-                <View onTouchEnd={() => navigation.goBack()}>
+                <View style={styles.iconBg} onTouchEnd={() => navigation.goBack()}>
                     <Feather
-                    style={styles.icon}
-                    name="arrow-left"
-                    size={20}
-                    color={theme.foreground}
+                        style={styles.icon}
+                        name="arrow-left"
+                        size={20}
+                        color={theme.foreground}
                     />
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
+                    {/* movieId being undefined means user is probably in actor screen*/}
+                    {/* so add to library icon doesnt need to be shown */}
                     {movieId ?
-                        <View>
-                        <Feather
-                        style={{...styles.icon, marginRight: 15}}
-                        name={!isInLibrary ? 'plus' : 'minus'}
-                        size={20}
-                        color={theme.foreground}
-                        onTouchEnd={
-                            contextAuth.isAuth ?
-                            () => !isInLibrary ? addToWatchLater() : removeFromLibrary()
-                            :
-                            () => navigation.push('login')
-                        }
-                        />
-                    </View> : null
+                        <View style={{ ...styles.iconBg, marginRight: 15 }}>
+                            <Feather
+                                style={{ ...styles.icon }}
+                                name={!isInLibrary ? 'plus' : 'minus'}
+                                size={20}
+                                color={theme.foreground}
+                                onTouchEnd={
+                                    contextAuth.isAuth ?
+                                        () => !isInLibrary ? addToWatchLater() : removeFromLibrary()
+                                        :
+                                        () => navigation.push('login')
+                                }
+                            />
+                        </View> : null
                     }
-                    <View>
+                    <View style={styles.iconBg}>
                         <Feather
-                        style={styles.icon}
-                        name="share"
-                        size={20}
-                        color={theme.foreground}
+                            style={styles.icon}
+                            name="share"
+                            size={20}
+                            color={theme.foreground}
                         />
                     </View>
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
