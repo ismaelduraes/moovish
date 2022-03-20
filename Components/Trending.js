@@ -12,7 +12,8 @@ import {
     StyleSheet,
     Image,
     Dimensions,
-    LayoutAnimation
+    LayoutAnimation,
+    TouchableHighlight
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -28,7 +29,7 @@ import { imgPrefixOriginal } from "./Utilities/Utilities";
 
 const width = Dimensions.get('window').width
 
-export default function Trending(){
+export default function Trending() {
     //states
     const theme = useContext(ThemeContext)
     const slideAnim = useRef(new Animated.Value(25)).current
@@ -40,14 +41,14 @@ export default function Trending(){
     const navigation = useNavigation()
 
     //functions
-    function fetchData(){
+    function fetchData() {
         // console.log(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`)
         fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`)
-        .then(result => result.json()
-        .then(data => setTrendingMovies(data.results))
-        )
+            .then(result => result.json()
+                .then(data => setTrendingMovies(data.results))
+            )
     }
-    
+
     //run on mount
     useEffect(() => {
         SlideAnimationFunction(containerSlideAnim, 0, 1000)
@@ -60,7 +61,7 @@ export default function Trending(){
         Animated.timing(slideAnim).reset()
         SlideAnimationFunction(slideAnim, 0, 500)
     }, [activeSlide])
-    
+
 
     const styles = StyleSheet.create({
         container: {
@@ -87,9 +88,9 @@ export default function Trending(){
         },
         banner: {
             backgroundColor: theme.accent,
-            width: width-(theme.defaultPadding*2),
+            width: width - (theme.defaultPadding * 2),
             //aspect-ratio is 1/1.4; as in height is width + 40% of width
-            height: (width-(theme.defaultPadding*2))*1.4,
+            height: (width - (theme.defaultPadding * 2)) * 1.4,
             borderRadius: theme.borderRadius,
             resizeMode: 'cover',
         },
@@ -103,15 +104,16 @@ export default function Trending(){
             opacity: 0.6
         },
     })
-    
-    function Banner(item){
-        return(
-            <View
-            onTouchEnd={() => navigation.push('movie', {movieId: item.item.id})}
-            removeClippedSubviews
-            renderToHardwareTextureAndroid
-            key={item.item.movie_id}
+
+    function Banner(item) {
+        return (
+            <TouchableHighlight
+                onPress={() => navigation.push('movie', { movieId: item.item.id })}
+                removeClippedSubviews
+                renderToHardwareTextureAndroid
+                key={item.item.movie_id}
             >
+                <View>
                     <FastImage
                         source={{
                             uri: `${imgPrefixOriginal}${item.item.poster_path}`,
@@ -119,41 +121,42 @@ export default function Trending(){
                         }}
                         style={styles.banner}
                     />
-                {
-                activeSlide === item.index &&
-                <View>
-                    <Animated.Text
-                    style={{
-                        ...styles.title,
-                        transform: [{translateY: slideAnim}],
-                    }}>
-                        {item.item.title}
-                    </Animated.Text>
+                    {
+                        activeSlide === item.index &&
+                        <View>
+                            <Animated.Text
+                                style={{
+                                    ...styles.title,
+                                    transform: [{ translateY: slideAnim }],
+                                }}>
+                                {item.item.title}
+                            </Animated.Text>
 
-                    <Animated.Text
-                    style={{
-                        ...styles.overview,
-                        transform: [{translateY: slideAnim}],
-                    }}>
-                        {item.item.overview}
-                    </Animated.Text>
+                            <Animated.Text
+                                style={{
+                                    ...styles.overview,
+                                    transform: [{ translateY: slideAnim }],
+                                }}>
+                                {item.item.overview}
+                            </Animated.Text>
 
+                        </View>
+                    }
                 </View>
-                }
-            </View>
+            </TouchableHighlight>
         )
     }
 
-    return(
+    return (
         <Animated.View style={styles.container}>
             <Text style={{
                 ...styles.sectionTitle,
-                }}>
+            }}>
                 Trending
             </Text>
             <Text style={{
                 ...styles.caption,
-                }}>
+            }}>
                 What everyone keeps talking about
             </Text>
 
@@ -161,7 +164,7 @@ export default function Trending(){
                 data={trendingMovies}
                 renderItem={Banner}
                 sliderWidth={width}
-                itemWidth={width-(theme.defaultPadding*2)}
+                itemWidth={width - (theme.defaultPadding * 2)}
                 layout="stack"
                 onSnapToItem={e => {
                     setActiveSlide(e)
@@ -171,7 +174,7 @@ export default function Trending(){
                             update: { type: 'spring', springDamping: 0.4 },
                         }
                     );
-                    }}
+                }}
                 removeClippedSubviews
             />
         </Animated.View>

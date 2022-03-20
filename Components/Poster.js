@@ -9,7 +9,8 @@ import {
     Animated,
     Easing,
     Dimensions,
-    Image
+    Image,
+    TouchableOpacity
 } from 'react-native'
 
 import FastImage from "react-native-fast-image";
@@ -31,13 +32,13 @@ export default function Poster({
     //index/key
     animDelay = 0,
     animate = true
-    }){
+}) {
     const theme = useContext(ThemeContext)
     const navigation = useNavigation()
 
     const slideAnim = useRef(new Animated.Value(animate ? 200 : 0)).current
-    
-    function playAnim(){
+
+    function playAnim() {
         Animated.timing(slideAnim, {
             toValue: 0,
             duration: 750,
@@ -48,14 +49,14 @@ export default function Poster({
     }
 
     useEffect(() => {
-        if(animate) playAnim()
+        if (animate) playAnim()
     }, [])
 
 
     const styles = StyleSheet.create({
         container: {
             marginRight: 10,
-            transform: [{'translateY': slideAnim}],
+            transform: [{ 'translateY': slideAnim }],
             width: width,
         },
         title: {
@@ -65,34 +66,37 @@ export default function Poster({
             fontFamily: theme.fontRegular,
         },
         banner: {
-            height: useBackdrop ? width*0.55 : width*1.5,
+            height: useBackdrop ? width * 0.55 : width * 1.5,
             width: width,
             borderRadius: theme.borderRadius,
             backgroundColor: theme.accent,
         }
     })
-    
-    return(
+
+    return (
         <Animated.View
-        style={styles.container}
-        onTouchEnd={() => {
-            navigation.push('movie', {movieId: movie.id})
-        }}
-        key={movie.id}
-        removeClippedSubviews
+            style={styles.container}
+            key={movie.id}
+            removeClippedSubviews
         >
+            <TouchableOpacity
+                onPress={() =>
+                    navigation.push('movie', { movieId: movie.id })
+                }
+            >
                 <FastImage
                     style={styles.banner}
                     source={{
-                        uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop? movie.backdrop_path : movie.poster_path}`,
+                        uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop ? movie.backdrop_path : movie.poster_path}`,
                         priority: FastImage.priority.high
                     }
-                }
+                    }
                 />
-            {showText && 
-            <Animated.Text style={styles.title}>
-                {movie.title}
-            </Animated.Text>}
+            </TouchableOpacity>
+            {showText &&
+                <Animated.Text style={styles.title}>
+                    {movie.title}
+                </Animated.Text>}
 
         </Animated.View>
     )
