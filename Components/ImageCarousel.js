@@ -11,14 +11,16 @@ import {
 
 import FastImage from "react-native-fast-image"
 
+import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
+
 import Carousel from 'react-native-snap-carousel'
 import { ThemeContext } from "./Contexts/ThemeContext"
 
-import { imgPrefixOriginal } from "./Utilities/Utilities"
+import { imgPrefix, imgPrefixOriginal } from "./Utilities/Utilities"
 
 const width = Dimensions.get('window').width
 
-export default function ImageCarousel({ data = [], isSquare = false, canChangeResize = false }) {
+export default function ImageCarousel({ data = [], isSquare = false, canChangeResize = false, originalQuality = true, showsIcon = true }) {
     const theme = useContext(ThemeContext)
     const [resizeMode, setResizeMode] = useState('cover')
 
@@ -27,10 +29,14 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
             // backgroundColor: 'blue',
         },
         sectionTitle: {
+            flexDirection: 'row',
+            marginBottom: 15,
+        },
+        titleText: {
             fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            marginBottom: 15,
+            marginLeft: showsIcon ? 10 : 0
         },
         imageContainer: {
             borderRadius: theme.borderRadius,
@@ -52,14 +58,23 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
     })
     return data.length > 0 ? (
         <View style={{ ...styles.section, marginTop: '10%' }}>
-            <Text
+            <View
                 style={{
                     ...styles.sectionTitle,
                     paddingHorizontal: theme.defaultPadding
                 }}
             >
-                Images
-            </Text>
+                {showsIcon ? <MaterialCommunityIcons
+                    name="image-area"
+                    size={20}
+                    color={theme.foreground}
+                /> : null}
+                <Text
+                    style={styles.titleText}
+                >
+                    Images
+                </Text>
+            </View>
             <Carousel
                 data={data}
                 removeClippedSubviews
@@ -87,7 +102,7 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
                                 <View>
                                     <Image
                                         style={styles.image}
-                                        source={{ uri: `${imgPrefixOriginal}${item.item.file_path}` }}
+                                        source={{ uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${item.item.file_path}` }}
                                         resizeMode={resizeMode}
                                     />
                                     {resizeMode === 'contain' && <Image
