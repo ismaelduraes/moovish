@@ -9,6 +9,7 @@ import {
     Text,
     StyleSheet,
     Image,
+    Pressable
 } from 'react-native'
 
 import FastImage from "react-native-fast-image";
@@ -103,17 +104,16 @@ export default function MovieVerticalList({ movieId, setPendingModal, isWatched 
     return movieData ? (
         <View style={styles.container} removeClippedSubviews>
 
-            <View
+            <Pressable
                 style={styles.movieContainer}
+                onPress={() => navigation.push('movie', { movieId })}
             >
                 <FastImage
                     source={{ uri: `${imgPrefixLow}${movieData.backdrop_path ? movieData.backdrop_path : movieData.poster_path}` }}
                     resizeMode={FastImage.resizeMode.cover}
                     style={styles.image}
-                    onTouchEnd={() => navigation.push('movie', { movieId })}
                 />
                 <View
-                    onTouchEnd={() => navigation.push('movie', { movieId })}
                     style={styles.movieTitleContainer}
                 >
                     <Text style={styles.movieTitle}>
@@ -126,8 +126,8 @@ export default function MovieVerticalList({ movieId, setPendingModal, isWatched 
                 <View style={styles.buttons}>
                     {
                         !isWatched ?
-                            <View
-                                onTouchEnd={() => setPendingModal({
+                            <Pressable
+                                onPress={() => setPendingModal({
                                     isActive: true,
                                     title: "Set as watched",
                                     text: `Do you want to set ${movieData.title} as watched?`,
@@ -142,11 +142,11 @@ export default function MovieVerticalList({ movieId, setPendingModal, isWatched 
                                     size={20}
                                     color={theme.accent}
                                 />
-                            </View>
+                            </Pressable>
                             : null
                     }
-                    <View
-                        onTouchEnd={() => setPendingModal({
+                    <Pressable
+                        onPress={() => setPendingModal({
                             isActive: true,
                             title: "Confirm deletion",
                             text: `You are about to remove ${movieData.title} from this list. Are you sure you want to proceed?`,
@@ -162,9 +162,9 @@ export default function MovieVerticalList({ movieId, setPendingModal, isWatched 
                             color={theme.accent}
 
                         />
-                    </View>
+                    </Pressable>
                 </View>
-            </View>
+            </Pressable>
         </View>
     ) : null
 }

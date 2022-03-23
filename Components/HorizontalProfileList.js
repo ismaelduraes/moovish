@@ -6,14 +6,16 @@ import {
     Text,
     StyleSheet,
     FlatList,
+    Touchable
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import { ThemeContext } from './Contexts/ThemeContext'
 
 import { imgPrefixLow } from './Utilities/Utilities'
+import Pressable from 'react-native/Libraries/Components/Pressable/Pressable'
 
-export default function HorizontalProfileList({data, title = 'Untitled List', showCharacter = false}){
+export default function HorizontalProfileList({ data, title = 'Untitled List', showCharacter = false }) {
     const theme = useContext(ThemeContext)
     const navigation = useNavigation()
 
@@ -50,61 +52,64 @@ export default function HorizontalProfileList({data, title = 'Untitled List', sh
         <View>
 
             <Text
-            style={{
-                ...styles.sectionTitle,
-                ...styles.section,
-                marginTop: '10%'
-            }}
+                style={{
+                    ...styles.sectionTitle,
+                    ...styles.section,
+                    marginTop: '10%'
+                }}
             >
                 {title}
             </Text>
 
             <FlatList
-            data={data}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            style={{
-                ...styles.section,
-                flexDirection: 'row'
-            }}
-            contentContainerStyle={{paddingRight: 30}}
-            renderItem={
-            (item) => {
-                return(
-                    <View
-                    style={styles.profileItem}
-                    key={item.item.id+item.index}
-                    onTouchEnd={() => navigation.push('profile', {profileId: item.item.id})}
-                    >
-                        <Image
-                        style={styles.profileImage}
-                        source={
-                                item.item.profile_path ?
-                            {uri:`${imgPrefixLow}${item.item.profile_path}`} :
-                                require('../assets/images/profile_default.png')}
-                        />
+                data={data}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+                style={{
+                    ...styles.section,
+                    flexDirection: 'row'
+                }}
+                contentContainerStyle={{ paddingRight: 30 }}
+                renderItem={
+                    (item) => {
+                        return (
+                            <Pressable
+                                onPress={() => navigation.push('profile', { profileId: item.item.id })}
+                            >
+                                <View
+                                    style={styles.profileItem}
+                                    key={item.item.id + item.index}
+                                >
+                                    <Image
+                                        style={styles.profileImage}
+                                        source={
+                                            item.item.profile_path ?
+                                                { uri: `${imgPrefixLow}${item.item.profile_path}` } :
+                                                require('../assets/images/profile_default.png')}
+                                    />
 
-                        <Text style={{
-                        ...styles.name,
-                        marginTop: 10,
-                        fontFamily: theme.fontBold,
-                        }}>
-                            {item.item.name ? item.item.name : 'Unknown name'}
-                        </Text>
-                        
-                        {item.item.character && showCharacter ?
-                        <Text
-                        style={{
-                            ...styles.name,
-                            color: theme.accentLight,
-                        }}>
-                            {item.item.character ? item.item.character : 'Unknown Character'}
-                        </Text> : null
-                        }
-                    </View>
-                )
+                                    <Text style={{
+                                        ...styles.name,
+                                        marginTop: 10,
+                                        fontFamily: theme.fontBold,
+                                    }}>
+                                        {item.item.name ? item.item.name : 'Unknown name'}
+                                    </Text>
+
+                                    {item.item.character && showCharacter ?
+                                        <Text
+                                            style={{
+                                                ...styles.name,
+                                                color: theme.accentLight,
+                                            }}>
+                                            {item.item.character ? item.item.character : 'Unknown Character'}
+                                        </Text> : null
+                                    }
+                                </View>
+                            </Pressable>
+                        )
+                    }
                 }
-            }
             />
         </View>
     )
