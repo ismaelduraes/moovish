@@ -12,9 +12,11 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3BC519EA0C824A1FAEEE5A17 /* Manrope-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4650E1C6D7F14F8C9014D05A /* Manrope-ExtraBold.ttf */; };
+		6BEF820D26AE4A7094E7F0EB /* Rubik-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C1ABC837A5840C89BFE9B70 /* Rubik-Bold.ttf */; };
 		6DAEDD416B474E25B640C7A0 /* Manrope-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2426AE362B4341AFB1ACAF82 /* Manrope-Regular.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		98B041754FE47647A3FACBD9 /* libPods-moovish.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 076504505FF955BE6FF7A805 /* libPods-moovish.a */; };
+		BBBA48BD8D074CE5860C553D /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7B2E6CA0D3240B3BA74498F /* Rubik-Regular.ttf */; };
 		CC118272C9C087F22FAD5976 /* libPods-moovish-moovishTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81650B26F21F5407EBE08820 /* libPods-moovish-moovishTests.a */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +42,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = moovish/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = moovish/main.m; sourceTree = "<group>"; };
 		1B546BBFF9494449B3EE928B /* AtkinsonHyperlegible-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AtkinsonHyperlegible-BoldItalic.ttf"; path = "../assets/fonts/AtkinsonHyperlegible-BoldItalic.ttf"; sourceTree = "<group>"; };
+		1C1ABC837A5840C89BFE9B70 /* Rubik-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Bold.ttf"; path = "../assets/fonts/Rubik-Bold.ttf"; sourceTree = "<group>"; };
 		24219FDB88814D048AF2BD45 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 		2426AE362B4341AFB1ACAF82 /* Manrope-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Manrope-Regular.ttf"; path = "../assets/fonts/Manrope-Regular.ttf"; sourceTree = "<group>"; };
 		2450EDC55181405390793CDE /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -67,6 +70,8 @@
 		B4F2730327624119BC951611 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		B97746D907F14EB28BCEEEBA /* ZillaSlab-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ZillaSlab-Regular.ttf"; path = "../assets/fonts/ZillaSlab-Regular.ttf"; sourceTree = "<group>"; };
 		BAC48C0C277146D1BD9F758E /* Manrope-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Manrope-Bold.ttf"; path = "../assets/fonts/Manrope-Bold.ttf"; sourceTree = "<group>"; };
+		C7B2E6CA0D3240B3BA74498F /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		CD855033B0F543A6A3E2E326 /* Rubik-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-ExtraBold.ttf"; path = "../assets/fonts/Rubik-ExtraBold.ttf"; sourceTree = "<group>"; };
 		CE400DC48ED949C83B373B35 /* Pods-moovish.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-moovish.release.xcconfig"; path = "Target Support Files/Pods-moovish/Pods-moovish.release.xcconfig"; sourceTree = "<group>"; };
 		D1C7B53A1DB845D9A5313DEA /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		D1F3E37409E94CCD86D0EB78 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
@@ -175,6 +180,9 @@
 				588929687E1246A8B618F7BB /* SFUIText-Heavy.otf */,
 				78C9F391859149A793BFA685 /* SFUIText-Regular.otf */,
 				2426AE362B4341AFB1ACAF82 /* Manrope-Regular.ttf */,
+				CD855033B0F543A6A3E2E326 /* Rubik-ExtraBold.ttf */,
+				C7B2E6CA0D3240B3BA74498F /* Rubik-Regular.ttf */,
+				1C1ABC837A5840C89BFE9B70 /* Rubik-Bold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -320,6 +328,8 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3BC519EA0C824A1FAEEE5A17 /* Manrope-ExtraBold.ttf in Resources */,
 				6DAEDD416B474E25B640C7A0 /* Manrope-Regular.ttf in Resources */,
+				BBBA48BD8D074CE5860C553D /* Rubik-Regular.ttf in Resources */,
+				6BEF820D26AE4A7094E7F0EB /* Rubik-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
