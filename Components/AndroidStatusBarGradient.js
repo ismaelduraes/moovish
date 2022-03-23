@@ -11,14 +11,14 @@ import { ThemeContext } from "./Contexts/ThemeContext";
 
 const { StatusBarManager } = NativeModules;
 
-const statusBarHeight = Platform.OS === 'ios' ? 0 : StatusBarManager.HEIGHT;
+const statusBarHeight = Platform.OS === 'ios' ? 30 : StatusBarManager.HEIGHT;
 
-export default function AndroidStatusBarGradient(){
+export default function AndroidStatusBarGradient() {
     const theme = useContext(ThemeContext)
 
     const styles = StyleSheet.create({
         container: {
-            height: statusBarHeight*4,
+            height: statusBarHeight * 8,
             width: '100%',
             position: 'absolute',
             zIndex: 1,
@@ -26,15 +26,15 @@ export default function AndroidStatusBarGradient(){
         }
     })
 
-    return(
+    return (
         <View style={styles.container}>
             <LinearGradient
-            colors={[
-                theme.background+'b3',
-                'rgba(0, 0, 0, 0)',
-                'rgba(0, 0, 0, 0)',
-            ]}
-            style={styles.container}/>
+                colors={[
+                    theme.accent + '88',
+                    'rgba(0, 0, 0, 0)',
+                    'rgba(0, 0, 0, 0)',
+                ]}
+                style={styles.container} />
         </View>
     )
 }
