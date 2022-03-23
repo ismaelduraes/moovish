@@ -30,7 +30,7 @@ export default function ProfileScreen({ route }) {
         axios.get(`https://api.themoviedb.org/3/person/${profileId}?api_key=${TMDB_API_KEY}&append_to_response=images`)
             .then(r => {
                 setProfileData(r.data)
-                setLoaded(true)``
+                setLoaded(true)
             })
             .catch(e => console.log(e))
     }
