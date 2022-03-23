@@ -18,39 +18,31 @@ import { ThemeContext } from "./Contexts/ThemeContext";
 
 const width = Dimensions.get('window').width
 
-export default function Header({imagePath, fallbackImagePath, title, subtitle}){
+export default function Header({ imagePath, fallbackImagePath, title, subtitle }) {
     const theme = useContext(ThemeContext)
     const styles = StyleSheet.create({
         poster: {
             width: '100%',
             height: 350,
             backgroundColor: theme.accent,
-            marginBottom: 30,
+            marginBottom: 25,
         },
         titleContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
+            // alignItems: 'center',
             paddingHorizontal: theme.defaultPadding,
             // top: -25,
-            zIndex: 2
+            zIndex: 2,
+            marginBottom: 20,
         },
         headerTitle: {
             color: theme.foreground,
             fontFamily: theme.fontBold,
             fontSize: 24,
-            maxWidth: width*0.5,
-            textAlign: 'center',
             marginBottom: 5
         },
         subtitle: {
             width: '80%',
-            paddingHorizontal: 30,
-            // top: -20,
-            textAlign: 'center',
-            alignSelf: 'center',
             color: theme.foreground,
-            marginBottom: 20
         },
         headerGradient: {
             height: 350,
@@ -61,12 +53,13 @@ export default function Header({imagePath, fallbackImagePath, title, subtitle}){
         },
     })
 
-    return(
+    return (
         <View>
             <Image
                 style={styles.poster}
-                source={imagePath ? {uri:
-                    `${imgPrefixOriginal}${imagePath ? imagePath : fallbackImagePath}`
+                source={imagePath ? {
+                    uri:
+                        `${imgPrefixOriginal}${imagePath ? imagePath : fallbackImagePath}`
                 } : require('../assets/images/profile_default.png')}
             />
             {/* <LinearGradient
@@ -79,7 +72,7 @@ export default function Header({imagePath, fallbackImagePath, title, subtitle}){
                 theme.background,
             ]}
             /> */}
-                    
+
             {/* title */}
             <View style={styles.titleContainer}>
                 <View>
@@ -88,13 +81,13 @@ export default function Header({imagePath, fallbackImagePath, title, subtitle}){
                 <Text style={styles.headerTitle}>
                     {title}
                 </Text>
+                {subtitle ?
+                    <Text style={styles.subtitle}>
+                        {subtitle}
+                    </Text> : null
+                }
 
             </View>
-            {subtitle ?
-            <Text style={styles.subtitle}>
-                {subtitle}
-            </Text> : null
-            }
         </View>
     )
 }
