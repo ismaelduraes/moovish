@@ -7,13 +7,14 @@ import {
     LayoutAnimation
 } from 'react-native'
 import { ThemeContext } from "./Contexts/ThemeContext";
-import LinearGradient from "react-native-linear-gradient";
+import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Icon from 'react-native-vector-icons/SimpleLineIcons'
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
-export default function TextBody({title, text, hideIfLong, maxTextHeight = 300, marginBottom = 0, width = '100%'}){
+export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300, marginBottom = 0, width = '100%', iconName = "" }) {
     const theme = useContext(ThemeContext)
-    
+
     const [isHidden, setIsHidden] = useState(true)
     const [textHeight, setTextHeight] = useState(0)
 
@@ -23,11 +24,16 @@ export default function TextBody({title, text, hideIfLong, maxTextHeight = 300, 
             width
         },
         sectionTitle: {
+            flexDirection: 'row',
+            marginBottom: 10,
+            paddingHorizontal: theme.defaultPadding,
+        },
+        titleText: {
             fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            marginBottom: 5,
-            paddingHorizontal: theme.defaultPadding,
+            //add margin if icon is shown (gap)
+            marginLeft: iconName ? 10 : 0,
         },
         overviewText: {
             textAlign: 'left',
@@ -53,30 +59,38 @@ export default function TextBody({title, text, hideIfLong, maxTextHeight = 300, 
         }
     })
 
-    return(
-        <View
-        style={{...styles.section, marginTop: '10%'}}
-        onTouchEnd={() => {
-            if(textHeight > 300){
-                LayoutAnimation.configureNext({
-                    duration: 250,
-                    update: {
-                        type: 'spring',
-                        springDamping: 0.7,
-                    },
-                })
-                setIsHidden(!isHidden)
-            }
-        }}
+    return (
+        <Pressable
+            style={{ ...styles.section, marginTop: '10%' }}
+            onPress={() => {
+                if (textHeight > 300) {
+                    LayoutAnimation.configureNext({
+                        duration: 250,
+                        update: {
+                            type: 'spring',
+                            springDamping: 0.7,
+                        },
+                    })
+                    setIsHidden(!isHidden)
+                }
+            }}
         >
             <View
-            onLayout={e => {
-                setTextHeight(e.nativeEvent.layout.height)
-            }}
+                onLayout={e => {
+                    setTextHeight(e.nativeEvent.layout.height)
+                }}
             >
-                <Text style={styles.sectionTitle}>
+                <View style={styles.sectionTitle}>
+                    {iconName ?
+                        <MaterialCommunityIcons
+                            name={iconName}
+                            color={theme.foreground}
+                            size={20}
+                        /> : null}
+                    <Text style={styles.titleText}>
                         {title}
-                </Text>
+                    </Text>
+                </View>
                 <Text style={styles.overviewText}>
                     {text}
                 </Text>
@@ -92,25 +106,25 @@ export default function TextBody({title, text, hideIfLong, maxTextHeight = 300, 
                 />
             </View> : null
             } */}
-            
+
             {hideIfLong ? <View
-            style={{
-                alignItems: 'center',
-                justifyContent: 'space-around',
-                marginTop: marginBottom ? marginBottom : 20,
-                height: textHeight > maxTextHeight ? undefined : 0,
-                flexDirection: isHidden ? 'column' : 'column-reverse'
-            }}
+                style={{
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    marginTop: marginBottom ? marginBottom : 20,
+                    height: textHeight > maxTextHeight ? undefined : 0,
+                    flexDirection: isHidden ? 'column' : 'column-reverse'
+                }}
             >
                 {textHeight > maxTextHeight ?
-                <Text style={{...styles.expandCollapseText}}>
-                    {isHidden ? 'Expand...' : textHeight > maxTextHeight? 'Collapse...' : null}
-                </Text> : null
+                    <Text style={{ ...styles.expandCollapseText }}>
+                        {isHidden ? 'Expand...' : textHeight > maxTextHeight ? 'Collapse...' : null}
+                    </Text> : null
                 }
-                {textHeight > maxTextHeight && <Icon name={isHidden ? 'arrow-down' : 'arrow-up'} size={12} color={theme.foreground}/>}
+                {textHeight > maxTextHeight && <Icon name={isHidden ? 'arrow-down' : 'arrow-up'} size={12} color={theme.foreground} />}
             </View> : null
             }
 
-        </View>
+        </Pressable>
     )
 }
