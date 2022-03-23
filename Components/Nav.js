@@ -14,10 +14,13 @@ const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 import { useNavigation } from '@react-navigation/native'
 import { default as MaterialIcons } from 'react-native-vector-icons/MaterialIcons'
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
+import LinearGradient from 'react-native-linear-gradient';
 
 import { PropsContext } from './Contexts/PropsContext'
 import { AuthContext } from './Contexts/AuthContext'
 import { themes } from './Contexts/ThemeContext'
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 export default function Nav({ isOnSearch = false, title = 'moovish' }) {
     const theme = useContext(ThemeContext)
@@ -30,16 +33,16 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
             zIndex: 1,
             width: '100%',
             // height: 130,
+            paddingTop: 15,
+            paddingBottom: 15,
 
-            paddingTop: statusBarHeight + 20,
-            paddingBottom: 20,
             position: 'absolute',
 
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingHorizontal: theme.defaultPadding,
-            backgroundColor: theme.background,
+            // backgroundColor: theme.background,
         },
         title: {
             fontSize: 30,
@@ -57,7 +60,7 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
         },
         searchBar: {
             width: '70%',
-            backgroundColor: theme.gray,
+            backgroundColor: theme.gray + '88',
             alignItems: 'center',
             justifyContent: 'center',
             padding: 10,
@@ -71,7 +74,7 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
     })
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View
                 onTouchEnd={() => {
                     contextProps.setCurrentTheme(contextProps.currentTheme.type === 'light' ?
@@ -83,7 +86,7 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
                 <MaterialCommunityIcons
                     name='movie-open'
                     size={25}
-                    color={theme.accent}
+                    color={theme.foreground}
                 />
             </View>
             <View
@@ -104,9 +107,9 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
             <MaterialCommunityIcons
                 name='bookshelf'
                 size={25}
-                color={theme.accent}
+                color={theme.foreground}
                 onTouchEnd={() => contextAuth.isAuth ? navigation.push('library') : navigation.push('login')}
             />
-        </View>
+        </SafeAreaView>
     )
 }

@@ -7,7 +7,9 @@ import {
     StyleSheet,
     FlatList,
     NativeModules,
-    Platform
+    Platform,
+    SafeAreaView,
+    Pressable
 } from 'react-native'
 import { AuthContext } from '../Components/Contexts/AuthContext'
 
@@ -22,9 +24,15 @@ import { useIsFocused } from '@react-navigation/native'
 import DropShadow from 'react-native-drop-shadow'
 import BottomPopUp from '../Components/BottomPopUp'
 
+import { useNavigation } from '@react-navigation/native'
+
+import { default as Feather } from 'react-native-vector-icons/Feather'
+
 export default function Library() {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
+
+    const navigation = useNavigation()
 
     const [toWatchMovies, setToWatchMovies] = useState([])
     const [watchedMovies, setWatchedMovies] = useState([])
@@ -108,13 +116,18 @@ export default function Library() {
             height: '100%',
             position: 'absolute',
         },
+        titleContainer: {
+            marginTop: statusBarHeight + 20,
+            paddingHorizontal: theme.defaultPadding,
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
         screenTitle: {
             fontSize: 30,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            width: '100%',
-            paddingHorizontal: theme.defaultPadding,
-            marginTop: statusBarHeight + 20,
+            // width: '100%',
+            marginLeft: 15
         },
         navigation: {
             width: '100%',
@@ -136,7 +149,7 @@ export default function Library() {
     })
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
             {pendingPopUpState.isActive ?
                 <BottomPopUp
@@ -154,9 +167,18 @@ export default function Library() {
                 /> : null
             }
 
-            <Text style={styles.screenTitle}>
-                Library
-            </Text>
+            <View style={styles.titleContainer}>
+                <Feather
+                    onPress={() => navigation.goBack()}
+                    style={styles.icon}
+                    name="arrow-left"
+                    size={30}
+                    color={theme.foreground}
+                />
+                <Text style={styles.screenTitle}>
+                    Library
+                </Text>
+            </View>
 
             <View style={styles.navigation}>
                 <DropShadow
@@ -170,7 +192,7 @@ export default function Library() {
                         shadowRadius: 20,
                     }}
                 >
-                    <View onTouchEnd={() => setCurrentScreen(0)}
+                    <Pressable onPress={() => setCurrentScreen(0)}
                         style={{
                             ...styles.navigationItem,
                             marginRight: 15,
@@ -187,7 +209,7 @@ export default function Library() {
                         >
                             To Watch
                         </Text>
-                    </View>
+                    </Pressable>
                 </DropShadow>
                 <DropShadow
                     style={{
@@ -200,7 +222,7 @@ export default function Library() {
                         shadowRadius: 20,
                     }}
                 >
-                    <View onTouchEnd={() => setCurrentScreen(1)}
+                    <Pressable onPress={() => setCurrentScreen(1)}
                         style={{
                             ...styles.navigationItem,
                             fontFamily: currentScreen === 1 ? theme.fontBold : theme.fontRegular,
@@ -213,7 +235,7 @@ export default function Library() {
                         }}>
                             Watched
                         </Text>
-                    </View>
+                    </Pressable>
                 </DropShadow>
             </View>
 
@@ -240,6 +262,6 @@ export default function Library() {
             >
             </FlatList>
 
-        </View>
+        </SafeAreaView>
     )
 }

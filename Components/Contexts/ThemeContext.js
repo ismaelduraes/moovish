@@ -4,29 +4,29 @@ import { createContext } from "react";
 export const themes = {
     light: {
         type: 'light',
-        accent: '#b56d19', //tomato-ish
+        accent: '#de3400', //tomato-ish
         accentAlt: '#b84239', //white
         background: '#ffffff', //black
         foreground: '#000000', //white
         gray: '#e3e3e3',
-        fontRegular: 'Manrope-Regular',
-        fontBold: 'Manrope-ExtraBold',
+        fontRegular: 'Rubik-Regular',
+        fontBold: 'Rubik-Bold',
         defaultPadding: 20,
         borderRadius: 12,
         homeComponentsBottomMargin: '9%'
     },
     dark: {
         type: 'dark',
-        accent: '#9FC2CC',
+        accent: '#E4572E',
         accentAlt: '#266DD3',
         background: '#000000', //black
         foreground: '#f9e7e7',
         gray: '#0f0f0f',
-        fontRegular: 'Manrope-Regular',
-        fontBold: 'Manrope-ExtraBold',
+        fontRegular: 'Rubik-Regular',
+        fontBold: 'Rubik-Bold',
         defaultPadding: 20,
         borderRadius: 15,
-        homeComponentsBottomMargin: '9%'
+        homeComponentsBottomMargin: '10%'
     }
 }
 export const ThemeContext = createContext({})

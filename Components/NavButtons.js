@@ -60,7 +60,8 @@ export default function NavButtons({ movieId, isInLibrary, setIsInLibrary }) {
             zIndex: 1
         },
         navigation: {
-            // marginTop: statusBarHeight + 15,
+            //adds the height of status bar, adds nothing on ios
+            marginTop: statusBarHeight,
             paddingHorizontal: theme.defaultPadding,
             flexDirection: 'row',
             justifyContent: 'space-between'
