@@ -13,7 +13,8 @@ import New from "../Components/New";
 import NowPlaying from "../Components/NowPlaying";
 import Nav from "../Components/Nav";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
-import Loading from "../Components/Loading";
+import LinearGradient from "react-native-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { StatusBarManager } = NativeModules;
 const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
@@ -22,18 +23,16 @@ const height = Dimensions.get('screen').height
 
 
 export default function Main({ navigation }) {
-    const [newLoaded, setNewLoaded] = useState(false)
     const theme = useContext(ThemeContext)
 
     const styles = StyleSheet.create({
         container: {
-            width: '100%',
-            height: '100%',
             backgroundColor: theme.background,
-            position: 'absolute',
         },
-        contentContainer: {
-            paddingTop: statusBarHeight + 100,
+        gradient: {
+            width: '100%',
+            height: '15%',
+            position: 'absolute'
         },
     })
 
@@ -42,17 +41,23 @@ export default function Main({ navigation }) {
             <Nav />
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                style={{
-                    // backgroundColor: theme.background
-                }}
                 contentContainerStyle={styles.contentContainer}
                 removeClippedSubviews
+            // stickyHeaderIndices={[0]}
             >
                 <NowPlaying />
-                <TopRated />
-                <Trending />
                 <New />
+                <Trending />
+                <TopRated />
             </ScrollView>
+            <LinearGradient
+                style={styles.gradient}
+                colors={[
+                    theme.background,
+                    'rgba(0,0,0,0.6)',
+                    'rgba(0,0,0,0)',
+                ]}
+            />
         </View>
     )
 }
