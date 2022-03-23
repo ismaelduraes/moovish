@@ -11,6 +11,7 @@ import {
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
 import { TMDB_API_KEY } from '@env'
+import { YT_API_KEY } from '@env'
 
 import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
 
@@ -19,12 +20,15 @@ import TextBody from "../Components/TextBody";
 import HorizontalProfileList from "../Components/HorizontalProfileList";
 import ImageCarousel from "../Components/ImageCarousel";
 import AndroidStatusBarGradient from '../Components/AndroidStatusBarGradient'
-
-import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
-import axios from "axios";
-import { AuthContext } from "../Components/Contexts/AuthContext";
 import Loading from "../Components/Loading";
+
+import { imgPrefix, imgPrefixLow, imgPrefixOriginal } from "../Components/Utilities/Utilities";
+import { AuthContext } from "../Components/Contexts/AuthContext";
+
+import axios from "axios";
+import { SvgUri } from "react-native-svg";
+import FastImage from "react-native-fast-image";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
@@ -33,6 +37,8 @@ export default function MovieScreen({ route }) {
     const [movieData, setMovieData] = useState({})
     const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
     const [movieImages, setMovieImages] = useState([])
+    const [movieVideo, setMovieVideo] = useState([])
+
     const [cast, setCast] = useState({})
     const [crew, setCrew] = useState({})
     const [isInLibrary, setIsInLibrary] = useState(false)
@@ -66,7 +72,9 @@ export default function MovieScreen({ route }) {
         //fetch movie data
         await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
             .then(d => {
-                setMovieData(d.data); setProductionCompanies(d.data.production_companies[0].name)
+                setMovieData(d.data)
+                setProductionCompanies(d.data.production_companies[0])
+                console.log(`${imgPrefixOriginal}${productionCompany.logo_path}`)
             })
 
         //fetch movie images
@@ -74,8 +82,8 @@ export default function MovieScreen({ route }) {
             .then(d => setMovieImages(d.data.backdrops))
 
         //fetch videos
-        // axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
-        // .then(d => setMovieVideo(d.data.results[0]))
+        axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
+            .then(d => setMovieVideo(d.data.results[0]))
 
         //fetch credits
         await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
@@ -122,12 +130,12 @@ export default function MovieScreen({ route }) {
         rating: {
             flexDirection: 'row',
             alignItems: 'center',
-            marginHorizontal: '5%',
+            marginHorizontal: theme.defaultPadding,
             justifyContent: 'center',
-            backgroundColor: theme.background + '40',
-            borderRadius: 50,
+            backgroundColor: theme.background + '4c',
+            borderRadius: 20,
             overflow: 'hidden',
-            paddingVertical: 15
+            paddingVertical: 15,
         },
         ratingAverage: {
             fontFamily: theme.fontBold,
@@ -169,7 +177,7 @@ export default function MovieScreen({ route }) {
             zIndex: -1,
             //dark theme has less opacity on blurred image
             //to keep theme darker
-            opacity: theme.type === 'light' ? 0.3 : 0.1
+            opacity: theme.type === 'light' ? 0 : 0.07
         }
     })
 
@@ -184,18 +192,18 @@ export default function MovieScreen({ route }) {
                 isInLibrary={isInLibrary}
                 setIsInLibrary={setIsInLibrary}
             />
-            <ScrollView showsVerticalScrollIndicator={false}>
 
-                {/* background image */}
-                <Image
-                    style={styles.imageBg}
-                    source={movieData.backdrop_path ?
-                        { uri: `${imgPrefixOriginal}${movieData.backdrop_path}` } :
-                        require('../assets/images/profile_default.png')}
-                    // dark theme looks better with more blur
-                    blurRadius={theme.type === 'light' ? 20 : 50}
-                    progressiveRenderingEnabled
-                />
+            {/* background image */}
+            <Image
+                style={styles.imageBg}
+                source={movieData.backdrop_path ?
+                    { uri: `${imgPrefixOriginal}${movieData.backdrop_path}` } :
+                    require('../assets/images/profile_default.png')}
+                blurRadius={50}
+                progressiveRenderingEnabled
+            />
+            <ScrollView contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator={false}>
+
 
 
                 {/* Poster */}
@@ -208,6 +216,19 @@ export default function MovieScreen({ route }) {
 
                 {/* Ratings */}
                 <View style={{ ...styles.rating }}>
+                    {productionCompany.logo_path ?
+                        <FastImage
+                            source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
+                            style={{ width: 90, height: 50, marginHorizontal: 10 }}
+                            resizeMode="contain"
+                            tintColor={theme.foreground}
+                        /> :
+                        <Text style={styles.smallText}>
+                            {productionCompany ? productionCompany.name :
+                                'Unknown Production Company'
+                            }
+                        </Text>
+                    }
                     <View>
                         <Text style={styles.ratingAverage}>
                             {movieData.vote_average ?
@@ -223,14 +244,6 @@ export default function MovieScreen({ route }) {
                         }
                     </View>
 
-                    {productionCompany ?
-                        <Text style={styles.smallText}>
-                            {productionCompany ?
-                                productionCompany :
-                                'Unknown Production Company'
-                            }
-                        </Text> : null
-                    }
 
                     {movieData.runtime > 0 ?
                         <Text style={styles.smallText}>
@@ -246,7 +259,7 @@ export default function MovieScreen({ route }) {
 
                 {/* Images carousel */}
                 {movieImages.length > 0 ?
-                    <ImageCarousel data={movieImages} /> : null
+                    <ImageCarousel showsIcon={false} data={movieImages} /> : null
                 }
 
                 {/* Cast */}
@@ -259,21 +272,21 @@ export default function MovieScreen({ route }) {
 
                 {/* Video */}
                 {/* {movieVideo ?
-                <View style={{
-                    ...styles.section,
-                    marginTop: '10%',
+                    <View style={{
+                        ...styles.section,
+                        marginTop: '10%',
                     }}>
 
-                    <Text style={styles.sectionTitle}>
-                        Featured Video
-                    </Text>
-                    <YouTube
-                    apiKey={YT_API_KEY}
-                    videoId={movieVideo.key}
-                    style={styles.video}
-                    />
+                        <Text style={styles.sectionTitle}>
+                            Featured Video
+                        </Text>
+                        <YouTube
+                            apiKey={YT_API_KEY}
+                            videoId={movieVideo.key}
+                            style={styles.video}
+                        />
 
-                </View> : null
+                    </View> : null
                 } */}
             </ScrollView>
         </View>
