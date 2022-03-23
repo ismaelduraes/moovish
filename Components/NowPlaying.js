@@ -8,22 +8,17 @@ import {
 import {
     View,
     Text,
-    Image,
     StyleSheet,
     Dimensions,
-    Animated
 } from 'react-native'
 
 import axios from 'axios'
 
 import { ThemeContext } from './Contexts/ThemeContext'
-import Carousel from 'react-native-snap-carousel';
 
 import Poster from './Poster'
 
 import { TMDB_API_KEY } from '@env'
-import SlideAnimationFunction from './Utilities/SlideAnimationFuncion';
-import { MovieContext } from '../App';
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
@@ -31,45 +26,42 @@ const height = Dimensions.get('window').height
 export default function NowPlaying() {
     const theme = useContext(ThemeContext)
 
-    const [nowPlaying, setNowPlaying] = useState([])
-    const [activeSlide, setActiveSlide] = useState(0)
-
-    const containerSlideAnim = useRef(new Animated.Value(250)).current
+    const [nowPlaying, setNowPlaying] = useState({})
 
     function fetchData() {
         axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
-            .then(result => setNowPlaying(result.data.results))
+            .then(result => setNowPlaying(result.data.results[0]))
     }
 
     useEffect(() => {
-        SlideAnimationFunction(containerSlideAnim, 0, 500, true, 500)
         fetchData()
     }, [])
 
     const styles = StyleSheet.create({
         container: {
-            marginBottom: theme.homeComponentsBottomMargin,
-            overflow: 'hidden',
-            // transform: [{ 'translateY': containerSlideAnim }]
+            marginBottom: -15
+            // overflow: 'hidden',
+        },
+        text: {
+            top: -50
         },
         sectionTitle: {
-            fontSize: 22,
+            textAlign: 'left',
+
+            fontSize: 20,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            paddingHorizontal: theme.defaultPadding,
-        },
-        caption: {
-            fontFamily: theme.fontRegular,
+            marginHorizontal: theme.defaultPadding,
             marginBottom: 15,
-            paddingHorizontal: theme.defaultPadding,
-            color: theme.accent,
-            // opacity: 0.6,
+            marginTop: 30,
         },
-        movieTitle: {
-            textAlign: 'center',
+        overview: {
+            textAlign: 'left',
+            paddingHorizontal: theme.defaultPadding,
+            width: '100%',
             color: theme.foreground,
-            marginTop: 5,
-            fontFamily: theme.fontRegular
+            fontFamily: theme.fontRegular,
+            fontSize: 14
         },
         gradient: {
             position: 'absolute',
@@ -81,44 +73,26 @@ export default function NowPlaying() {
     })
 
     return (
-        <Animated.View style={styles.container}>
-            <Text style={styles.sectionTitle}>
-                Now Playing
-            </Text>
-            <Text style={styles.caption}>
-                Movies currently playing in theatres
-            </Text>
-
-            <Carousel
-                data={nowPlaying}
-                horizontal
-                renderItem={
-                    item => {
-                        return (
-                            <View style={{ alignSelf: 'flex-start' }}>
-                                <Poster
-                                    movie={item.item}
-                                    width={(width - (theme.defaultPadding * 2)) - 10}
-                                    useBackdrop
-                                    showText={false}
-                                    animDelay={item.index * 100}
-                                    originalQuality
-                                    animate={false}
-                                />
-                                <Animated.Text style={styles.movieTitle}>
-                                    {item.item.title}
-                                </Animated.Text>
-                            </View>
-                        )
-                    }}
-                sliderWidth={width}
-                itemWidth={(width - (theme.defaultPadding * 2)) - 10}
-                layout="default"
-                layoutCardOffset={8}
-                activeSlideAlignment='center'
-                onSnapToItem={e => setActiveSlide(e)}
-                loop
+        <View style={styles.container}>
+            <Poster
+                movie={nowPlaying}
+                width={width}
+                height={height * 0.4}
+                showText={false}
+                originalQuality
+                animate={false}
+                isRounded={false}
+                showGradient={true}
+                useBackdrop
             />
-        </Animated.View>
+            <View style={styles.text}>
+                <Text style={styles.sectionTitle}>
+                    {nowPlaying.title}
+                </Text>
+                <Text style={styles.overview}>
+                    {nowPlaying.overview}
+                </Text>
+            </View>
+        </View>
     )
 }
