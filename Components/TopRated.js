@@ -44,16 +44,16 @@ export default function TopRated() {
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 20,
+            fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
+            marginBottom: 15,
         },
         caption: {
             fontFamily: theme.fontRegular,
-            marginBottom: '5%',
             paddingHorizontal: theme.defaultPadding,
-            color: theme.accent,
+            color: theme.foreground,
             // opacity: 0.6,
         },
         gradient: {
@@ -73,9 +73,7 @@ export default function TopRated() {
             <Text style={styles.sectionTitle}>
                 Top Rated
             </Text>
-            <Text style={styles.caption}>
-                The best, according to you
-            </Text>
+
             <ScrollView
                 removeClippedSubviews
                 showsHorizontalScrollIndicator={false}

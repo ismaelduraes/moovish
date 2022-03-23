@@ -26,6 +26,7 @@ import Carousel from "react-native-snap-carousel";
 import { MovieContext } from "../App";
 import { TMDB_API_KEY } from '@env'
 import { imgPrefixOriginal } from "./Utilities/Utilities";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 const width = Dimensions.get('window').width
 
@@ -66,19 +67,13 @@ export default function Trending() {
     const styles = StyleSheet.create({
         container: {
             marginBottom: theme.homeComponentsBottomMargin,
-            position: 'relative',
         },
         sectionTitle: {
-            fontSize: 22,
+            fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
-        },
-        caption: {
-            fontFamily: theme.fontRegular,
             marginBottom: 15,
-            paddingHorizontal: theme.defaultPadding,
-            color: theme.accent,
         },
         title: {
             fontSize: 16,
@@ -107,7 +102,7 @@ export default function Trending() {
 
     function Banner(item) {
         return (
-            <TouchableHighlight
+            <Pressable
                 onPress={() => navigation.push('movie', { movieId: item.item.id })}
                 removeClippedSubviews
                 renderToHardwareTextureAndroid
@@ -144,7 +139,7 @@ export default function Trending() {
                         </View>
                     }
                 </View>
-            </TouchableHighlight>
+            </Pressable>
         )
     }
 
@@ -155,17 +150,13 @@ export default function Trending() {
             }}>
                 Trending
             </Text>
-            <Text style={{
-                ...styles.caption,
-            }}>
-                What everyone keeps talking about
-            </Text>
 
             <Carousel
                 data={trendingMovies}
                 renderItem={Banner}
                 sliderWidth={width}
                 itemWidth={width - (theme.defaultPadding * 2)}
+                layoutCardOffset={10}
                 layout="stack"
                 onSnapToItem={e => {
                     setActiveSlide(e)

@@ -48,17 +48,11 @@ export default function New() {
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 22,
+            fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
-        },
-        caption: {
-            fontFamily: theme.fontRegular,
-            marginBottom: '5%',
-            paddingHorizontal: theme.defaultPadding,
-            color: theme.accent,
-            // opacity: 0.6,
+            marginBottom: 15,
         },
         scrollView: {
             paddingHorizontal: theme.defaultPadding,
@@ -69,9 +63,6 @@ export default function New() {
         <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
                 New and fresh
-            </Text>
-            <Text style={styles.caption}>
-                Just released or upcoming
             </Text>
 
             <FlatList
