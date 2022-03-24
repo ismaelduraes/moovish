@@ -46,7 +46,7 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
         },
         image: {
             height: isSquare ? width - (theme.defaultPadding * 2) : width * 0.5,
-            width: width - (theme.defaultPadding * 2),
+            width: width - (theme.defaultPadding * 2) - 7,
             resizeMode: canChangeResize ? resizeMode : 'cover',
             zIndex: 1
         },
@@ -57,7 +57,7 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
         },
     })
     return data.length > 0 ? (
-        <View style={{ ...styles.section, marginTop: '10%' }}>
+        <View style={{ ...styles.section, marginTop: 30 }}>
             <View
                 style={{
                     ...styles.sectionTitle,
@@ -79,9 +79,8 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
                 data={data}
                 removeClippedSubviews
                 sliderWidth={width}
-                itemWidth={width - (theme.defaultPadding * 2)}
-                layout="stack"
-                layoutCardOffset={10}
+                itemWidth={width - (theme.defaultPadding * 2) - 7}
+                layout="default"
                 enableMomentum={true}
                 decelerationRate={0.9}
                 renderItem={(item) => {

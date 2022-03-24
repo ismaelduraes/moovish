@@ -58,12 +58,12 @@ export default function ProfileScreen({ route }) {
         <View style={{ backgroundColor: theme.background }}>
             <AndroidStatusBarGradient />
             <NavButtons />
-            <Image
+            {/* <Image
                 style={styles.imageBg}
                 source={{ uri: `${imgPrefixOriginal}${profileData.profile_path}` }}
                 blurRadius={50}
-            />
-            <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+            /> */}
+            <ScrollView contentContainerStyle={{ paddingBottom: 60 }} showsVerticalScrollIndicator={false} style={styles.container}>
                 <Header
                     title={profileData.name}
                     imagePath={profileData.profile_path}

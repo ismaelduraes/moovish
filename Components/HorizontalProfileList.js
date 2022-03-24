@@ -31,13 +31,13 @@ export default function HorizontalProfileList({ data, title = 'Untitled List', s
             marginBottom: 10,
         },
         profileImage: {
-            height: 100,
-            width: 100,
+            height: 80,
+            width: 80,
             borderRadius: 100,
             backgroundColor: theme.accent,
         },
         profileItem: {
-            marginRight: 25,
+            marginRight: 10,
             alignItems: 'center'
         },
         name: {

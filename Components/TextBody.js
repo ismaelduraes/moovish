@@ -25,11 +25,11 @@ export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300,
         },
         sectionTitle: {
             flexDirection: 'row',
-            marginBottom: 10,
+            marginBottom: 5,
             paddingHorizontal: theme.defaultPadding,
         },
         titleText: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             //add margin if icon is shown (gap)
@@ -61,7 +61,7 @@ export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300,
 
     return (
         <Pressable
-            style={{ ...styles.section, marginTop: '10%' }}
+            style={{ ...styles.section, marginTop: 30 }}
             onPress={() => {
                 if (textHeight > 300) {
                     LayoutAnimation.configureNext({
@@ -87,9 +87,9 @@ export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300,
                             color={theme.foreground}
                             size={20}
                         /> : null}
-                    <Text style={styles.titleText}>
+                    {title ? <Text style={styles.titleText}>
                         {title}
-                    </Text>
+                    </Text> : null}
                 </View>
                 <Text style={styles.overviewText}>
                     {text}

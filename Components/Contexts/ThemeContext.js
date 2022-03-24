@@ -25,7 +25,7 @@ export const themes = {
         fontRegular: 'Rubik-Regular',
         fontBold: 'Rubik-Bold',
         defaultPadding: 20,
-        borderRadius: 7,
+        borderRadius: 15,
         homeComponentsBottomMargin: '10%'
     }
 }

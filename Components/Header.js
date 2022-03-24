@@ -32,10 +32,10 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle }
             paddingHorizontal: theme.defaultPadding,
             // top: -25,
             zIndex: 2,
-            marginBottom: 20,
+            // marginBottom: 20,
         },
         headerTitle: {
-            color: theme.foreground,
+            color: theme.accent,
             fontFamily: theme.fontBold,
             fontSize: 24,
             marginBottom: 5
