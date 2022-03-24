@@ -29,6 +29,7 @@ import { AuthContext } from "../Components/Contexts/AuthContext";
 import axios from "axios";
 import { SvgUri } from "react-native-svg";
 import FastImage from "react-native-fast-image";
+import WatchOn from "../Components/WatchOn";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
@@ -37,6 +38,7 @@ export default function MovieScreen({ route }) {
     const [movieData, setMovieData] = useState({})
     const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
     const [movieImages, setMovieImages] = useState([])
+    const [watchOn, setWatchOn] = useState([])
     const [movieVideo, setMovieVideo] = useState([])
 
     const [cast, setCast] = useState({})
@@ -80,57 +82,26 @@ export default function MovieScreen({ route }) {
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
 
-                axios.get('http://192.168.15.10:8080/profile/library',
-                    { headers: { 'auth-token': contextAuth.token } }
-                ).then(r => {
-                    //check if any of the movies in library match current movieId
-                    r.data.forEach(item => {
-                        if (item.movie_id === movieId) {
-                            setIsInLibrary(true)
-                        }
+                //get watch providers
+                axios.get(`https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${TMDB_API_KEY}`)
+                    .then(d => {
+                        setWatchOn(d.data.results)
                     })
-                }).catch(() => setIsInLibrary(false))
+
+                axios.get('http://192.168.15.10:8080/profile/library',
+                    { headers: { 'auth-token': contextAuth.token } })
+                    .then(r => {
+                        //check if any of the movies in library match current movieId
+                        r.data.forEach(item => {
+                            if (item.movie_id === movieId) {
+                                setIsInLibrary(true)
+                            }
+                        })
+                    })
+                    .catch(() => setIsInLibrary(false))
 
                 setIsLoading(false)
             })
-    }
-
-
-    async function fetchData() {
-        //fetch movie data
-        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`)
-            .then(d => {
-                setMovieData(d.data)
-                setProductionCompanies(d.data.production_companies[0])
-                console.log(`${imgPrefixOriginal}${productionCompany.logo_path}`)
-            })
-
-        //fetch movie images
-        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/images?api_key=${TMDB_API_KEY}`)
-            .then(d => setMovieImages(d.data.backdrops))
-
-        //fetch videos
-        axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`)
-            .then(d => setMovieVideo(d.data.results[0]))
-
-        //fetch credits
-        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`)
-            .then(d => {
-                sortCast(d.data.cast, setCast)
-                sortCrew(d.data.crew, setCrew)
-            })
-
-        await axios.get('http://192.168.15.10:8080/profile/library',
-            { headers: { 'auth-token': contextAuth.token } }
-        ).then(r => {
-            //check if any of the movies in library match current movieId
-            r.data.forEach(item => {
-                if (item.movie_id === movieId) {
-                    setIsInLibrary(true)
-                }
-            })
-        }).catch(() => setIsInLibrary(false))
-        setIsLoading(false)
     }
 
     function ratingColor(rating) {
@@ -160,10 +131,12 @@ export default function MovieScreen({ route }) {
             alignItems: 'center',
             marginHorizontal: theme.defaultPadding,
             justifyContent: 'center',
-            backgroundColor: theme.gray,
-            borderRadius: 20,
+            borderColor: theme.accent + '1a',
+            borderWidth: 3,
+            borderRadius: theme.borderRadius,
             overflow: 'hidden',
             paddingVertical: 15,
+            marginTop: 30
         },
         ratingAverage: {
             fontFamily: theme.fontBold,
@@ -242,6 +215,11 @@ export default function MovieScreen({ route }) {
                     subtitle={movieData.tagline}
                 />
 
+                {/* Overview */}
+                {movieData.overview ?
+                    <TextBody title="Overview" text={movieData.overview} /> : null
+                }
+
                 {/* Ratings */}
                 <View style={{ ...styles.rating }}>
                     {productionCompany.logo_path ?
@@ -280,10 +258,11 @@ export default function MovieScreen({ route }) {
                     }
                 </View>
 
-                {/* Overview */}
-                {movieData.overview ?
-                    <TextBody title="Overview" text={movieData.overview} /> : null
-                }
+                {console.log(watchOn.BR !== undefined ? true : false)}
+
+                {watchOn.BR && watchOn.BR.flatrate ? <WatchOn
+                    data={watchOn.BR.flatrate}
+                /> : null}
 
                 {/* Images carousel */}
                 {movieImages.length > 0 ?
