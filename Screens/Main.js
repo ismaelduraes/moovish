@@ -54,7 +54,6 @@ export default function Main({ navigation }) {
                 style={styles.gradient}
                 colors={[
                     theme.background,
-                    'rgba(0,0,0,0.6)',
                     'rgba(0,0,0,0)',
                 ]}
             />
