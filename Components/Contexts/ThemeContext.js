@@ -21,11 +21,11 @@ export const themes = {
         accentAlt: '#266DD3',
         background: '#000000', //black
         foreground: '#f9e7e7',
-        gray: '#0f0f0f',
+        gray: '#0a0a0a',
         fontRegular: 'Rubik-Regular',
         fontBold: 'Rubik-Bold',
         defaultPadding: 20,
-        borderRadius: 15,
+        borderRadius: 7,
         homeComponentsBottomMargin: '10%'
     }
 }
