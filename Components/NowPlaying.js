@@ -29,8 +29,9 @@ export default function NowPlaying() {
     const [nowPlaying, setNowPlaying] = useState({})
 
     function fetchData() {
+        const rand = Math.floor(Math.random() * 10)
         axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
-            .then(result => setNowPlaying(result.data.results[0]))
+            .then(result => setNowPlaying(result.data.results[rand]))
     }
 
     useEffect(() => {
@@ -77,7 +78,7 @@ export default function NowPlaying() {
             <Poster
                 movie={nowPlaying}
                 width={width}
-                height={height * 0.4}
+                height={height * 0.5}
                 showText={false}
                 originalQuality
                 animate={false}
