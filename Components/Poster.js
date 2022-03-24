@@ -62,7 +62,7 @@ export default function Poster({
 
     const styles = StyleSheet.create({
         container: {
-            marginRight: 10,
+            marginRight: 15,
             transform: [{ 'translateY': slideAnim }],
             width: width,
         },
@@ -101,10 +101,11 @@ export default function Poster({
                 }
             >
                 <View>
-                    {showGradient ? <LinearGradient
-                        colors={['rgba(0,0,0,0)', theme.background]}
-                        style={styles.gradient}
-                    /> : null}
+                    {showGradient ?
+                        <LinearGradient
+                            colors={['rgba(0,0,0,0)', theme.background]}
+                            style={styles.gradient}
+                        /> : null}
                     <FastImage
                         style={styles.banner}
                         source={{
