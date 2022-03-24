@@ -51,7 +51,8 @@ export default function MovieScreen({ route }) {
     const { movieId } = route.params
 
     useEffect(() => {
-        fetchData()
+        // fetchData()
+        fetchAllData()
 
         return (() => {
             setMovieData({})
@@ -66,6 +67,33 @@ export default function MovieScreen({ route }) {
         //used by the header (avoids redundancy in images)
         movieImages.shift()
     }, [movieImages])
+
+    async function fetchAllData() {
+
+        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits`)
+            .then(d => {
+                //insert data into their own state
+                setMovieData(d.data)
+                setMovieImages(d.data.images.backdrops)
+                setMovieVideo(d.data.videos[0])
+                sortCast(d.data.credits.cast, setCast)
+                sortCrew(d.data.credits.crew, setCrew)
+                setProductionCompanies(d.data.production_companies[0])
+
+                axios.get('http://192.168.15.10:8080/profile/library',
+                    { headers: { 'auth-token': contextAuth.token } }
+                ).then(r => {
+                    //check if any of the movies in library match current movieId
+                    r.data.forEach(item => {
+                        if (item.movie_id === movieId) {
+                            setIsInLibrary(true)
+                        }
+                    })
+                }).catch(() => setIsInLibrary(false))
+
+                setIsLoading(false)
+            })
+    }
 
 
     async function fetchData() {
@@ -132,7 +160,7 @@ export default function MovieScreen({ route }) {
             alignItems: 'center',
             marginHorizontal: theme.defaultPadding,
             justifyContent: 'center',
-            backgroundColor: theme.background + '4c',
+            backgroundColor: theme.gray,
             borderRadius: 20,
             overflow: 'hidden',
             paddingVertical: 15,
@@ -194,14 +222,14 @@ export default function MovieScreen({ route }) {
             />
 
             {/* background image */}
-            <Image
+            {/* <Image
                 style={styles.imageBg}
                 source={movieData.backdrop_path ?
                     { uri: `${imgPrefixOriginal}${movieData.backdrop_path}` } :
                     require('../assets/images/profile_default.png')}
                 blurRadius={50}
                 progressiveRenderingEnabled
-            />
+            /> */}
             <ScrollView contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator={false}>
 
 
@@ -219,7 +247,7 @@ export default function MovieScreen({ route }) {
                     {productionCompany.logo_path ?
                         <FastImage
                             source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
-                            style={{ width: 90, height: 50, marginHorizontal: 10 }}
+                            style={{ width: 90, height: 20, marginHorizontal: 10 }}
                             resizeMode="contain"
                             tintColor={theme.foreground}
                         /> :
