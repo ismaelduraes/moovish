@@ -136,7 +136,7 @@ export default function MovieScreen({ route }) {
             borderRadius: theme.borderRadius,
             overflow: 'hidden',
             paddingVertical: 15,
-            marginTop: 30
+            marginTop: 20
         },
         ratingAverage: {
             fontFamily: theme.fontBold,
@@ -205,8 +205,6 @@ export default function MovieScreen({ route }) {
             /> */}
             <ScrollView contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator={false}>
 
-
-
                 {/* Poster */}
                 <Header
                     imagePath={movieData.backdrop_path}
@@ -217,18 +215,24 @@ export default function MovieScreen({ route }) {
 
                 {/* Overview */}
                 {movieData.overview ?
-                    <TextBody title="Overview" text={movieData.overview} /> : null
+                    <TextBody
+                        title="Overview"
+                        text={movieData.overview}
+                    /> : null
                 }
 
                 {/* Ratings */}
                 <View style={{ ...styles.rating }}>
                     {productionCompany.logo_path ?
-                        <FastImage
-                            source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
-                            style={{ width: 90, height: 20, marginHorizontal: 10 }}
-                            resizeMode="contain"
-                            tintColor={theme.foreground}
-                        /> :
+                        <View>
+                            <FastImage
+                                source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
+                                style={{ width: 90, height: 20, marginHorizontal: 10 }}
+                                resizeMode="contain"
+                                tintColor={theme.foreground}
+                            />
+                        </View>
+                        :
                         <Text style={styles.smallText}>
                             {productionCompany ? productionCompany.name :
                                 'Unknown Production Company'

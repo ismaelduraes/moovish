@@ -78,7 +78,7 @@ export default function New() {
                                 movie={item.item}
                                 animDelay={item.index * 100}
                                 width={100}
-                                animate={false}
+                                animate={true}
                             />
                         </View>
                     )

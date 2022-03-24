@@ -30,10 +30,10 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
         },
         sectionTitle: {
             flexDirection: 'row',
-            marginBottom: 15,
+            marginBottom: 10,
         },
         titleText: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             marginLeft: showsIcon ? 10 : 0

@@ -25,10 +25,10 @@ export default function WatchOn({ data, showCharacter = false }) {
             // backgroundColor: 'blue',
         },
         sectionTitle: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            marginBottom: 10,
+            marginBottom: 5,
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -41,7 +41,7 @@ export default function WatchOn({ data, showCharacter = false }) {
         listItem: {
             flexDirection: 'row',
             alignItems: 'center',
-            borderColor: theme.gray,
+            borderColor: theme.accent + '1a',
             borderWidth: 3,
             borderRadius: theme.borderRadius,
             padding: 10
