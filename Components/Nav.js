@@ -76,11 +76,6 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
     return (
         <SafeAreaView style={styles.container}>
             <View
-                onTouchEnd={() => {
-                    contextProps.setCurrentTheme(contextProps.currentTheme.type === 'light' ?
-                        themes.dark : themes.light
-                    )
-                }}
                 style={{ flexDirection: 'row', alignItems: 'center' }}
             >
                 <MaterialCommunityIcons
