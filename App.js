@@ -77,6 +77,7 @@ export default function App() {
   }, [])
 
   if (Platform.OS === 'android') {
+    //setup for layout animations on android
     if (UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
