@@ -16,8 +16,8 @@ export default function Modal({
     confirmText = 'OK',
     confirmAction,
     cancelAction,
-    hasCancelButton = true
-}){
+    hasCancelButton = true,
+}) {
     const theme = useContext(ThemeContext)
 
     const styles = StyleSheet.create({
@@ -76,7 +76,7 @@ export default function Modal({
         }
     })
 
-    return(
+    return (
         <View style={styles.container}>
             <View style={styles.modal}>
                 <View style={styles.titleContainer}>
@@ -90,26 +90,27 @@ export default function Modal({
                     </Text>
                 </View>
                 <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={() => confirmAction()}
+                    style={styles.confirmButton}
+                    onPress={() => confirmAction()}
                 >
                     <Text style={{
-                        ...styles.buttonText}}>
+                        ...styles.buttonText
+                    }}>
                         {confirmText}
                     </Text>
                 </TouchableOpacity>
                 {hasCancelButton ?
-                <TouchableOpacity
-                onPress={() => cancelAction()}
-                style={styles.cancelButton}>
-                    <Text style={{
-                        ...styles.buttonText,
-                        color: theme.foreground
-                    }}
-                    >
-                        Cancel
-                    </Text>
-                </TouchableOpacity> : null
+                    <TouchableOpacity
+                        onPress={() => cancelAction()}
+                        style={styles.cancelButton}>
+                        <Text style={{
+                            ...styles.buttonText,
+                            color: theme.foreground
+                        }}
+                        >
+                            Cancel
+                        </Text>
+                    </TouchableOpacity> : null
                 }
             </View>
         </View>
