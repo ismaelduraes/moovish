@@ -83,7 +83,7 @@ export default function Trending() {
         },
         banner: {
             backgroundColor: theme.accent,
-            width: width - (theme.defaultPadding * 2),
+            width: width - (theme.defaultPadding * 2) - 15,
             //aspect-ratio is 1/1.4; as in height is width + 40% of width
             height: (width - (theme.defaultPadding * 2)) * 1.4,
             borderRadius: theme.borderRadius,
@@ -155,9 +155,9 @@ export default function Trending() {
                 data={trendingMovies}
                 renderItem={Banner}
                 sliderWidth={width}
-                itemWidth={width - (theme.defaultPadding * 2)}
+                itemWidth={width - (theme.defaultPadding * 2) - 15}
                 layoutCardOffset={10}
-                layout="stack"
+                layout="default"
                 onSnapToItem={e => {
                     setActiveSlide(e)
                     LayoutAnimation.configureNext(
