@@ -8,24 +8,27 @@ import {
     Dimensions
 } from 'react-native'
 
-import { default as AntDesign } from "react-native-vector-icons/AntDesign";
-import { default as Ionicons } from "react-native-vector-icons/Ionicons";
 import { imgPrefixOriginal } from "./Utilities/Utilities";
 
-import { Link } from "react-router-native";
+import FastImage from "react-native-fast-image";
 
 import { ThemeContext } from "./Contexts/ThemeContext";
 
 const width = Dimensions.get('window').width
 
-export default function Header({ imagePath, fallbackImagePath, title, subtitle }) {
+export default function Header({ imagePath, fallbackImagePath, title, subtitle, resizeMode = "cover", tintColor = null }) {
     const theme = useContext(ThemeContext)
     const styles = StyleSheet.create({
-        poster: {
+        posterContainer: {
             width: '100%',
             height: 350,
+            paddingHorizontal: resizeMode === "contain" ? theme.defaultPadding : 0,
             backgroundColor: theme.accent,
             marginBottom: 25,
+        },
+        poster: {
+            width: '100%',
+            height: '100%',
         },
         titleContainer: {
             // alignItems: 'center',
@@ -55,13 +58,19 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle }
 
     return (
         <View>
-            <Image
-                style={styles.poster}
-                source={imagePath ? {
-                    uri:
-                        `${imgPrefixOriginal}${imagePath ? imagePath : fallbackImagePath}`
-                } : require('../assets/images/profile_default.png')}
-            />
+            <View
+                style={styles.posterContainer}
+            >
+                <FastImage
+                    style={styles.poster}
+                    source={imagePath ? {
+                        uri:
+                            `${imgPrefixOriginal}${imagePath ? imagePath : fallbackImagePath}`
+                    } : require('../assets/images/profile_default.png')}
+                    resizeMode={resizeMode}
+                    tintColor={tintColor}
+                />
+            </View>
             {/* <LinearGradient
             style={styles.headerGradient}
             colors={[
