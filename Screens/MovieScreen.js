@@ -3,7 +3,7 @@ import { useState, useLayoutEffect, useEffect, useContext } from "react";
 import {
     View,
     Text,
-    Image,
+    Pressable,
     ScrollView,
     StyleSheet,
     Dimensions
@@ -11,7 +11,6 @@ import {
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
 import { TMDB_API_KEY } from '@env'
-import { YT_API_KEY } from '@env'
 
 import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
 
@@ -23,23 +22,26 @@ import AndroidStatusBarGradient from '../Components/AndroidStatusBarGradient'
 import NavButtons from "../Components/NavButtons";
 import Loading from "../Components/Loading";
 
-import { imgPrefix, imgPrefixLow, imgPrefixOriginal } from "../Components/Utilities/Utilities";
+import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import { AuthContext } from "../Components/Contexts/AuthContext";
 
 import axios from "axios";
-import { SvgUri } from "react-native-svg";
 import FastImage from "react-native-fast-image";
 import WatchOn from "../Components/WatchOn";
+
+import { useNavigation } from "@react-navigation/native";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
 
 export default function MovieScreen({ route }) {
     const [movieData, setMovieData] = useState({})
-    const [productionCompany, setProductionCompanies] = useState('Unknown Production Company')
+    const [productionCompany, setProductionCompanies] = useState({})
     const [movieImages, setMovieImages] = useState([])
     const [watchOn, setWatchOn] = useState([])
     const [movieVideo, setMovieVideo] = useState([])
+
+    const navigate = useNavigation()
 
     const [cast, setCast] = useState({})
     const [crew, setCrew] = useState({})
@@ -88,6 +90,7 @@ export default function MovieScreen({ route }) {
                         setWatchOn(d.data.results)
                     })
 
+                //check if movie is in library
                 axios.get('http://192.168.15.10:8080/profile/library',
                     { headers: { 'auth-token': contextAuth.token } })
                     .then(r => {
@@ -118,6 +121,17 @@ export default function MovieScreen({ route }) {
             height,
             width,
             backgroundColor: theme.background,
+        },
+        companyLogo: {
+            width: 90,
+            height: 20,
+            marginHorizontal: 10,
+        },
+        companyLogoContainer: {
+            backgroundColor: theme.gray,
+            padding: 5,
+            paddingVertical: 10,
+            borderRadius: theme.borderRadius / 2
         },
         smallText: {
             color: theme.foreground,
@@ -190,6 +204,7 @@ export default function MovieScreen({ route }) {
             <AndroidStatusBarGradient />
             <NavButtons
                 movieId={movieId}
+                movieRuntime={movieData.runtime}
                 isInLibrary={isInLibrary}
                 setIsInLibrary={setIsInLibrary}
             />
@@ -220,25 +235,31 @@ export default function MovieScreen({ route }) {
                         text={movieData.overview}
                     /> : null
                 }
-
                 {/* Ratings */}
                 <View style={{ ...styles.rating }}>
-                    {productionCompany.logo_path ?
-                        <View>
+                    <Pressable
+                        onPress={() => {
+                            if (productionCompany) {
+                                navigate.push('company', { companyId: productionCompany.id })
+                            }
+                        }}
+                        style={styles.companyLogoContainer}
+                    >
+                        {productionCompany && productionCompany.logo_path ?
                             <FastImage
                                 source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
-                                style={{ width: 90, height: 20, marginHorizontal: 10 }}
+                                style={styles.companyLogo}
                                 resizeMode="contain"
                                 tintColor={theme.foreground}
                             />
-                        </View>
-                        :
-                        <Text style={styles.smallText}>
-                            {productionCompany ? productionCompany.name :
-                                'Unknown Production Company'
-                            }
-                        </Text>
-                    }
+                            :
+                            <Text style={styles.smallText}>
+                                {productionCompany ? productionCompany.name :
+                                    'Unknown Production Company'
+                                }
+                            </Text>
+                        }
+                    </Pressable>
                     <View>
                         <Text style={styles.ratingAverage}>
                             {movieData.vote_average ?
@@ -261,8 +282,6 @@ export default function MovieScreen({ route }) {
                         </Text> : null
                     }
                 </View>
-
-                {console.log(watchOn.BR !== undefined ? true : false)}
 
                 {watchOn.BR && watchOn.BR.flatrate ? <WatchOn
                     data={watchOn.BR.flatrate}
