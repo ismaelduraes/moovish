@@ -27,6 +27,7 @@ import { PropsContext } from './Components/Contexts/PropsContext'
 import LoginScreen from './Screens/LoginScreen'
 import { AuthContext } from './Components/Contexts/AuthContext'
 import axios from 'axios'
+import CompanyScreen from './Screens/CompanyScreen'
 
 export const MovieContext = createContext()
 export default function App() {
@@ -40,12 +41,10 @@ export default function App() {
     RNSecureKeyStore.get('auth_token')
       .then(r => {
         setToken(r)
-        console.log('token:', r)
         //check token with server
         axios.get('http://192.168.15.10:8080/profile/data', { headers: { 'auth-token': r } })
           //if success
           .then(res => {
-            console.log('token apparently retrieved')
             setIsAuth(true)
             setLoginData(res.data)
             setAuthTestDone(true)
@@ -62,7 +61,6 @@ export default function App() {
               alert('Something went wrong while trying to connect to moovish. Please check your internet connection.')
               setIsAuth(true)
             }
-            alert('not authenticated')
             setAuthTestDone(true)
           })
       })
@@ -112,6 +110,7 @@ export default function App() {
                 <Stack.Screen name="search" component={SearchScreen} />
                 <Stack.Screen name="login" component={LoginScreen} />
                 <Stack.Screen name="library" component={Library} />
+                <Stack.Screen name="company" component={CompanyScreen} />
               </Stack.Navigator>
 
             </NavigationContainer>
