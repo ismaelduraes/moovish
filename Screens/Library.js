@@ -62,7 +62,6 @@ export default function Library() {
 
         //push not watched movies to toWatch list
         data.forEach(item => {
-            console.log(item.watched)
             if (item.watched) watched.push(item)
             else toWatch.push(item)
         })
