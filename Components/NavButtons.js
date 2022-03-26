@@ -19,7 +19,7 @@ import axios from "axios";
 import { AuthContext } from "./Contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function NavButtons({ movieId, isInLibrary, setIsInLibrary }) {
+export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsInLibrary }) {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
 
@@ -31,7 +31,8 @@ export default function NavButtons({ movieId, isInLibrary, setIsInLibrary }) {
         axios.post
             (`http://192.168.15.10:8080/profile/library`, {
                 movie_id: movieId,
-                watched: false
+                watched: false,
+                runtime: movieRuntime,
             },
                 { headers: { 'auth-token': contextAuth.token } }
             )
