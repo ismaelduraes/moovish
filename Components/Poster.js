@@ -11,7 +11,6 @@ import {
     Dimensions,
     Image,
     View,
-    TouchableOpacity
 } from 'react-native'
 
 import FastImage from "react-native-fast-image";
@@ -33,6 +32,8 @@ export default function Poster({
     originalQuality = false,
     width = 100,
     height,
+    marginRight = 15,
+    marginBottom = 0,
     //↓useful if instantiating many. you can set the delay to be a multiple of the
     //index/key
     animDelay = 0,
@@ -62,9 +63,11 @@ export default function Poster({
 
     const styles = StyleSheet.create({
         container: {
-            marginRight: 15,
+            marginRight,
+            marginBottom,
             transform: [{ 'translateY': slideAnim }],
             width: width,
+            alignSelf: 'center'
         },
         gradient: {
             width: '100%',
@@ -78,7 +81,7 @@ export default function Poster({
             textAlign: 'center',
             color: theme.foreground,
             fontFamily: theme.fontRegular,
-            maxHeight: 45
+            // maxHeight: 45
         },
         banner: {
             //if height was defined, use it, if not, set height depending on whether image is backdrop or poster
