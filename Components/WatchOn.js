@@ -41,7 +41,7 @@ export default function WatchOn({ data, showCharacter = false }) {
         listItem: {
             flexDirection: 'row',
             alignItems: 'center',
-            borderColor: theme.accent + '1a',
+            backgroundColor: theme.gray,
             borderWidth: 3,
             borderRadius: theme.borderRadius,
             padding: 10
