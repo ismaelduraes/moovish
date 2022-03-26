@@ -79,6 +79,7 @@ export default function NowPlaying() {
                 movie={nowPlaying}
                 width={width}
                 height={height * 0.5}
+                marginRight={0}
                 showText={false}
                 originalQuality
                 animate={false}
