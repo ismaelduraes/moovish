@@ -6,7 +6,8 @@ import {
     Pressable,
     ScrollView,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    FlatList
 } from "react-native";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
@@ -30,6 +31,7 @@ import FastImage from "react-native-fast-image";
 import WatchOn from "../Components/WatchOn";
 
 import { useNavigation } from "@react-navigation/native";
+import Poster from "../Components/Poster";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
@@ -39,6 +41,7 @@ export default function MovieScreen({ route }) {
     const [productionCompany, setProductionCompanies] = useState({})
     const [movieImages, setMovieImages] = useState([])
     const [watchOn, setWatchOn] = useState([])
+    const [similar, setSimilar] = useState([])
     const [movieVideo, setMovieVideo] = useState([])
 
     const navigate = useNavigation()
@@ -48,6 +51,7 @@ export default function MovieScreen({ route }) {
     const [isInLibrary, setIsInLibrary] = useState(false)
 
     const [isLoading, setIsLoading] = useState(true)
+    const [isError, setIsError] = useState(false)
 
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
@@ -74,7 +78,7 @@ export default function MovieScreen({ route }) {
 
     async function fetchAllData() {
 
-        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits`)
+        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar`)
             .then(d => {
                 //insert data into their own state
                 setMovieData(d.data)
@@ -83,6 +87,7 @@ export default function MovieScreen({ route }) {
                 sortCast(d.data.credits.cast, setCast)
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
+                setSimilar(d.data.similar.results)
 
                 //get watch providers
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${TMDB_API_KEY}`)
@@ -91,7 +96,7 @@ export default function MovieScreen({ route }) {
                     })
 
                 //check if movie is in library
-                axios.get('http://192.168.15.10:8080/profile/library',
+                axios.get(`${contextAuth.moovishServer}/profile/library`,
                     { headers: { 'auth-token': contextAuth.token } })
                     .then(r => {
                         //check if any of the movies in library match current movieId
@@ -105,6 +110,7 @@ export default function MovieScreen({ route }) {
 
                 setIsLoading(false)
             })
+            .catch(() => setIsError(true))
     }
 
     function ratingColor(rating) {
@@ -196,7 +202,7 @@ export default function MovieScreen({ route }) {
         }
     })
 
-    if (isLoading) return <Loading />
+    if (isLoading) return <Loading isError={isError} />
 
     else return (
         <View style={styles.container}>
@@ -291,6 +297,25 @@ export default function MovieScreen({ route }) {
                 {movieImages.length > 0 ?
                     <ImageCarousel showsIcon={false} data={movieImages} /> : null
                 }
+
+                <Text style={{ ...styles.sectionTitle, marginTop: 30 }}>
+                    You might also like
+                </Text>
+
+                <FlatList
+                    horizontal
+                    data={similar.splice(0, 5)}
+                    renderItem={(item) => {
+                        return (
+                            <Poster
+                                movie={item.item}
+                            />
+                        )
+                    }}
+                    contentContainerStyle={{ paddingLeft: theme.defaultPadding }}
+                    style={{ marginTop: 5 }}
+                    showsHorizontalScrollIndicator={false}
+                />
 
                 {/* Cast */}
                 {cast.acting ?
