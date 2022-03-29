@@ -39,7 +39,8 @@ export default function Poster({
     animDelay = 0,
     animate = true,
     //border radius
-    isRounded = true
+    isRounded = true,
+    alignCenter
 }) {
     const theme = useContext(ThemeContext)
     const navigation = useNavigation()
@@ -60,14 +61,13 @@ export default function Poster({
         if (animate) playAnim()
     }, [])
 
-
     const styles = StyleSheet.create({
         container: {
             marginRight,
             marginBottom,
             transform: [{ 'translateY': slideAnim }],
             width: width,
-            alignSelf: 'center'
+            alignSelf: alignCenter ? 'center' : 'auto'
         },
         gradient: {
             width: '100%',
