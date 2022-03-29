@@ -13,8 +13,9 @@ import {
 } from 'react-native'
 import { AuthContext } from '../Components/Contexts/AuthContext'
 
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+
 const { StatusBarManager } = NativeModules;
-const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 
 import { ThemeContext } from '../Components/Contexts/ThemeContext'
 import Modal from '../Components/Modal'
@@ -23,10 +24,13 @@ import { useIsFocused } from '@react-navigation/native'
 
 import DropShadow from 'react-native-drop-shadow'
 import BottomPopUp from '../Components/BottomPopUp'
+import Loading from '../Components/Loading'
 
 import { useNavigation } from '@react-navigation/native'
+import RNSecureKeyStore from "react-native-secure-key-store";
 
 import { default as Feather } from 'react-native-vector-icons/Feather'
+import { default as MaterialIcons } from 'react-native-vector-icons/MaterialIcons'
 
 export default function Library() {
     const theme = useContext(ThemeContext)
@@ -48,6 +52,9 @@ export default function Library() {
     const [pendingModal, setPendingModal] = useState({ isActive: false })
     //same concept as pending modal
     const [pendingPopUpState, setPendingPopUpState] = useState({ isActive: false })
+
+    const [isLoading, setIsLoading] = useState(true)
+    const [isError, setIsError] = useState(false)
 
     //refetch when screen is focused. useful for when the user opens a movie,
     //removes it from library and then navigates back to this screen.
@@ -71,17 +78,20 @@ export default function Library() {
     }
 
     async function fetchData() {
-        axios.get('http://192.168.15.10:8080/profile/library',
+        setIsLoading(true)
+        axios.get(`${contextAuth.moovishServer}/profile/library`,
             { headers: { 'auth-token': contextAuth.token } })
-            .then(res => parseMovies(res.data))
-            .catch(e => console.warn('error:', e))
+            .then(res => {
+                parseMovies(res.data)
+                setIsLoading(false)
+            })
+            .catch(e => setIsError(true))
     }
 
     function deleteMovie() {
-        axios.delete(`http://192.168.15.10:8080/profile/library/${pendingModal.movieId}`,
+        axios.delete(`${contextAuth.moovishServer}/profile/library${pendingModal.movieId}`,
             { headers: { 'auth-token': contextAuth.token } })
             .then(() => {
-                console.log('deleting movie', pendingModal.movieId)
                 fetchData()
                 setPendingModal({ isActive: false })
                 setPendingPopUpState({ isActive: true, text: 'Removed from library.' })
@@ -92,11 +102,10 @@ export default function Library() {
     function setWatched() {
         //change watched to true
         axios.patch
-            (`http://192.168.15.10:8080/profile/library/`,
+            (`${contextAuth.moovishServer}/profile/library/`,
                 { movie_id: pendingModal.movieId, watched: true },
                 { headers: { 'auth-token': contextAuth.token } }
             ).then(() => {
-                console.log('then')
                 fetchData()
                 setPendingModal({ isActive: false })
                 setPendingPopUpState({ isActive: true, text: 'Moved to "Watched" list.' })
@@ -115,18 +124,22 @@ export default function Library() {
             height: '100%',
             position: 'absolute',
         },
+        username: {
+            color: theme.accent,
+            fontFamily: theme.fontRegular,
+        },
         titleContainer: {
-            marginTop: statusBarHeight + 20,
             paddingHorizontal: theme.defaultPadding,
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: getStatusBarHeight() + 20
         },
         screenTitle: {
             fontSize: 30,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             // width: '100%',
-            marginLeft: 15
         },
         navigation: {
             width: '100%',
@@ -147,8 +160,10 @@ export default function Library() {
         }
     })
 
-    return (
-        <SafeAreaView style={styles.container}>
+    if (isLoading) return <Loading isError={isError} />
+
+    else return (
+        <View style={styles.container}>
 
             {pendingPopUpState.isActive ?
                 <BottomPopUp
@@ -167,16 +182,39 @@ export default function Library() {
             }
 
             <View style={styles.titleContainer}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Feather
+                        onPress={() => navigation.goBack()}
+                        style={styles.icon}
+                        name="arrow-left"
+                        size={30}
+                        color={theme.foreground}
+                    />
+                    <View style={{ marginLeft: 15 }}>
+                        <Text style={styles.screenTitle}>
+                            Library
+                        </Text>
+                        <Text style={styles.username}>
+                            Logged in as {contextAuth.loginData.username}
+                        </Text>
+                    </View>
+                </View>
                 <Feather
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        RNSecureKeyStore.remove('auth_token')
+                            .then(() => {
+                                //log user out
+                                contextAuth.setIsAuth(false)
+                                //go back to home
+                                navigation.navigate("home")
+                            })
+                            .catch(() => navigation.navigate("home"))
+                    }}
                     style={styles.icon}
-                    name="arrow-left"
-                    size={30}
+                    name="log-out"
+                    size={25}
                     color={theme.foreground}
                 />
-                <Text style={styles.screenTitle}>
-                    Library
-                </Text>
             </View>
 
             <View style={styles.navigation}>
@@ -261,6 +299,6 @@ export default function Library() {
             >
             </FlatList>
 
-        </SafeAreaView>
+        </View>
     )
 }
