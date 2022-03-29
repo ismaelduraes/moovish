@@ -10,7 +10,7 @@ import {
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ThemeContext } from "./Contexts/ThemeContext";
 
-export default function Loading(){
+export default function Loading({ isError = false }) {
     const theme = useContext(ThemeContext)
 
     const rotateAnim = useRef(new Animated.Value(0)).current
@@ -19,7 +19,7 @@ export default function Loading(){
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-        easing: Easing.linear
+        easing: Easing.bounce
     })
 
     Animated.loop(animTiming).start()
@@ -37,30 +37,38 @@ export default function Loading(){
         text: {
             fontFamily: theme.fontBold,
             fontSize: 20,
-            color: theme.foreground
+            color: theme.foreground,
+            marginTop: 15,
+            textAlign: 'center',
+            paddingHorizontal: theme.defaultPadding
         }
     })
 
-    return(
+    return (
         <View style={styles.container}>
             <Animated.View
-            style={{
-                transform: [
-                    {rotateZ: rotateAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', '360deg']
-                    })}
-                ]
-            }}
+                style={{
+                    transform: [
+                        {
+                            rotateZ: rotateAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ['0deg', '360deg']
+                            })
+                        }
+                    ]
+                }}
             >
                 <MaterialCommunityIcons
-                name="loading"
-                size={50}
-                color={theme.accent}
+                    name={isError ? "close" : "loading"}
+                    size={50}
+                    color={theme.accent}
                 />
             </Animated.View>
             <Text style={styles.text}>
-                Loading...
+                {
+                    isError ? "Something went wrong.\n\nPlease check your internet connection"
+                        : "Loading..."
+                }
             </Text>
         </View>
     )
