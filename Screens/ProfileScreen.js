@@ -14,7 +14,6 @@ import { ThemeContext } from "../Components/Contexts/ThemeContext";
 import TextBody from "../Components/TextBody";
 import ImageCarousel from "../Components/ImageCarousel";
 
-import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import NavButtons from "../Components/NavButtons";
 import AndroidStatusBarGradient from "../Components/AndroidStatusBarGradient";
 import Loading from "../Components/Loading";
