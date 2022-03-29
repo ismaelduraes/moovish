@@ -28,6 +28,9 @@ import LoginScreen from './Screens/LoginScreen'
 import { AuthContext } from './Components/Contexts/AuthContext'
 import axios from 'axios'
 import CompanyScreen from './Screens/CompanyScreen'
+import VerifyEmail from './Screens/VerifyEmail'
+
+import { RECAPTCHA_CLIENT_KEY, RECAPTCHA_CLIENT_KEY_LOCAL } from '@env'
 
 export const MovieContext = createContext()
 export default function App() {
@@ -36,13 +39,22 @@ export default function App() {
   const [isAuth, setIsAuth] = useState(false)
   const [token, setToken] = useState('')
   const [loginData, setLoginData] = useState({})
+  //set production=true to make moovish connect to remote api instead of localhost
+
+  const [moovishServer, setMoovishServer] = useState(process.env.production ? 'https://moovish.durev.net' : 'http://localhost:8080')
+  const [captchaKey, setCaptchaKey] = useState(process.env.production ? RECAPTCHA_CLIENT_KEY : RECAPTCHA_CLIENT_KEY_LOCAL)
+
+  console.log(process.env.production)
+
+  console.log('connecting to', moovishServer)
+  console.log(captchaKey)
 
   function checkAuth() {
     RNSecureKeyStore.get('auth_token')
       .then(r => {
         setToken(r)
         //check token with server
-        axios.get('http://192.168.15.10:8080/profile/data', { headers: { 'auth-token': r } })
+        axios.get(`${moovishServer}/profile/data`, { headers: { 'auth-token': r } })
           //if success
           .then(res => {
             setIsAuth(true)
@@ -96,7 +108,9 @@ export default function App() {
       setIsAuth,
       isAuth,
       setLoginData,
-      loginData
+      loginData,
+      moovishServer,
+      captchaKey
     }}>
       <ThemeContext.Provider value={currentTheme}>
         <PropsContext.Provider value={{ currentTheme, setCurrentTheme }}>
@@ -111,6 +125,7 @@ export default function App() {
                 <Stack.Screen name="login" component={LoginScreen} />
                 <Stack.Screen name="library" component={Library} />
                 <Stack.Screen name="company" component={CompanyScreen} />
+                <Stack.Screen name="verify" component={VerifyEmail} />
               </Stack.Navigator>
 
             </NavigationContainer>
