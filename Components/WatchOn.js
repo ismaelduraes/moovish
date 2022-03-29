@@ -16,8 +16,6 @@ import { imgPrefixLow } from './Utilities/Utilities'
 export default function WatchOn({ data, showCharacter = false }) {
     const theme = useContext(ThemeContext)
 
-    console.log(data)
-
     const styles = StyleSheet.create({
         section: {
             paddingHorizontal: theme.defaultPadding,
