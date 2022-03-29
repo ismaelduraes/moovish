@@ -24,10 +24,13 @@ import MasonryList from '@react-native-seoul/masonry-list';
 import FastImage from "react-native-fast-image";
 import { imgPrefix } from "../Components/Utilities/Utilities";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CompanyScreen({ route }) {
     const companyId = route.params.companyId
+
     const theme = useContext(ThemeContext)
+    const navigation = useNavigation()
 
     const [companyData, setCompanyData] = useState({})
     const [companyMovies, setCompanyMovies] = useState([])
@@ -38,10 +41,11 @@ export default function CompanyScreen({ route }) {
             .then(r => {
                 setCompanyData(r.data)
             })
-            .catch(e => console.log(e))
+            .catch(() => navigation.goBack())
 
         axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&sort_by=popularity.desc&with_companies=${companyId}`)
             .then(d => setCompanyMovies(d.data.results))
+            .catch(() => navigation.goBack())
         setLoaded(true)
     }
 
@@ -108,6 +112,7 @@ export default function CompanyScreen({ route }) {
                                 animDelay={index}
                                 key={index}
                                 marginBottom={30}
+                                alignCenter
                             />
                         )
                     }
