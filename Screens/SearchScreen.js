@@ -180,7 +180,6 @@ export default function SearchScreen() {
                     />
                 </View>
             </View>
-            {/* {console.log(results)} */}
             <MasonryList
                 data={results}
                 renderItem={ResultItem}
