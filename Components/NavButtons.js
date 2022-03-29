@@ -29,7 +29,7 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
 
     function addToWatchLater() {
         axios.post
-            (`http://192.168.15.10:8080/profile/library`, {
+            (`${contextAuth.moovishServer}/profile/library`, {
                 movie_id: movieId,
                 watched: false,
                 runtime: movieRuntime,
@@ -44,7 +44,7 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
     }
 
     function removeFromLibrary() {
-        axios.delete(`http://192.168.15.10:8080/profile/library/${movieId}`,
+        axios.delete(`${contextAuth.moovishServer}/profile/library/${movieId}`,
             { headers: { 'auth-token': contextAuth.token } })
             .then(() => {
                 setIsInLibrary(false)
