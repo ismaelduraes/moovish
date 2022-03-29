@@ -8,9 +8,8 @@ import {
     Platform,
     NativeModules
 } from 'react-native'
-const { StatusBarManager } = NativeModules;
-const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { useNavigation } from '@react-navigation/native'
 import { default as MaterialIcons } from 'react-native-vector-icons/MaterialIcons'
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -35,6 +34,8 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
             // height: 130,
             paddingTop: 15,
             paddingBottom: 15,
+
+            marginTop: getStatusBarHeight(),
 
             position: 'absolute',
 
@@ -74,7 +75,7 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
     })
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View
                 style={{ flexDirection: 'row', alignItems: 'center' }}
             >
@@ -105,6 +106,6 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
                 color={theme.foreground}
                 onTouchEnd={() => contextAuth.isAuth ? navigation.push('library') : navigation.push('login')}
             />
-        </SafeAreaView>
+        </View>
     )
 }
