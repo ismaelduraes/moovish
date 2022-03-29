@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React from 'react'
-import { useContext, useState } from 'react'
+import { useContext, useState, useRef } from 'react'
 import {
     View,
     Image,
@@ -8,12 +8,14 @@ import {
     TextInput,
     StyleSheet,
     ScrollView,
-    Pressable
+    Pressable,
+    LayoutAnimation
 } from 'react-native'
 import RNSecureKeyStore, { ACCESSIBLE } from "react-native-secure-key-store";
 
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
+import Recaptcha from 'react-native-recaptcha-that-works';
 
 import { ThemeContext } from '../Components/Contexts/ThemeContext'
 import { AuthContext } from '../Components/Contexts/AuthContext';
@@ -21,81 +23,131 @@ import { useNavigation } from '@react-navigation/native';
 
 import Modal from '../Components/Modal';
 
+import Loading from '../Components/Loading';
+
 export default function LoginScreen() {
     const theme = useContext(ThemeContext)
+    const contextAuth = useContext(AuthContext)
+
+
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     //sign up
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
-    //this is the email input used for signing up. for signing in, the username var
+    //this is the email input used for signing up. for signing in, the username variable
     //is used.
     const [email, setEmail] = useState('')
-
     const [hasAccount, setHasAccount] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const recaptcha = useRef()
 
     const [pendingModal, setPendingModal] = useState({ isActive: false })
 
     const navigation = useNavigation()
 
-    const contextAuth = useContext(AuthContext)
 
-    async function login() {
-        if (username.length < 6 && password.length < 8) {
-            setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Make sure your username is over 6 characters long, and your password is over 8 characters long." })
+    function verifyLogin() {
+        if (username.length < 6 && username.length > 12 &&
+            password.length < 8 && password.length > 12
+        ) {
+            setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Make sure your username is over 6 characters long (and below 12), and your password is over 8 characters long (and below 20)." })
             return
         }
-        axios.post('http://192.168.15.10:8080/login',
-            { username, password })
-            .then(res => {
-                RNSecureKeyStore.set('auth_token', res.data, { accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK })
-                    .then(() => {
-                        contextAuth.setToken(res.data)
-                        contextAuth.setIsAuth(true)
-                        navigation.navigate('home')
-                    })
-            })
-            //handle errors
-            .catch(err => {
-                switch (err.response.status) {
-                    case 401:
-                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Incorrect username or password." })
-                        break
-                    default:
-                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Something went wrong and you couldn't be signed in." })
-                        break
-                }
-            }
-            )
+        login()
     }
 
-    async function signup() {
+    function verifySignup() {
         function validateEmail(email) {
-            return email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+            return !!email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+        }
+        function validateUsername(username) {
+            const test = /^[a-zA-Z0-9_\.]+$/.test(username);
+            return test;
+        }
+        function validatePassword(password) {
+            const test = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/.test(password);
+            return test;
         }
 
-        if (username.length < 6 && password.length < 8) {
-            setPendingModal({ isActive: true, title: "Couldn't sign you up.", text: "Make sure your username is over 6 characters long, and your password is over 8 characters long." })
+        if (!validateUsername(username) || !validatePassword(password)) {
+            setPendingModal({ isActive: true, title: "Couldn't sign you up.", text: "Make sure your username is over 6 characters long, and your password is over 8 characters long.\n\nYou can only use letters (a-Z), numbers (0-9), underscores (_) and dots (.) on your username.\n\nYou have to use at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol on your password." })
             return
         }
         if (password !== passwordConfirmation) {
             setPendingModal({ isActive: true, title: "Couldn't sign you up.", text: "Your password and password confirmation don't match" })
             return
         }
-
         if (!validateEmail(email)) {
             setPendingModal({ isActive: true, title: "Couldn't sign you up.", text: "You need to input a valid e-mail address." })
             return
         }
-        axios.post('http://192.168.15.10:8080/profile',
-            { email, username, password })
+        recaptcha.current.open()
+    }
+
+    async function login() {
+        setIsLoading(true)
+        axios.post(`${contextAuth.moovishServer}/login`,
+            { username, password })
             .then(res => {
-                console.log(res.data)
+                setIsLoading(false)
+                if (res.data.verified) {
+                    // set token
+                    RNSecureKeyStore.set('auth_token', res.data.token, { accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK })
+                        .then(() => {
+                            contextAuth.setToken(res.data.token)
+                            contextAuth.setIsAuth(true)
+                            navigation.navigate('home')
+                        })
+                    // get user data (username, email, uuid)
+                    axios.get(`${contextAuth.moovishServer}/profile/data`, { headers: { 'auth-token': res.data.token } })
+                        .then(res => {
+                            contextAuth.setLoginData(res.data)
+                        })
+                }
+                else {
+                    setIsLoading(false)
+                    navigation.push("verify", { email: res.data.email })
+                }
             })
             //handle errors
             .catch(err => {
+                setIsLoading(false)
                 switch (err.response.status) {
                     case 401:
                         setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Incorrect username or password." })
+                        break
+                    default:
+                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Something went wrong and you couldn't be signed in." + err.response.data })
+                        break
+                }
+            }
+            )
+    }
+
+    async function signup(token) {
+        setIsLoading(true)
+        axios.post(`${contextAuth.moovishServer}/profile`,
+            { email, username, password, captcha: token })
+            .then(res => {
+                setIsLoading(false)
+                navigation.push("verify", { email: email })
+            })
+            //handle errors
+            .catch(err => {
+                setIsLoading(false)
+                switch (err.response.data) {
+                    case "email or username exist":
+                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "The e-mail and username you selected are already in use by another account" })
+                        break
+                    case "captcha failed":
+                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Captcha failed." })
+                        break
+                    case "username exists":
+                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "The username you selected is already in use by another account" })
+                        break
+                    case "email exists":
+                        setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "The e-mail you selected is already in use by another account" })
                         break
                     default:
                         setPendingModal({ isActive: true, title: "Couldn't sign you in.", text: "Something went wrong and you couldn't be signed in." })
@@ -115,6 +167,14 @@ export default function LoginScreen() {
 
             height: '100%',
         },
+        closeButtonContainer: {
+            // height: '10%',
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            paddingHorizontal: theme.defaultPadding,
+            marginTop: getStatusBarHeight() + 20
+        },
         title: {
             fontFamily: theme.fontBold,
             fontSize: 30,
@@ -132,6 +192,7 @@ export default function LoginScreen() {
             fontFamily: theme.fontRegular,
 
             width: '90%',
+            maxWidth: '90%',
             alignSelf: 'center',
 
             color: theme.foreground,
@@ -167,8 +228,20 @@ export default function LoginScreen() {
         }
     })
 
-    return (
-        <SafeAreaView style={styles.container}>
+    if (isLoading) return <Loading />
+
+    else return (
+        <View style={styles.container}>
+            <View style={styles.closeButtonContainer}>
+                <Pressable style={styles.closeButton}>
+                    <MaterialCommunityIcons
+                        name="arrow-left"
+                        color={theme.foreground}
+                        size={20}
+                        onPress={() => navigation.navigate("home")}
+                    />
+                </Pressable>
+            </View>
             <ScrollView contentContainerStyle={styles.container} pointerEvents="box-none">
                 {pendingModal.isActive ? <Modal
                     title={pendingModal.title}
@@ -195,6 +268,7 @@ export default function LoginScreen() {
                         style={styles.input}
                         placeholderTextColor={theme.foreground + '4c'}
                         onChangeText={text => hasAccount ? setUsername(text) : setEmail(text)}
+                        maxLength={60}
                     />
                 </View>
 
@@ -207,6 +281,7 @@ export default function LoginScreen() {
                         style={styles.input}
                         placeholderTextColor={theme.foreground + '4c'}
                         onChangeText={text => setUsername(text)}
+                        maxLength={12}
                     />
                 </View> : null
                 }
@@ -222,6 +297,7 @@ export default function LoginScreen() {
                         onChangeText={text => setPassword(text)}
                         textContentType={"password"}
                         secureTextEntry={true}
+                        maxLength={20}
                     />
                 </View>
 
@@ -236,14 +312,30 @@ export default function LoginScreen() {
                         onChangeText={text => setPasswordConfirmation(text)}
                         textContentType={"password"}
                         secureTextEntry={true}
+                        maxLength={20}
                     />
                 </View> : null
                 }
+                <Recaptcha
+                    siteKey={contextAuth.captchaKey}
+                    baseUrl={`${contextAuth.moovishServer.replace(':8080', '')}`}
+                    onVerify={token => {
+                        console.log(token)
+                        signup(token)
+                    }}
+                    size="normal"
+                    ref={recaptcha}
+                    onError={(error) => console.log(error)}
+                />
 
                 <Pressable
                     style={styles.signIn}
                     onPress={() => {
-                        hasAccount ? login() : signup()
+                        if (!hasAccount) {
+                            verifySignup()
+                            return
+                        }
+                        verifyLogin()
                     }}
                 >
                     <Text style={styles.signInText}>
@@ -257,7 +349,15 @@ export default function LoginScreen() {
                     alignSelf: 'center',
                     marginTop: 60,
                 }}
-                    onPress={() => console.log(setHasAccount(!hasAccount))}
+                    onPress={() => {
+                        setHasAccount(!hasAccount)
+                        LayoutAnimation.configureNext(
+                            {
+                                duration: 500,
+                                update: { type: 'spring', springDamping: 0.5 },
+                            }
+                        );
+                    }}
                 >
                     <MaterialCommunityIcons
                         name={hasAccount ? "arrow-right" : "arrow-left"}
@@ -272,6 +372,6 @@ export default function LoginScreen() {
                     </Text>
                 </Pressable>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     )
 }
