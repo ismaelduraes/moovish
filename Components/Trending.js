@@ -43,7 +43,6 @@ export default function Trending() {
 
     //functions
     function fetchData() {
-        // console.log(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`)
         fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`)
             .then(result => result.json()
                 .then(data => setTrendingMovies(data.results))
