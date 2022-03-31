@@ -33,6 +33,7 @@ import { default as MaterialCommunityIcons } from 'react-native-vector-icons/Mat
 
 import { useNavigation } from "@react-navigation/native";
 import TextBody from "../Components/TextBody";
+import Season from "../Components/Season";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
@@ -44,7 +45,7 @@ export default function TVShowScreen({ route }) {
     const [watchOn, setWatchOn] = useState([])
     const [similar, setSimilar] = useState([])
     const [reviews, setReviews] = useState([])
-    const [showVideo, setMovieVideo] = useState([])
+    const [seasons, setSeasons] = useState([])
 
     const navigate = useNavigation()
 
@@ -84,12 +85,12 @@ export default function TVShowScreen({ route }) {
                 //insert data into their own state
                 setShowData(d.data)
                 setShowImages(d.data.images.backdrops)
-                setMovieVideo(d.data.videos[0])
                 sortCast(d.data.credits.cast, setCast)
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
                 setSimilar(d.data.similar.results)
                 setReviews(d.data.reviews.results)
+                setSeasons(d.data.seasons)
             })
             .catch(e => console.log(e.response.data))
     }
@@ -230,7 +231,7 @@ export default function TVShowScreen({ route }) {
                                 source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
                                 style={styles.companyLogo}
                                 resizeMode="contain"
-                                tintColor={theme.background}
+                            // tintColor={theme.background}
                             />
                             :
                             <Text style={{ ...styles.smallText, color: theme.background }}>
@@ -271,6 +272,10 @@ export default function TVShowScreen({ route }) {
                         text={showData.overview}
                     /> : null
                 }
+
+                <Season
+                    data={seasons}
+                />
 
                 {watchOn.BR && watchOn.BR.flatrate ?
                     <WatchOn
