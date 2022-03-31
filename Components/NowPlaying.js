@@ -35,9 +35,8 @@ export default function NowPlaying() {
     const [nowPlaying, setNowPlaying] = useState({})
 
     function fetchData() {
-        const rand = Math.floor(Math.random() * 10)
         axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`)
-            .then(result => setNowPlaying(result.data.results[rand]))
+            .then(result => setNowPlaying(result.data.results[0]))
     }
 
     useEffect(() => {
@@ -107,8 +106,7 @@ export default function NowPlaying() {
                     <MaterialCommunityIcons
                         name="chevron-right"
                         color={theme.foreground}
-                        size={25}
-                        style={{ marginLeft: 5 }}
+                        size={20}
                     />
                 </View>
                 <Text style={styles.overview}>
