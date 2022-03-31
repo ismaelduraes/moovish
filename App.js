@@ -16,6 +16,7 @@ import { themes } from './Components/Contexts/ThemeContext'
 import Main from './Screens/Main'
 import MovieScreen from './Screens/MovieScreen'
 import TVShowScreen from './Screens/TVShowScreen'
+import SeasonScreen from './Screens/SeasonScreen'
 import SearchScreen from './Screens/SearchScreen'
 import ProfileScreen from './Screens/ProfileScreen'
 import Library from './Screens/Library'
@@ -117,8 +118,11 @@ export default function App() {
 
               <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="home" component={Main} />
+
                 <Stack.Screen name="movie" component={MovieScreen} />
                 <Stack.Screen name="show" component={TVShowScreen} />
+                <Stack.Screen name="season" component={SeasonScreen} />
+
                 <Stack.Screen name="profile" component={ProfileScreen} />
                 <Stack.Screen name="search" component={SearchScreen} />
                 <Stack.Screen name="login" component={LoginScreen} />
