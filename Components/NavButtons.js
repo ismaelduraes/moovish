@@ -1,9 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
     NativeModules,
     Platform,
+    ActivityIndicator,
+    Share
 } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
@@ -19,15 +21,42 @@ import axios from "axios";
 import { AuthContext } from "./Contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsInLibrary }) {
+export default function NavButtons({ movieId, showId, movieRuntime, profileId }) {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
 
+    const [isInLibrary, setIsInLibrary] = useState()
+    const [isLoading, setIsLoading] = useState(true)
     const [pendingPopUp, setPendingPopUp] = useState({ isActive: false })
 
     const navigation = useNavigation()
 
+    function checkLibrary() {
+        //check if movie is in library to set appropriate initial state
+        axios.get(`${contextAuth.moovishServer}/profile/library`,
+            { headers: { 'auth-token': contextAuth.token } })
+            //if success
+            .then(r => {
+                //check if any of the movies in library match current movieId
+                r.data.forEach(item => {
+                    if (item.movie_id === movieId) {
+                        setIsInLibrary(true);
+                    }
+                });
+                setIsLoading(false)
+            })
+            //if fail
+            .catch(() => {
+                setIsInLibrary(false);
+            });
+    }
+
+    useEffect(() => {
+        if (movieId) checkLibrary()
+    }, [])
+
     function addToWatchLater() {
+        setIsLoading(true)
         axios.post
             (`${contextAuth.moovishServer}/profile/library`, {
                 movie_id: movieId,
@@ -39,18 +68,27 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
             .then(r => {
                 setIsInLibrary(true)
                 setPendingPopUp({ isActive: true, text: "Added to Library" })
+                setIsLoading(false)
             })
-            .catch(e => alert(e))
+            .catch(e => {
+                setIsLoading(false)
+            })
     }
 
     function removeFromLibrary() {
+        setIsLoading(true)
         axios.delete(`${contextAuth.moovishServer}/profile/library/${movieId}`,
             { headers: { 'auth-token': contextAuth.token } })
             .then(() => {
                 setIsInLibrary(false)
                 setPendingPopUp({ isActive: true, text: "Removed from Library" })
+                setIsLoading(false)
             })
-            .catch(e => console.warn('error:', e))
+            .catch(e => {
+                console.warn('error:', e)
+                setPendingPopUp({ isActive: true, text: "Something went wrong while removing item from library" })
+                setIsLoading(false)
+            })
     }
 
     const styles = StyleSheet.create({
@@ -70,7 +108,7 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
         iconBg: {
             width: 35,
             height: 35,
-            backgroundColor: theme.gray + '4c',
+            backgroundColor: theme.foreground + '88',
             borderRadius: 35,
             justifyContent: 'center',
             alignItems: 'center'
@@ -91,7 +129,7 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
                         style={styles.icon}
                         name="arrow-left"
                         size={20}
-                        color={theme.foreground}
+                        color={theme.background}
                     />
                 </View>
                 <View style={{ flexDirection: 'row' }}>
@@ -99,18 +137,25 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
                     {/* so add to library icon doesnt need to be shown */}
                     {movieId ?
                         <View style={{ ...styles.iconBg, marginRight: 15 }}>
-                            <Feather
-                                style={{ ...styles.icon }}
-                                name={!isInLibrary ? 'plus' : 'minus'}
-                                size={20}
-                                color={theme.foreground}
-                                onTouchEnd={
-                                    contextAuth.isAuth ?
-                                        () => !isInLibrary ? addToWatchLater() : removeFromLibrary()
-                                        :
-                                        () => navigation.push('login')
-                                }
-                            />
+                            {!isLoading ?
+                                <Feather
+                                    style={{ ...styles.icon }}
+                                    name={!isInLibrary ? 'plus' : 'minus'}
+                                    size={20}
+                                    color={theme.background}
+                                    onTouchEnd={
+                                        contextAuth.isAuth ?
+                                            () => !isInLibrary ? addToWatchLater() : removeFromLibrary()
+                                            :
+                                            () => navigation.push('login')
+                                    }
+                                /> : null}
+                            {isLoading ?
+                                <ActivityIndicator
+                                    color={theme.background}
+                                    style={{ alignSelf: 'center' }}
+                                /> : null
+                            }
                         </View> : null
                     }
                     <View style={styles.iconBg}>
@@ -118,7 +163,8 @@ export default function NavButtons({ movieId, movieRuntime, isInLibrary, setIsIn
                             style={styles.icon}
                             name="share"
                             size={20}
-                            color={theme.foreground}
+                            color={theme.background}
+                            onTouchEnd={() => Share.share({ message: movieId ? `https://tmdb.org/movie/${movieId}` : `https://tmdb.org/person/${profileId}` })}
                         />
                     </View>
                 </View>

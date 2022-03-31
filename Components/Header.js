@@ -1,11 +1,11 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import {
     View,
     Text,
-    Image,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    ActivityIndicator
 } from 'react-native'
 
 import { imgPrefixOriginal } from "./Utilities/Utilities";
@@ -14,10 +14,14 @@ import FastImage from "react-native-fast-image";
 
 import { ThemeContext } from "./Contexts/ThemeContext";
 
+import LinearGradient from "react-native-linear-gradient";
+
 const width = Dimensions.get('window').width
 
 export default function Header({ imagePath, fallbackImagePath, title, subtitle, resizeMode = "cover", tintColor = null }) {
     const theme = useContext(ThemeContext)
+    const [isImageLoading, setIsImageLoading] = useState(true)
+
     const styles = StyleSheet.create({
         posterContainer: {
             width: '100%',
@@ -25,6 +29,8 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle, 
             paddingHorizontal: resizeMode === "contain" ? theme.defaultPadding : 0,
             backgroundColor: theme.accent,
             marginBottom: 25,
+            alignContent: 'center',
+            justifyContent: 'center',
         },
         poster: {
             width: '100%',
@@ -46,6 +52,7 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle, 
         subtitle: {
             width: '80%',
             color: theme.foreground,
+            fontFamily: theme.fontRegular
         },
         headerGradient: {
             height: 350,
@@ -53,6 +60,7 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle, 
             position: 'absolute',
             left: 0,
             zIndex: 1,
+            opacity: 0.5,
         },
     })
 
@@ -61,6 +69,17 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle, 
             <View
                 style={styles.posterContainer}
             >
+                {isImageLoading ?
+                    <ActivityIndicator
+                        style={{
+                            position: 'absolute',
+                            alignSelf: 'center',
+                            zIndex: 1,
+                        }}
+                        size="large"
+                        color={theme.background}
+                    /> : null
+                }
                 <FastImage
                     style={styles.poster}
                     source={imagePath ? {
@@ -69,18 +88,18 @@ export default function Header({ imagePath, fallbackImagePath, title, subtitle, 
                     } : require('../assets/images/profile_default.png')}
                     resizeMode={resizeMode}
                     tintColor={tintColor}
+                    onLoad={() => setIsImageLoading(false)}
                 />
             </View>
-            {/* <LinearGradient
-            style={styles.headerGradient}
-            colors={[
-                'rgba(0, 0, 0, 0)',
-
-                'rgba(0, 0, 0, 0)',
-                'rgba(0, 0, 0, 0)',
-                theme.background,
-            ]}
-            /> */}
+            <LinearGradient
+                style={styles.headerGradient}
+                colors={[
+                    'rgba(0, 0, 0, 0)',
+                    'rgba(0, 0, 0, 0)',
+                    'rgba(0, 0, 0, 0)',
+                    theme.accent,
+                ]}
+            />
 
             {/* title */}
             <View style={styles.titleContainer}>
