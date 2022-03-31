@@ -1,31 +1,42 @@
 import React from "react";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
     View,
     Text,
     StyleSheet,
-    LayoutAnimation
+    LayoutAnimation,
+    Pressable
 } from 'react-native'
 import { ThemeContext } from "./Contexts/ThemeContext";
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import Icon from 'react-native-vector-icons/SimpleLineIcons'
-import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import { default as SimpleLineIcons } from 'react-native-vector-icons/SimpleLineIcons'
 
-export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300, marginBottom = 0, width = '100%', iconName = "" }) {
+export default function TextBody({
+    title,
+    text,
+    hideIfLong,
+    maxTextHeight = 300,
+    marginBottom = 0,
+    marginTop = 30,
+    width = '100%',
+    iconName = "",
+    greyedOut = false,
+    bold }) {
     const theme = useContext(ThemeContext)
 
+    const [textHeight, setTextHeight] = useState(maxTextHeight)
     const [isHidden, setIsHidden] = useState(true)
-    const [textHeight, setTextHeight] = useState(0)
 
     const styles = StyleSheet.create({
         section: {
             // backgroundColor: 'blue',
-            width
+            marginBottom,
+            width,
         },
         sectionTitle: {
             flexDirection: 'row',
-            marginBottom: 5,
+            marginBottom: title ? 5 : 0,
             paddingHorizontal: theme.defaultPadding,
         },
         titleText: {
@@ -38,8 +49,10 @@ export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300,
         overviewText: {
             textAlign: 'left',
             color: theme.foreground,
-            maxHeight: isHidden && hideIfLong ? maxTextHeight : '100%',
             paddingHorizontal: theme.defaultPadding,
+            maxHeight: hideIfLong && isHidden ? maxTextHeight : undefined,
+            fontFamily: bold ? theme.fontBold : theme.fontRegular,
+            opacity: greyedOut ? 0.3 : 1
         },
         gradientContainer: {
             width: '100%',
@@ -55,31 +68,30 @@ export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300,
         expandCollapseText: {
             // marginTop: 15,
             color: theme.foreground,
-            marginBottom: 5
+            marginBottom: 5,
+            fontSize: 12
         }
     })
 
     return (
         <Pressable
-            style={{ ...styles.section, marginTop: 30 }}
+            style={{ ...styles.section, marginTop }}
+            onLayout={(t) => {
+                //this gets the height of the text
+                setTextHeight(t.nativeEvent.layout.height - 30)
+            }}
             onPress={() => {
-                if (textHeight > 300) {
-                    LayoutAnimation.configureNext({
-                        duration: 250,
-                        update: {
-                            type: 'spring',
-                            springDamping: 0.7,
-                        },
-                    })
-                    setIsHidden(!isHidden)
-                }
+                LayoutAnimation.configureNext({
+                    duration: 500,
+                    update: {
+                        type: 'spring',
+                        springDamping: 0.7,
+                    },
+                })
+                setIsHidden(!isHidden)
             }}
         >
-            <View
-                onLayout={e => {
-                    setTextHeight(e.nativeEvent.layout.height)
-                }}
-            >
+            {title ?
                 <View style={styles.sectionTitle}>
                     {iconName ?
                         <MaterialCommunityIcons
@@ -87,44 +99,48 @@ export default function TextBody({ title, text, hideIfLong, maxTextHeight = 300,
                             color={theme.foreground}
                             size={20}
                         /> : null}
-                    {title ? <Text style={styles.titleText}>
+                    <Text style={styles.titleText}>
                         {title}
-                    </Text> : null}
-                </View>
-                <Text style={styles.overviewText}>
+                    </Text>
+                </View> : null}
+            <View
+            >
+                <Text
+                    style={styles.overviewText}>
                     {text}
                 </Text>
             </View>
             {/* {isHidden && hideIfLong ?
-            <View style={styles.gradient} pointerEvents="none">
-                <LinearGradient
-                colors={[
-                    'rgba(0, 0, 0, 0)',
-                    theme.background,
-                ]}
-                style={styles.gradient}
-                />
-            </View> : null
+                <View style={styles.gradient} pointerEvents="none">
+                    <LinearGradient
+                        colors={[
+                            'rgba(0, 0, 0, 0)',
+                            theme.background,
+                        ]}
+                        style={styles.gradient}
+                    />
+                </View> : null
             } */}
 
-            {hideIfLong ? <View
-                style={{
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                    marginTop: marginBottom ? marginBottom : 20,
-                    height: textHeight > maxTextHeight ? undefined : 0,
-                    flexDirection: isHidden ? 'column' : 'column-reverse'
-                }}
-            >
-                {textHeight > maxTextHeight ?
-                    <Text style={{ ...styles.expandCollapseText }}>
-                        {isHidden ? 'Expand...' : textHeight > maxTextHeight ? 'Collapse...' : null}
-                    </Text> : null
-                }
-                {textHeight > maxTextHeight && <Icon name={isHidden ? 'arrow-down' : 'arrow-up'} size={12} color={theme.foreground} />}
-            </View> : null
+            {
+                hideIfLong && textHeight >= maxTextHeight ?
+                    <View
+                        style={{
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                            marginTop: marginBottom ? marginBottom : 20,
+                            //making it reverse puts arrow on top of 'collapse' text
+                            flexDirection: isHidden ? 'column' : 'column-reverse',
+                            height: 30,
+                        }}
+                    >
+                        <Text style={{ ...styles.expandCollapseText }}>
+                            {isHidden ? 'Expand' : 'Collapse'}
+                        </Text>
+                        <SimpleLineIcons name={isHidden ? 'arrow-down' : 'arrow-up'} size={12} color={theme.foreground} />
+                    </View> : null
             }
 
-        </Pressable>
+        </Pressable >
     )
 }
