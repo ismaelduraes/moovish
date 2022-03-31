@@ -68,11 +68,11 @@ export default function Trending() {
             marginBottom: theme.homeComponentsBottomMargin,
         },
         sectionTitle: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
-            marginBottom: 15,
+            marginBottom: 10,
         },
         title: {
             fontSize: 16,

@@ -48,11 +48,11 @@ export default function New() {
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
-            marginBottom: 15,
+            marginBottom: 10,
         },
         scrollView: {
             paddingHorizontal: theme.defaultPadding,

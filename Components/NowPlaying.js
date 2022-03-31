@@ -55,18 +55,17 @@ export default function NowPlaying() {
         sectionTitle: {
             textAlign: 'left',
 
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
         },
         overview: {
-            marginTop: 15,
+            marginTop: 5,
             textAlign: 'left',
             paddingHorizontal: theme.defaultPadding,
             width: '100%',
             color: theme.foreground,
             fontFamily: theme.fontRegular,
-            fontSize: 14
         },
         gradient: {
             position: 'absolute',
