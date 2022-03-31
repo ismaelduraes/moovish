@@ -112,7 +112,7 @@ export default function Comment({ comment }) {
                 <TextBody
                     text={commentText}
                     hideIfLong
-                    maxTextHeight={300}
+                    maxTextHeight={80}
                     marginTop={10}
                     greyedOut={commentHidden ? true : false}
                     bold={commentHidden ? true : false}
