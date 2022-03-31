@@ -95,7 +95,7 @@ export default function Trending() {
             width: '100%',
             alignSelf: 'center',
             color: theme.foreground,
-            opacity: 0.7
+            opacity: 0.5
         },
     })
 
