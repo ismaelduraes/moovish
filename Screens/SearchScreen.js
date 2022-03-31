@@ -165,6 +165,7 @@ export default function SearchScreen() {
                             key={item.index}
                             data={item.item}
                             marginBottom={15}
+                            cutText={false}
                             // marginRight={0}
                             width={width / 3 - 20}
                         // alignCenter={true}

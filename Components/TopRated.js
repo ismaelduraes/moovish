@@ -44,11 +44,11 @@ export default function TopRated() {
             opacity: containerOpacityAnim
         },
         sectionTitle: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             paddingHorizontal: theme.defaultPadding,
-            marginBottom: 15,
+            marginBottom: 10,
         },
         caption: {
             fontFamily: theme.fontRegular,

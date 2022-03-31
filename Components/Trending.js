@@ -75,7 +75,7 @@ export default function Trending() {
             marginBottom: 10,
         },
         title: {
-            fontSize: 16,
+            fontSize: 14,
             color: theme.foreground,
             fontFamily: theme.fontBold,
             marginTop: 20,
@@ -90,12 +90,12 @@ export default function Trending() {
         },
         overview: {
             textAlign: 'left',
-            marginTop: 10,
+            marginTop: 5,
             fontFamily: theme.fontRegular,
             width: '100%',
             alignSelf: 'center',
             color: theme.foreground,
-            opacity: 0.6
+            opacity: 0.7
         },
     })
 

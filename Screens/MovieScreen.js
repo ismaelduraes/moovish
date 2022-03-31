@@ -88,7 +88,7 @@ export default function MovieScreen({ route }) {
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
                 setSimilar(d.data.similar.results)
-                setReviews(d.data.reviews.results)
+                setReviews(d.data.reviews.results.slice(0, 10))
 
                 //get watch providers
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${TMDB_API_KEY}`)
@@ -122,7 +122,7 @@ export default function MovieScreen({ route }) {
             marginHorizontal: 10,
         },
         companyLogoContainer: {
-            backgroundColor: theme.accent,
+            backgroundColor: theme.background,
             padding: 5,
             paddingVertical: 10,
             borderRadius: theme.borderRadius / 2
@@ -239,10 +239,10 @@ export default function MovieScreen({ route }) {
                                 source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
                                 style={styles.companyLogo}
                                 resizeMode="contain"
-                                tintColor={theme.background}
+                                tintColor={theme.foreground}
                             />
                             :
-                            <Text style={{ ...styles.smallText, color: theme.background }}>
+                            <Text style={{ ...styles.smallText, color: theme.accent }}>
                                 {productionCompany ? productionCompany.name :
                                     'Unknown Production Company'
                                 }
