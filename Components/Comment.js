@@ -72,17 +72,14 @@ export default function Comment({ comment }) {
         //some avatar image urls come with full links and some don't. this function checks for that and returns full links
         const path = comment.author_details.avatar_path
         if (path.includes('https://')) {
-            console.log(path.slice(1))
             return path.slice(1)
         }
-        console.log(imgPrefixOriginal + path)
         return imgPrefixOriginal + path
     }
 
     function filterComment() {
         var removeHtmlRegex = /(<([^>]+)>)/ig
         var urlCheckRegex = new RegExp('([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?([^ ])+').test(comment.content)
-        console.log(urlCheckRegex)
         if (lowQualityCommenters.includes(comment.author_details.username.toLowerCase()) || urlCheckRegex) {
             setCommentHidden(true)
             setCommentText('This comment has been automatically hidden because our systems tagged it as being low quality and/or harmful')
