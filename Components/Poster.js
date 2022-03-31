@@ -2,14 +2,15 @@ import React from "react";
 import {
     useContext,
     useRef,
-    useEffect
+    useEffect,
+    useState
 } from "react";
 import {
     StyleSheet,
     Animated,
     Easing,
     Dimensions,
-    Image,
+    ActivityIndicator,
     View,
 } from 'react-native'
 
@@ -24,9 +25,10 @@ import LinearGradient from "react-native-linear-gradient";
 const width = Dimensions.get('window').width
 
 export default function Poster({
-    movie,
+    data,
     //↓disable if you want to add custom text
     showText = true,
+    cutText = false,
     showGradient = false,
     useBackdrop = false,
     originalQuality = false,
@@ -43,6 +45,8 @@ export default function Poster({
     alignCenter
 }) {
     const theme = useContext(ThemeContext)
+    const [isImageLoading, setIsImageLoading] = useState(true)
+
     const navigation = useNavigation()
 
     const slideAnim = useRef(new Animated.Value(animate ? 200 : 0)).current
@@ -67,12 +71,13 @@ export default function Poster({
             marginBottom,
             transform: [{ 'translateY': slideAnim }],
             width: width,
-            alignSelf: alignCenter ? 'center' : 'auto'
+            alignSelf: alignCenter ? 'center' : 'auto',
+            // backgroundColor: 'blue'
         },
         gradient: {
             width: '100%',
-            top: '80%',
-            height: '20%',
+            top: '60%',
+            height: '40%',
             position: 'absolute',
             zIndex: 1,
         },
@@ -95,12 +100,19 @@ export default function Poster({
     return (
         <Animated.View
             style={styles.container}
-            key={movie.id}
-            removeClippedSubviews
+            key={data.id}
+        // removeClippedSubviews
         >
             <Pressable
-                onPress={() =>
-                    navigation.push('movie', { movieId: movie.id })
+                onPress={() => {
+                    console.log(data.media_type)
+                    if (data.media_type === "movie" || data.media_type === undefined) {
+                        navigation.push('movie', { movieId: data.id })
+                    }
+                    else if (data.media_type === "tv") {
+                        navigation.push('show', { showId: data.id })
+                    }
+                }
                 }
             >
                 <View>
@@ -109,19 +121,32 @@ export default function Poster({
                             colors={['rgba(0,0,0,0)', theme.background]}
                             style={styles.gradient}
                         /> : null}
+                    {isImageLoading ?
+                        <ActivityIndicator
+                            style={{
+                                position: 'absolute',
+                                alignSelf: 'center',
+                                zIndex: 1,
+                                height: '100%'
+                            }}
+                            size="large"
+                            color={theme.background}
+                        /> : null
+                    }
                     <FastImage
                         style={styles.banner}
                         source={{
-                            uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop ? movie.backdrop_path : movie.poster_path}`,
+                            uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${useBackdrop ? data.backdrop_path : data.poster_path}`,
                             priority: FastImage.priority.high
                         }
                         }
+                        onLoad={() => setIsImageLoading(false)}
                     />
                 </View>
             </Pressable>
             {showText &&
                 <Animated.Text style={styles.title}>
-                    {movie.title}
+                    {data.name ? data.name.slice(0, 20) : data.title.slice(0, 20)}{data.name ? (data.name.length > 30 ? '...' : '') : (data.title.length > 30 ? '...' : '')}
                 </Animated.Text>}
 
         </Animated.View>
