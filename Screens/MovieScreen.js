@@ -78,6 +78,7 @@ export default function MovieScreen({ route }) {
     }, [movieImages])
 
     function fetchAllData() {
+        setIsLoading(true)
         axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,reviews`)
             .then(d => {
                 //insert data into their own state
