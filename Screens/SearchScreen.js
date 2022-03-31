@@ -28,6 +28,7 @@ import { ThemeContext } from "../Components/Contexts/ThemeContext"
 import { TMDB_API_KEY } from '@env'
 import { imgPrefix } from "../Components/Utilities/Utilities"
 import { SafeAreaView } from "react-native-safe-area-context"
+import Poster from "../Components/Poster";
 const width = Dimensions.get('window').width
 
 export default function SearchScreen() {
@@ -43,7 +44,7 @@ export default function SearchScreen() {
 
     function fetchData() {
         setIsLoading(true)
-        axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${query}&page=1`)
+        axios.get(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${query}&page=1`)
             .then(r => {
                 setIsLoading(false)
                 setResults(r.data.results)
@@ -66,7 +67,8 @@ export default function SearchScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             alignSelf: 'center',
-            paddingHorizontal: theme.defaultPadding
+            // backgroundColor: 'blue',
+            // paddingHorizontal: theme.defaultPadding
         },
         scrollView: {
             marginTop: 40,
@@ -122,31 +124,6 @@ export default function SearchScreen() {
         },
     })
 
-    function ResultItem({ item, index }) {
-        return (
-            <Pressable
-                style={{
-                    width: '90%',
-                    alignSelf: 'center'
-                }}
-                onPress={() => navigation.push('movie', { movieId: item.id })}>
-                <View>
-                    <Image
-                        source={{ uri: `${imgPrefix}${item.popularity > 150 ? item.backdrop_path : item.poster_path}` }}
-                        style={{
-                            ...styles.resultImage,
-                            width: '100%',
-                            height: 220
-                        }}
-                    />
-                    <Text style={styles.resultText}>
-                        {item.title}
-                    </Text>
-                </View>
-            </Pressable>
-        )
-    }
-
     return (
         <SafeAreaView style={styles.container}>
 
@@ -182,9 +159,25 @@ export default function SearchScreen() {
             </View>
             <MasonryList
                 data={results}
-                renderItem={ResultItem}
-                numColumns={2}
-                containerStyle={{ marginTop: 30, paddingHorizontal: theme.defaultPadding }}
+                renderItem={(item) => {
+                    if (item.item.poster_path || item.item.backdrop_path) return (
+                        <Poster
+                            key={item.index}
+                            data={item.item}
+                            marginBottom={15}
+                            // marginRight={0}
+                            width={width / 3 - 20}
+                        // alignCenter={true}
+                        />
+                    )
+                }}
+                numColumns={3}
+                containerStyle={{
+                    marginTop: 30,
+                    marginHorizontal: theme.defaultPadding
+                }}
+                contentContainerStyle={{}}
+                style={{ justifyContent: 'center' }}
                 onRefresh={() => fetchData}
                 refreshing={isLoading}
             />
