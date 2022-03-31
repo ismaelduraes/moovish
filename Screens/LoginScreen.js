@@ -318,9 +318,8 @@ export default function LoginScreen() {
                 }
                 <Recaptcha
                     siteKey={contextAuth.captchaKey}
-                    baseUrl={`${contextAuth.moovishServer.replace(':8080', '')}`}
+                    baseUrl={`${contextAuth.moovishServer}`}
                     onVerify={token => {
-                        console.log(token)
                         signup(token)
                     }}
                     size="normal"
