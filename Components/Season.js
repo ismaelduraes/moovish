@@ -13,11 +13,15 @@ import {
 import { ThemeContext } from './Contexts/ThemeContext'
 import { imgPrefixLow } from './Utilities/Utilities'
 
+import { useNavigation } from '@react-navigation/native'
+
 
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
-export default function Season({ data, showCharacter = false, tmdbLink = 'https://tmdb.org' }) {
+export default function Season({ data, showId, }) {
     const theme = useContext(ThemeContext)
+    const navigation = useNavigation()
+
     const [showAll, setShowAll] = useState(false)
 
     const styles = StyleSheet.create({
@@ -70,7 +74,7 @@ export default function Season({ data, showCharacter = false, tmdbLink = 'https:
             width: 130,
             alignSelf: 'center',
             borderRadius: theme.borderRadius * 2,
-            backgroundColor: theme.accent,
+            backgroundColor: theme.gray,
             padding: 10
         }
     })
@@ -95,7 +99,7 @@ export default function Season({ data, showCharacter = false, tmdbLink = 'https:
             {data.slice(0, showAll ? data.length : 3).map((item, index) => {
                 return (
                     <Pressable
-                        onPress={() => openLink()}
+                        onPress={() => navigation.push('season', { showId, seasonNumber: item.season_number })}
                         style={{ marginRight: 7 }}
                         key={index}
                     >
@@ -160,7 +164,7 @@ export default function Season({ data, showCharacter = false, tmdbLink = 'https:
                     setShowAll(!showAll)
                 }}
             >
-                <Text style={{ ...styles.name, textAlign: 'center', color: theme.background }}>
+                <Text style={{ ...styles.name, textAlign: 'center', color: theme.foreground }}>
                     {showAll ? 'Show less...' : 'Show all...'}
                 </Text>
             </Pressable> : null}
