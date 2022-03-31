@@ -80,6 +80,7 @@ export default function TVShowScreen({ route }) {
     }, [showImages])
 
     function fetchAllData() {
+        setIsLoading(true)
         axios.get(`https://api.themoviedb.org/3/tv/${showId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,reviews`)
             .then(d => {
                 //insert data into their own state
@@ -89,10 +90,11 @@ export default function TVShowScreen({ route }) {
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
                 setSimilar(d.data.similar.results)
-                setReviews(d.data.reviews.results)
+                setReviews(d.data.reviews.results.splice(0, 5))
                 setSeasons(d.data.seasons)
+                setIsLoading(false)
             })
-            .catch(e => console.log(e.response.data))
+            .catch(e => setIsError(true))
     }
 
     function ratingColor(rating) {
@@ -186,6 +188,8 @@ export default function TVShowScreen({ route }) {
         }
     })
 
+    if (isLoading) return <Loading isError={isError} />
+
     return (
         <View style={styles.container}>
             {/* <Nav/> */}
@@ -273,15 +277,16 @@ export default function TVShowScreen({ route }) {
                     /> : null
                 }
 
-                <Season
-                    data={seasons}
-                />
-
                 {watchOn.BR && watchOn.BR.flatrate ?
                     <WatchOn
                         data={watchOn.BR.flatrate}
                         tmdbLink={watchOn.hasOwnProperty('US') ? watchOn.US.link : ''}
                     /> : null}
+
+                <Season
+                    data={seasons}
+                    showId={showId}
+                />
 
                 {/* Images carousel */}
                 {showImages.length > 0 ?
@@ -306,6 +311,7 @@ export default function TVShowScreen({ route }) {
 
                     </View> : null
                 }
+
 
                 {/* Cast */}
                 {cast.acting ?
