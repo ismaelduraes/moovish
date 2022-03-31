@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useLayoutEffect, useEffect, useContext } from "react";
+import { useState, useMemo, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -7,7 +7,7 @@ import {
     ScrollView,
     StyleSheet,
     Dimensions,
-    FlatList
+    Image
 } from "react-native";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 
@@ -16,22 +16,23 @@ import { TMDB_API_KEY } from '@env'
 import { sortCast, sortCrew } from "../Components/Utilities/CreditsSort";
 
 import Header from "../Components/Header";
-import TextBody from "../Components/TextBody";
 import HorizontalProfileList from "../Components/HorizontalProfileList";
 import ImageCarousel from "../Components/ImageCarousel";
 import AndroidStatusBarGradient from '../Components/AndroidStatusBarGradient'
 import NavButtons from "../Components/NavButtons";
 import Loading from "../Components/Loading";
+import Comment from "../Components/Comment";
+import WatchOn from "../Components/WatchOn";
 
 import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import { AuthContext } from "../Components/Contexts/AuthContext";
 
 import axios from "axios";
 import FastImage from "react-native-fast-image";
-import WatchOn from "../Components/WatchOn";
+import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { useNavigation } from "@react-navigation/native";
-import Poster from "../Components/Poster";
+import TextBody from "../Components/TextBody";
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('screen').height
@@ -42,13 +43,13 @@ export default function MovieScreen({ route }) {
     const [movieImages, setMovieImages] = useState([])
     const [watchOn, setWatchOn] = useState([])
     const [similar, setSimilar] = useState([])
+    const [reviews, setReviews] = useState([])
     const [movieVideo, setMovieVideo] = useState([])
 
     const navigate = useNavigation()
 
     const [cast, setCast] = useState({})
     const [crew, setCrew] = useState({})
-    const [isInLibrary, setIsInLibrary] = useState(false)
 
     const [isLoading, setIsLoading] = useState(true)
     const [isError, setIsError] = useState(false)
@@ -68,7 +69,7 @@ export default function MovieScreen({ route }) {
             setCast({})
             setCrew({})
         })
-    }, [isInLibrary])
+    }, [])
 
     useEffect(() => {
         //remove first image as it's already
@@ -76,9 +77,8 @@ export default function MovieScreen({ route }) {
         movieImages.shift()
     }, [movieImages])
 
-    async function fetchAllData() {
-
-        await axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar`)
+    function fetchAllData() {
+        axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,reviews`)
             .then(d => {
                 //insert data into their own state
                 setMovieData(d.data)
@@ -88,25 +88,13 @@ export default function MovieScreen({ route }) {
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
                 setSimilar(d.data.similar.results)
+                setReviews(d.data.reviews.results)
 
                 //get watch providers
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${TMDB_API_KEY}`)
                     .then(d => {
                         setWatchOn(d.data.results)
                     })
-
-                //check if movie is in library
-                axios.get(`${contextAuth.moovishServer}/profile/library`,
-                    { headers: { 'auth-token': contextAuth.token } })
-                    .then(r => {
-                        //check if any of the movies in library match current movieId
-                        r.data.forEach(item => {
-                            if (item.movie_id === movieId) {
-                                setIsInLibrary(true)
-                            }
-                        })
-                    })
-                    .catch(() => setIsInLibrary(false))
 
                 setIsLoading(false)
             })
@@ -134,7 +122,7 @@ export default function MovieScreen({ route }) {
             marginHorizontal: 10,
         },
         companyLogoContainer: {
-            backgroundColor: theme.gray,
+            backgroundColor: theme.accent,
             padding: 5,
             paddingVertical: 10,
             borderRadius: theme.borderRadius / 2
@@ -144,18 +132,19 @@ export default function MovieScreen({ route }) {
             maxWidth: 150,
             textAlign: 'center',
             paddingHorizontal: '3%',
+            fontFamily: theme.fontRegular
             // backgroundColor: 'red'
         },
         rating: {
             flexDirection: 'row',
             alignItems: 'center',
             marginHorizontal: theme.defaultPadding,
-            justifyContent: 'center',
+            justifyContent: 'space-around',
             borderColor: theme.accent + '1a',
             borderWidth: 3,
             borderRadius: theme.borderRadius,
             overflow: 'hidden',
-            paddingVertical: 15,
+            paddingVertical: 10,
             marginTop: 20
         },
         ratingAverage: {
@@ -171,13 +160,14 @@ export default function MovieScreen({ route }) {
             maxWidth: '100%',
             textAlign: 'center',
             paddingHorizontal: '3%',
+            fontFamily: theme.fontRegular
         },
         companies: {
             textAlign: 'center',
             color: theme.accent
         },
         sectionTitle: {
-            fontSize: 18,
+            fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
             marginBottom: 10,
@@ -198,7 +188,7 @@ export default function MovieScreen({ route }) {
             zIndex: -1,
             //dark theme has less opacity on blurred image
             //to keep theme darker
-            opacity: theme.type === 'light' ? 0 : 0.07
+            opacity: theme.type === 'light' ? 0 : 0.1
         }
     })
 
@@ -211,8 +201,8 @@ export default function MovieScreen({ route }) {
             <NavButtons
                 movieId={movieId}
                 movieRuntime={movieData.runtime}
-                isInLibrary={isInLibrary}
-                setIsInLibrary={setIsInLibrary}
+            // isInLibrary={isInLibrary}
+            // setIsInLibrary={setIsInLibrary}
             />
 
             {/* background image */}
@@ -234,13 +224,6 @@ export default function MovieScreen({ route }) {
                     subtitle={movieData.tagline}
                 />
 
-                {/* Overview */}
-                {movieData.overview ?
-                    <TextBody
-                        title="Overview"
-                        text={movieData.overview}
-                    /> : null
-                }
                 {/* Ratings */}
                 <View style={{ ...styles.rating }}>
                     <Pressable
@@ -256,10 +239,10 @@ export default function MovieScreen({ route }) {
                                 source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
                                 style={styles.companyLogo}
                                 resizeMode="contain"
-                                tintColor={theme.foreground}
+                                tintColor={theme.background}
                             />
                             :
-                            <Text style={styles.smallText}>
+                            <Text style={{ ...styles.smallText, color: theme.background }}>
                                 {productionCompany ? productionCompany.name :
                                     'Unknown Production Company'
                                 }
@@ -289,34 +272,45 @@ export default function MovieScreen({ route }) {
                     }
                 </View>
 
-                {watchOn.BR && watchOn.BR.flatrate ? <WatchOn
-                    data={watchOn.BR.flatrate}
-                /> : null}
+                {/* Overview */}
+                {movieData.overview ?
+                    <TextBody
+                        title="Overview"
+                        text={movieData.overview}
+                    /> : null
+                }
+
+                {watchOn.BR && watchOn.BR.flatrate ?
+                    <WatchOn
+                        data={watchOn.BR.flatrate}
+                        tmdbLink={watchOn.hasOwnProperty('US') ? watchOn.US.link : ''}
+                    /> : null}
 
                 {/* Images carousel */}
                 {movieImages.length > 0 ?
-                    <ImageCarousel showsIcon={false} data={movieImages} /> : null
+                    <ImageCarousel originalQuality={false} showsIcon={false} data={movieImages.slice(0, 5)} /> : null
                 }
 
-                <Text style={{ ...styles.sectionTitle, marginTop: 30 }}>
-                    You might also like
-                </Text>
 
-                <FlatList
-                    horizontal
-                    data={similar.splice(0, 5)}
-                    renderItem={(item) => {
-                        return (
-                            <Poster
-                                movie={item.item}
-                            />
-                        )
-                    }}
-                    contentContainerStyle={{ paddingLeft: theme.defaultPadding }}
-                    style={{ marginTop: 5 }}
-                    showsHorizontalScrollIndicator={false}
-                />
 
+                {reviews.length > 0 ?
+                    <View style={{ marginTop: 30 }}>
+                        <Text style={styles.sectionTitle}>
+                            Reviews, thoughts ({reviews.length})
+                        </Text>
+                        {
+                            reviews.map((item, index) => {
+                                return (
+                                    <Comment
+                                        key={index}
+                                        comment={item}
+                                    />
+                                )
+                            })
+                        }
+
+                    </View> : null
+                }
                 {/* Cast */}
                 {cast.acting ?
                     <HorizontalProfileList
@@ -324,6 +318,18 @@ export default function MovieScreen({ route }) {
                         title="Cast"
                     /> : null
                 }
+
+                <View style={{ marginTop: 30, }}>
+                    <Text style={{ ...styles.text, opacity: 0.5, fontFamily: theme.fontBold }}>
+                        You've reached the end. What a ride!
+                    </Text>
+                    <MaterialCommunityIcons
+                        name="dog"
+                        style={{ marginBottom: 20, opacity: 0.5, alignSelf: 'center' }}
+                        color={theme.foreground}
+                        size={30}
+                    />
+                </View>
 
                 {/* Video */}
                 {/* {movieVideo ?
