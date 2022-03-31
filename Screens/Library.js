@@ -89,7 +89,7 @@ export default function Library() {
     }
 
     function deleteMovie() {
-        axios.delete(`${contextAuth.moovishServer}/profile/library${pendingModal.movieId}`,
+        axios.delete(`${contextAuth.moovishServer}/profile/library/${pendingModal.movieId}`,
             { headers: { 'auth-token': contextAuth.token } })
             .then(() => {
                 fetchData()
