@@ -144,10 +144,14 @@ export default function Poster({
                     />
                 </View>
             </Pressable>
-            {showText &&
+            {showText && cutText ?
                 <Animated.Text style={styles.title}>
-                    {data.name ? data.name.slice(0, 20) : data.title.slice(0, 20)}{data.name ? (data.name.length > 30 ? '...' : '') : (data.title.length > 30 ? '...' : '')}
-                </Animated.Text>}
+                    {data.name ? data.name.slice(0, 20) : data.title.slice(0, 20)}{data.name ? (data.name.length >= 30 ? '...' : '') : (data.title.length >= 30 ? '...' : '')}
+                </Animated.Text> : null}
+            {showText && !cutText ?
+                <Animated.Text style={styles.title}>
+                    {data.name ? data.name : data.title}
+                </Animated.Text> : null}
 
         </Animated.View>
     )
