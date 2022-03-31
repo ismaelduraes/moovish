@@ -66,7 +66,7 @@ export default function VerifyEmail({ route }) {
 
     function resendVerify(token) {
         setIsLoading(true)
-        axios.post(`${contextAuth.moovishServer}/verify/resend`, { email, captcha: token })
+        axios.post(`${contextAuth.moovishServer}/profile/verify/resend`, { email, captcha: token })
             .then(() => {
                 setPendingModal({
                     isActive: true,
@@ -233,7 +233,7 @@ export default function VerifyEmail({ route }) {
 
             <Recaptcha
                 siteKey={contextAuth.captchaKey}
-                baseUrl={contextAuth.moovishServer.replace(':8080', '')}
+                baseUrl={`http://localhost:8080`}
                 onVerify={token => {
                     setToken(token)
                     resendVerify(token)
