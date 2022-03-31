@@ -56,7 +56,9 @@ export default function ProfileScreen({ route }) {
     else return (
         <View style={{ backgroundColor: theme.background }}>
             <AndroidStatusBarGradient />
-            <NavButtons />
+            <NavButtons
+                profileId={profileId}
+            />
             {/* <Image
                 style={styles.imageBg}
                 source={{ uri: `${imgPrefixOriginal}${profileData.profile_path}` }}
@@ -92,7 +94,7 @@ export default function ProfileScreen({ route }) {
                     />
                 </View>
                 <ImageCarousel
-                    data={profileData.images.profiles}
+                    data={profileData.images.profiles.slice(0, 20)}
                     isSquare
                     canChangeResize
                 />
