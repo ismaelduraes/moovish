@@ -15,6 +15,7 @@ import { themes } from './Components/Contexts/ThemeContext'
 
 import Main from './Screens/Main'
 import MovieScreen from './Screens/MovieScreen'
+import TVShowScreen from './Screens/TVShowScreen'
 import SearchScreen from './Screens/SearchScreen'
 import ProfileScreen from './Screens/ProfileScreen'
 import Library from './Screens/Library'
@@ -44,10 +45,7 @@ export default function App() {
   const [moovishServer, setMoovishServer] = useState(process.env.production ? 'https://moovish.durev.net' : 'http://localhost:8080')
   const [captchaKey, setCaptchaKey] = useState(process.env.production ? RECAPTCHA_CLIENT_KEY : RECAPTCHA_CLIENT_KEY_LOCAL)
 
-  console.log(process.env.production)
-
   console.log('connecting to', moovishServer)
-  console.log(captchaKey)
 
   function checkAuth() {
     RNSecureKeyStore.get('auth_token')
@@ -120,6 +118,7 @@ export default function App() {
               <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="home" component={Main} />
                 <Stack.Screen name="movie" component={MovieScreen} />
+                <Stack.Screen name="show" component={TVShowScreen} />
                 <Stack.Screen name="profile" component={ProfileScreen} />
                 <Stack.Screen name="search" component={SearchScreen} />
                 <Stack.Screen name="login" component={LoginScreen} />
