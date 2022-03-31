@@ -10,21 +10,27 @@ import {
     Text,
     StyleSheet,
     Dimensions,
+    Pressable
 } from 'react-native'
 
+import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 
 import { ThemeContext } from './Contexts/ThemeContext'
+import { TMDB_API_KEY } from '@env'
 
 import Poster from './Poster'
 
-import { TMDB_API_KEY } from '@env'
+
+import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 
 export default function NowPlaying() {
     const theme = useContext(ThemeContext)
+
+    const navigation = useNavigation()
 
     const [nowPlaying, setNowPlaying] = useState({})
 
@@ -49,14 +55,12 @@ export default function NowPlaying() {
         sectionTitle: {
             textAlign: 'left',
 
-            fontSize: 20,
+            fontSize: 18,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            marginHorizontal: theme.defaultPadding,
-            marginBottom: 15,
-            marginTop: 30,
         },
         overview: {
+            marginTop: 15,
             textAlign: 'left',
             paddingHorizontal: theme.defaultPadding,
             width: '100%',
@@ -76,7 +80,7 @@ export default function NowPlaying() {
     return (
         <View style={styles.container}>
             <Poster
-                movie={nowPlaying}
+                data={nowPlaying}
                 width={width}
                 height={height * 0.5}
                 marginRight={0}
@@ -87,14 +91,32 @@ export default function NowPlaying() {
                 showGradient={true}
                 useBackdrop
             />
-            <View style={styles.text}>
-                <Text style={styles.sectionTitle}>
-                    {nowPlaying.title}
-                </Text>
+            <Pressable
+                style={styles.text}
+                onPress={() => navigation.push('movie', { movieId: nowPlaying.id })}
+            >
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginHorizontal: theme.defaultPadding
+                    }}
+                >
+                    <Text style={styles.sectionTitle}>
+                        {nowPlaying.title}
+                    </Text>
+                    <MaterialCommunityIcons
+                        name="chevron-right"
+                        color={theme.foreground}
+                        size={25}
+                        style={{ marginLeft: 5 }}
+                    />
+                </View>
                 <Text style={styles.overview}>
                     {nowPlaying.overview}
                 </Text>
-            </View>
+            </Pressable>
+
         </View>
     )
 }
