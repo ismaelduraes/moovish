@@ -17,7 +17,7 @@ export const themes = {
     },
     dark: {
         type: 'dark',
-        accent: '#E4572E',
+        accent: '#e42e4c',
         accentAlt: '#266DD3',
         background: '#000000', //black
         foreground: '#f9e7e7',
@@ -25,7 +25,7 @@ export const themes = {
         fontRegular: 'Rubik-Regular',
         fontBold: 'Rubik-Bold',
         defaultPadding: 20,
-        borderRadius: 15,
+        borderRadius: 10,
         homeComponentsBottomMargin: '10%'
     }
 }

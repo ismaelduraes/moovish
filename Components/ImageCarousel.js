@@ -6,10 +6,9 @@ import {
     Image,
     StyleSheet,
     Dimensions,
-    TouchableHighlight
+    TouchableHighlight,
+    ActivityIndicator
 } from 'react-native'
-
-import FastImage from "react-native-fast-image"
 
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -17,12 +16,15 @@ import Carousel from 'react-native-snap-carousel'
 import { ThemeContext } from "./Contexts/ThemeContext"
 
 import { imgPrefix, imgPrefixOriginal } from "./Utilities/Utilities"
+import IndexDots from "./IndexDots"
 
 const width = Dimensions.get('window').width
 
 export default function ImageCarousel({ data = [], isSquare = false, canChangeResize = false, originalQuality = true, showsIcon = true }) {
     const theme = useContext(ThemeContext)
     const [resizeMode, setResizeMode] = useState('cover')
+    const [isImageLoading, setIsImageLoading] = useState(true)
+    const [activeSlide, setActiveSlide] = useState(0)
 
     const styles = StyleSheet.create({
         section: {
@@ -43,12 +45,14 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
             backgroundColor: theme.accent,
             alignSelf: 'center',
             overflow: 'hidden',
+            alignItems: 'center',
+            justifyContent: 'center'
         },
         image: {
             height: isSquare ? width - (theme.defaultPadding * 2) : width * 0.5,
-            width: width - (theme.defaultPadding * 2) - 7,
+            width: width - (theme.defaultPadding * 2),
             resizeMode: canChangeResize ? resizeMode : 'cover',
-            zIndex: 1
+            zIndex: 1,
         },
         imageBackground: {
             height: isSquare ? width - (theme.defaultPadding * 2) : 190,
@@ -77,12 +81,11 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
             </View>
             <Carousel
                 data={data}
-                removeClippedSubviews
                 sliderWidth={width}
-                itemWidth={width - (theme.defaultPadding * 2) - 7}
-                layout="default"
-                enableMomentum={true}
-                decelerationRate={0.9}
+                itemWidth={width - (theme.defaultPadding * 2)}
+                layout="stack"
+                layoutCardOffset={10}
+                onSnapToItem={i => setActiveSlide(i)}
                 renderItem={(item) => {
                     return (
                         <View style={{
@@ -90,7 +93,6 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
                             alignItems: 'center',
                         }}
                             key={item.index}
-                            removeClippedSubviews
                         >
                             <TouchableHighlight
                                 onPress={() => {
@@ -99,10 +101,23 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
                                 style={styles.imageContainer}
                             >
                                 <View>
+                                    {isImageLoading ?
+                                        <ActivityIndicator
+                                            style={{
+                                                position: 'absolute',
+                                                alignSelf: 'center',
+                                                zIndex: 1,
+                                                height: '100%'
+                                            }}
+                                            size="large"
+                                            color={theme.background}
+                                        /> : null
+                                    }
                                     <Image
                                         style={styles.image}
                                         source={{ uri: `${originalQuality ? imgPrefixOriginal : imgPrefix}${item.item.file_path}` }}
                                         resizeMode={resizeMode}
+                                        onLoad={() => setIsImageLoading(false)}
                                     />
                                     {resizeMode === 'contain' && <Image
                                         style={styles.imageBackground}
@@ -118,6 +133,12 @@ export default function ImageCarousel({ data = [], isSquare = false, canChangeRe
                     )
                 }}
             />
+            {data.length > 1 ?
+                <IndexDots
+                    data={data}
+                    active={activeSlide}
+                /> : null
+            }
         </View>
     ) : null
 }

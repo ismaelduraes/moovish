@@ -5,26 +5,19 @@ import {
     Text,
     StyleSheet,
     View,
-    Platform,
-    NativeModules
 } from 'react-native'
 
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { useNavigation } from '@react-navigation/native'
 import { default as MaterialIcons } from 'react-native-vector-icons/MaterialIcons'
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
-import LinearGradient from 'react-native-linear-gradient';
 
-import { PropsContext } from './Contexts/PropsContext'
 import { AuthContext } from './Contexts/AuthContext'
-import { themes } from './Contexts/ThemeContext'
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function Nav({ isOnSearch = false, title = 'moovish' }) {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
-    const contextProps = useContext(PropsContext)
     const navigation = useNavigation()
 
     const styles = StyleSheet.create({
@@ -61,7 +54,7 @@ export default function Nav({ isOnSearch = false, title = 'moovish' }) {
         },
         searchBar: {
             width: '70%',
-            backgroundColor: theme.gray + '88',
+            backgroundColor: theme.gray + 'e6',
             alignItems: 'center',
             justifyContent: 'center',
             padding: 10,

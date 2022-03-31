@@ -1,38 +1,41 @@
 import React from 'react'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import {
     View,
     Image,
     Text,
     StyleSheet,
     FlatList,
-    Pressable
+    Pressable,
+    Linking
 } from 'react-native'
 
 import { ThemeContext } from './Contexts/ThemeContext'
 
 import { imgPrefixLow } from './Utilities/Utilities'
+import { TMDB_API_KEY } from '@env'
 
-export default function WatchOn({ data, showCharacter = false }) {
+import axios from 'axios'
+
+export default function WatchOn({ data, showCharacter = false, tmdbLink = 'https://tmdb.org' }) {
     const theme = useContext(ThemeContext)
 
     const styles = StyleSheet.create({
         section: {
             paddingHorizontal: theme.defaultPadding,
             width: '100%',
-            // backgroundColor: 'blue',
         },
         sectionTitle: {
             fontSize: 16,
             fontFamily: theme.fontBold,
             color: theme.foreground,
-            marginBottom: 5,
+            marginBottom: 10,
             alignItems: 'center',
             justifyContent: 'center',
         },
         logoImage: {
-            height: 40,
-            width: 40,
+            height: 30,
+            width: 30,
             borderRadius: 100,
             backgroundColor: theme.accent,
         },
@@ -40,15 +43,18 @@ export default function WatchOn({ data, showCharacter = false }) {
             flexDirection: 'row',
             alignItems: 'center',
             backgroundColor: theme.gray,
-            borderWidth: 3,
             borderRadius: theme.borderRadius,
             padding: 10
         },
         name: {
             color: theme.foreground,
-            marginLeft: 15
+            marginLeft: 10
         },
     })
+
+    function openLink() {
+        Linking.openURL(tmdbLink ? tmdbLink : 'https://tmdb.com')
+    }
 
     return (
         <View>
@@ -72,16 +78,17 @@ export default function WatchOn({ data, showCharacter = false }) {
                     flexDirection: 'row'
                 }}
                 contentContainerStyle={{ paddingRight: 30, alignItems: 'center' }}
+                extraData={this.props}
                 renderItem={
                     (item) => {
                         return (
                             <Pressable
-                                onPress={() => navigation.push('profile', { profileId: item.item.id })}
+                                onPress={() => openLink()}
                                 style={{ marginRight: 7 }}
                             >
                                 <View
                                     style={styles.listItem}
-                                    key={item.item.id + item.index}
+                                    key={item.index}
                                 >
                                     <Image
                                         style={styles.logoImage}
@@ -93,8 +100,7 @@ export default function WatchOn({ data, showCharacter = false }) {
 
                                     <Text style={{
                                         ...styles.name,
-                                        marginTop: 10,
-                                        fontFamily: theme.fontBold,
+                                        fontFamily: theme.fontRegular,
                                     }}>
                                         {item.item.provider_name ? item.item.provider_name : 'Unknown name'}
                                     </Text>

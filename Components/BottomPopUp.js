@@ -32,9 +32,9 @@ export default function BottomPopUp({ setPopUpState, popUpState }) {
         }, 3500)
 
         clear = () => {
+            // setPopUpState({ isActive: false })
             Animated.timing(slideAnim).stop()
             clearTimeout(timeout)
-            setPopUpState({ isActive: false })
         }
         //slide down and set as inactive (from callback)
     }
@@ -57,12 +57,12 @@ export default function BottomPopUp({ setPopUpState, popUpState }) {
         },
         popUp: {
             zIndex: 10,
-            height: 60,
+            height: 80,
             width: '100%',
             // marginTop: height - 60,
 
             // bottom: height - 60,
-            paddingBottom: 15,
+            paddingBottom: 5,
 
             backgroundColor: theme.background,
 
@@ -77,7 +77,9 @@ export default function BottomPopUp({ setPopUpState, popUpState }) {
         text: {
             fontSize: 16,
             fontFamily: theme.fontRegular,
-            color: theme.foreground
+            color: theme.foreground,
+            marginHorizontal: theme.defaultPadding,
+            textAlign: 'center'
         },
         blur: {
             height: '1000%',
@@ -88,13 +90,13 @@ export default function BottomPopUp({ setPopUpState, popUpState }) {
 
     return (
         // <Animated.View>
-        <SafeAreaView pointerEvents="box-none" style={styles.container}>
+        <View pointerEvents="box-none" style={styles.container}>
             <Animated.View style={styles.popUp}>
                 <Text style={styles.text}>
                     {popUpState.text}
                 </Text>
             </Animated.View>
-        </SafeAreaView>
+        </View>
         // </Animated.View>
     )
 }

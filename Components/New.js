@@ -62,7 +62,7 @@ export default function New() {
     return (
         <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
-                New and fresh
+                New
             </Text>
 
             <FlatList
@@ -73,12 +73,14 @@ export default function New() {
                 data={newMoviesData}
                 renderItem={item => {
                     return (
-                        <View key={item.item.id}>
+                        <View key={item.index}>
                             <Poster
-                                movie={item.item}
+                                data={item.item}
                                 animDelay={item.index * 100}
                                 width={100}
                                 animate={true}
+                                showText={true}
+                                cutText
                             />
                         </View>
                     )

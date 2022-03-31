@@ -69,7 +69,7 @@ export default function CompanyScreen({ route }) {
     if (!loaded) return <Loading />
 
     else return (
-        <SafeAreaView style={{ backgroundColor: theme.background }}>
+        <View style={{ backgroundColor: theme.background }}>
             <AndroidStatusBarGradient />
             <NavButtons />
             {/* <Image
@@ -87,7 +87,7 @@ export default function CompanyScreen({ route }) {
                 /> */}
                 <FastImage
                     source={{ uri: `${imgPrefix}${companyData.logo_path}` }}
-                    style={{ height: 60, width: width - theme.defaultPadding * 2, alignSelf: 'center' }}
+                    style={{ height: 60, width: width - theme.defaultPadding * 2, alignSelf: 'center', marginTop: 50 }}
                     resizeMode="contain"
                     tintColor={theme.accent}
                 />
@@ -101,30 +101,34 @@ export default function CompanyScreen({ route }) {
                         width="50%"
                     />
                 </View>
-                {companyMovies ? <MasonryList
-                    renderItem={({ item, index }) => {
-                        return (
-                            <Poster
-                                movie={item}
-                                width={(width * 1 / 2) - 40}
-                                height={width * 0.65}
-                                marginRight={0}
-                                animDelay={index}
-                                key={index}
-                                marginBottom={30}
-                                alignCenter
-                            />
-                        )
-                    }
-                    }
-                    data={companyMovies}
-                    contentContainerStyle={{
-                        marginHorizontal: theme.defaultPadding,
-                    }}
-                    numColumns={2}
-                /> : null
+                {companyMovies ?
+                    <MasonryList
+                        renderItem={({ item, index }) => {
+                            return (
+                                <View
+                                    key={index}
+                                >
+                                    <Poster
+                                        data={item}
+                                        width={(width * 1 / 3) - 25}
+                                        height={width * 0.4}
+                                        marginRight={0}
+                                        animDelay={index * 100}
+                                        marginBottom={10}
+                                        alignCenter
+                                    />
+                                </View>
+                            )
+                        }
+                        }
+                        data={companyMovies}
+                        contentContainerStyle={{
+                            marginHorizontal: theme.defaultPadding,
+                        }}
+                        numColumns={3}
+                    /> : null
                 }
             </ScrollView>
-        </SafeAreaView>
+        </View>
     )
 }

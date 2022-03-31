@@ -4,7 +4,7 @@ import {
     StyleSheet,
     Animated,
     Easing,
-    Text
+    Text,
 } from 'react-native'
 
 import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'

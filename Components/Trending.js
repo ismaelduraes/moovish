@@ -13,7 +13,7 @@ import {
     Image,
     Dimensions,
     LayoutAnimation,
-    TouchableHighlight
+    Pressable
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -26,7 +26,7 @@ import Carousel from "react-native-snap-carousel";
 import { MovieContext } from "../App";
 import { TMDB_API_KEY } from '@env'
 import { imgPrefixOriginal } from "./Utilities/Utilities";
-import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import IndexDots from "./IndexDots";
 
 const width = Dimensions.get('window').width
 
@@ -82,7 +82,7 @@ export default function Trending() {
         },
         banner: {
             backgroundColor: theme.accent,
-            width: width - (theme.defaultPadding * 2) - 15,
+            width: width - (theme.defaultPadding * 2),
             //aspect-ratio is 1/1.4; as in height is width + 40% of width
             height: (width - (theme.defaultPadding * 2)) * 1.4,
             borderRadius: theme.borderRadius,
@@ -102,10 +102,10 @@ export default function Trending() {
     function Banner(item) {
         return (
             <Pressable
+                key={item.index}
                 onPress={() => navigation.push('movie', { movieId: item.item.id })}
                 removeClippedSubviews
                 renderToHardwareTextureAndroid
-                key={item.item.movie_id}
                 underlayColor={theme.background}
             >
                 <View>
@@ -116,27 +116,6 @@ export default function Trending() {
                         }}
                         style={styles.banner}
                     />
-                    {
-                        activeSlide === item.index &&
-                        <View>
-                            <Animated.Text
-                                style={{
-                                    ...styles.title,
-                                    transform: [{ translateY: slideAnim }],
-                                }}>
-                                {item.item.title}
-                            </Animated.Text>
-
-                            <Animated.Text
-                                style={{
-                                    ...styles.overview,
-                                    transform: [{ translateY: slideAnim }],
-                                }}>
-                                {item.item.overview}
-                            </Animated.Text>
-
-                        </View>
-                    }
                 </View>
             </Pressable>
         )
@@ -154,9 +133,11 @@ export default function Trending() {
                 data={trendingMovies}
                 renderItem={Banner}
                 sliderWidth={width}
-                itemWidth={width - (theme.defaultPadding * 2) - 15}
+                itemWidth={width - (theme.defaultPadding * 2)}
                 layoutCardOffset={10}
-                layout="default"
+                layout="stack"
+                renderToHardwareTextureAndroid
+                loop
                 onSnapToItem={e => {
                     setActiveSlide(e)
                     LayoutAnimation.configureNext(
@@ -168,6 +149,33 @@ export default function Trending() {
                 }}
                 removeClippedSubviews
             />
+            {trendingMovies.length > 0 ?
+
+                <Pressable
+                    style={{ paddingHorizontal: theme.defaultPadding }}
+                    onPress={() => navigation.push('movie', { movieId: trendingMovies[activeSlide].id })}
+                >
+                    <IndexDots
+                        data={trendingMovies}
+                        active={activeSlide}
+                    />
+                    <Animated.Text
+                        style={{
+                            ...styles.title,
+                            transform: [{ translateY: slideAnim }],
+                        }}>
+                        {trendingMovies[activeSlide].title}
+                    </Animated.Text>
+
+                    <Animated.Text
+                        style={{
+                            ...styles.overview,
+                            transform: [{ translateY: slideAnim }],
+                        }}>
+                        {trendingMovies[activeSlide].overview}
+                    </Animated.Text>
+
+                </Pressable> : null}
         </Animated.View>
     )
 }

@@ -31,20 +31,20 @@ export default function HorizontalProfileList({ data, title = 'Untitled List', s
             marginBottom: 10,
         },
         profileImage: {
-            height: 80,
-            width: 80,
+            height: 70,
+            width: 70,
             borderRadius: 100,
             backgroundColor: theme.accent,
         },
         profileItem: {
-            marginRight: 10,
             alignItems: 'center'
         },
         name: {
             color: theme.foreground,
-            width: 90,
+            width: 70,
             textAlign: 'center',
-            // backgroundColor: 'red',
+            fontSize: 12,
+            marginRight: 10
         },
     })
 
@@ -55,7 +55,7 @@ export default function HorizontalProfileList({ data, title = 'Untitled List', s
                 style={{
                     ...styles.sectionTitle,
                     ...styles.section,
-                    marginTop: '10%'
+                    marginTop: 30
                 }}
             >
                 {title}
@@ -69,16 +69,16 @@ export default function HorizontalProfileList({ data, title = 'Untitled List', s
                     ...styles.section,
                     flexDirection: 'row'
                 }}
-                contentContainerStyle={{ paddingRight: 30 }}
+                contentContainerStyle={{ paddingRight: theme.defaultPadding }}
                 renderItem={
                     (item) => {
                         return (
                             <Pressable
                                 onPress={() => navigation.push('profile', { profileId: item.item.id })}
+                                key={item.index}
                             >
                                 <View
                                     style={styles.profileItem}
-                                    key={item.item.id + item.index}
                                 >
                                     <Image
                                         style={styles.profileImage}
@@ -91,7 +91,7 @@ export default function HorizontalProfileList({ data, title = 'Untitled List', s
                                     <Text style={{
                                         ...styles.name,
                                         marginTop: 10,
-                                        fontFamily: theme.fontBold,
+                                        fontFamily: theme.fontRegular,
                                     }}>
                                         {item.item.name ? item.item.name : 'Unknown name'}
                                     </Text>

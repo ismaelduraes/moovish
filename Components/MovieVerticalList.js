@@ -16,6 +16,7 @@ import FastImage from "react-native-fast-image";
 import { useNavigation } from "@react-navigation/native";
 
 import { default as Ionicons } from 'react-native-vector-icons/Ionicons'
+import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { ThemeContext } from "./Contexts/ThemeContext";
 import { imgPrefixLow } from "./Utilities/Utilities";
@@ -156,10 +157,10 @@ export default function MovieVerticalList({ movieId, setPendingModal, isWatched 
                         })}
                         style={styles.button}
                     >
-                        <Ionicons
-                            name={'close'}
+                        <MaterialCommunityIcons
+                            name={'minus'}
                             size={20}
-                            color={theme.accent}
+                            color={theme.foreground + '80'}
 
                         />
                     </Pressable>
