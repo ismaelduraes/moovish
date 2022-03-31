@@ -81,11 +81,10 @@ export default function TopRated() {
                 horizontal
             >
                 {topRated.splice(0, 10).map(
-                    (item,
-                        index) => {
+                    (item, index) => {
                         return (
                             <Poster
-                                movie={item}
+                                data={item}
                                 key={index}
                             />
                         )
