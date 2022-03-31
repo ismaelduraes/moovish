@@ -30,7 +30,7 @@ export default function AndroidStatusBarGradient() {
         <View style={styles.container}>
             <LinearGradient
                 colors={[
-                    theme.accent + '88',
+                    theme.background + '88',
                     // 'rgba(255, 255, 255, 0)',
                     'rgba(0, 0, 0, 0)',
                 ]}
