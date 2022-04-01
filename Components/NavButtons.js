@@ -21,7 +21,7 @@ import axios from "axios";
 import { AuthContext } from "./Contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function NavButtons({ movieId, showId, movieRuntime, profileId }) {
+export default function NavButtons({ movieId, showId, personId, movieRuntime }) {
     const theme = useContext(ThemeContext)
     const contextAuth = useContext(AuthContext)
 
@@ -115,6 +115,12 @@ export default function NavButtons({ movieId, showId, movieRuntime, profileId })
         },
     })
 
+    function getShare() {
+        if (movieId) return `https://tmdb.org/movie/${movieId}`
+        if (showId) return `https://tmdb.org/tv/${showId}`
+        if (personId) return `https://tmdb.org/person/${personId}`
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             {pendingPopUp.isActive ?
@@ -164,7 +170,7 @@ export default function NavButtons({ movieId, showId, movieRuntime, profileId })
                             name="share"
                             size={20}
                             color={theme.background}
-                            onTouchEnd={() => Share.share({ message: movieId ? `https://tmdb.org/movie/${movieId}` : `https://tmdb.org/person/${profileId}` })}
+                            onTouchEnd={() => Share.share({ message: getShare() })}
                         />
                     </View>
                 </View>
