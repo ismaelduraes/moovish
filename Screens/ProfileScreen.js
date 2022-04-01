@@ -23,15 +23,16 @@ export default function ProfileScreen({ route }) {
     const theme = useContext(ThemeContext)
 
     const [profileData, setProfileData] = useState({})
-    const [loaded, setLoaded] = useState(false)
+    const [loading, setIsLoading] = useState(false)
+    const [isError, setIsError] = useState(false)
 
     function fetchData() {
         axios.get(`https://api.themoviedb.org/3/person/${profileId}?api_key=${TMDB_API_KEY}&append_to_response=images`)
             .then(r => {
                 setProfileData(r.data)
-                setLoaded(true)
+                setIsLoading(true)
             })
-            .catch(e => console.log(e))
+            .catch(e => setIsError(true))
     }
 
     useLayoutEffect(() => {
@@ -51,13 +52,13 @@ export default function ProfileScreen({ route }) {
         }
     })
 
-    if (!loaded) return <Loading />
+    if (!loading) return <Loading isError={isError} />
 
     else return (
         <View style={{ backgroundColor: theme.background }}>
             <AndroidStatusBarGradient />
             <NavButtons
-                profileId={profileId}
+                personId={profileId}
             />
             {/* <Image
                 style={styles.imageBg}
@@ -83,14 +84,21 @@ export default function ProfileScreen({ route }) {
                         text={profileData.place_of_birth ? profileData.place_of_birth : 'Unknown'}
                         hideIfLong
                         marginBottom={50}
-                        width="50%"
+                        width="33%"
                     />
                     <TextBody
                         style={styles.section}
                         title="Gender"
                         text={profileData.gender === 1 ? 'Female' : 'Male'}
                         hideIfLong
-                        width="50%"
+                        width="33%"
+                    />
+                    <TextBody
+                        style={styles.section}
+                        title="Birthday"
+                        text={profileData.birthday ? profileData.birthday.replaceAll('-', '/') : 'Unknown'}
+                        hideIfLong
+                        width="33%"
                     />
                 </View>
                 <ImageCarousel
