@@ -121,6 +121,7 @@ export default function TVShowScreen({ route }) {
             {/* <Nav/> */}
             <AndroidStatusBarGradient />
             <NavButtons
+                showId={showData.id}
             // isInLibrary={isInLibrary}
             // setIsInLibrary={setIsInLibrary}
             />
