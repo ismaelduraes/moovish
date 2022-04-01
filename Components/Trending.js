@@ -126,7 +126,7 @@ export default function Trending() {
             <Text style={{
                 ...styles.sectionTitle,
             }}>
-                Trending
+                Trending movies
             </Text>
 
             <Carousel

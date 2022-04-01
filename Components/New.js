@@ -62,7 +62,7 @@ export default function New() {
     return (
         <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
-                New
+                New movies
             </Text>
 
             <FlatList

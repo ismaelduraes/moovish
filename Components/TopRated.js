@@ -71,7 +71,7 @@ export default function TopRated() {
     return (
         <Animated.View style={styles.container}>
             <Text style={styles.sectionTitle}>
-                Top Rated
+                Top rated movies
             </Text>
 
             <ScrollView
