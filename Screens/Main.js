@@ -4,8 +4,6 @@ import {
     ScrollView,
     StyleSheet,
     View,
-    Dimensions,
-    NativeModules
 } from "react-native";
 import TopRated from "../Components/TopRated";
 import Trending from "../Components/Trending";
@@ -14,13 +12,9 @@ import NowPlaying from "../Components/NowPlaying";
 import Nav from "../Components/Nav";
 import { ThemeContext } from "../Components/Contexts/ThemeContext";
 import LinearGradient from "react-native-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-const { StatusBarManager } = NativeModules;
-const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
-
-const height = Dimensions.get('screen').height
-
+import TrendingTV from "../Components/TrendingTV";
+import WorthAWatch from "../Components/WorthAWatch";
+import Kids from "../Components/Kids";
 
 export default function Main({ navigation }) {
     const theme = useContext(ThemeContext)
@@ -46,8 +40,11 @@ export default function Main({ navigation }) {
             // stickyHeaderIndices={[0]}
             >
                 <NowPlaying />
+                <TrendingTV />
                 <New />
+                <WorthAWatch />
                 <Trending />
+                <Kids />
                 <TopRated />
             </ScrollView>
             <LinearGradient
