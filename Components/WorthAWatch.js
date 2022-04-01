@@ -71,8 +71,6 @@ export default function WorthAWatch() {
                     width={width - theme.defaultPadding * 2}
                     useBackdrop
                     originalQuality
-                    // showText={false}
-                    showGradient
                     marginRight={0}
                     marginBottom={40}
                 />
