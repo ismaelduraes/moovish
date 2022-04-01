@@ -43,10 +43,8 @@ export default function App() {
   const [loginData, setLoginData] = useState({})
   //set production=true to make moovish connect to remote api instead of localhost
 
-  const [moovishServer, setMoovishServer] = useState(process.env.production ? 'https://moovish.durev.net' : 'http://localhost:8080')
+  const moovishServer = process.env.production ? 'https://moovish.durev.net' : 'http://localhost:8080'
   const [captchaKey, setCaptchaKey] = useState(process.env.production ? RECAPTCHA_CLIENT_KEY : RECAPTCHA_CLIENT_KEY_LOCAL)
-
-  console.log('connecting to', moovishServer)
 
   function checkAuth() {
     RNSecureKeyStore.get('auth_token')
@@ -82,6 +80,7 @@ export default function App() {
   }
 
   useEffect(() => {
+    console.log(moovishServer)
     checkAuth()
   }, [])
 
