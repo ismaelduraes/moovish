@@ -1,19 +1,19 @@
 import React from 'react'
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import {
     View,
     Image,
     Text,
     StyleSheet,
-    FlatList,
     Pressable,
     Linking
 } from 'react-native'
 
-import { ThemeContext } from './Contexts/ThemeContext'
+import { default as MaterialCommunityIcons } from 'react-native-vector-icons/MaterialCommunityIcons'
 
+import { ThemeContext } from './Contexts/ThemeContext'
 import { imgPrefixLow } from './Utilities/Utilities'
-import { TMDB_API_KEY } from '@env'
+
 
 import axios from 'axios'
 
@@ -48,7 +48,8 @@ export default function WatchOn({ data, showCharacter = false, tmdbLink = 'https
         },
         name: {
             color: theme.foreground,
-            marginLeft: 10
+            marginLeft: 10,
+            fontSize: 14
         },
     })
 
@@ -69,57 +70,41 @@ export default function WatchOn({ data, showCharacter = false, tmdbLink = 'https
                 Watch On
             </Text>
 
-            <FlatList
-                data={data}
-                showsHorizontalScrollIndicator={false}
-                horizontal
-                style={{
-                    ...styles.section,
-                    flexDirection: 'row'
-                }}
-                contentContainerStyle={{ paddingRight: 30, alignItems: 'center' }}
-                extraData={this.props}
-                renderItem={
-                    (item) => {
-                        return (
-                            <Pressable
-                                onPress={() => openLink()}
-                                style={{ marginRight: 7 }}
-                            >
-                                <View
-                                    style={styles.listItem}
-                                    key={item.index}
-                                >
-                                    <Image
-                                        style={styles.logoImage}
-                                        source={
-                                            item.item.logo_path ?
-                                                { uri: `${imgPrefixLow}${item.item.logo_path}` } :
-                                                require('../assets/images/profile_default.png')}
-                                    />
+            {data.map((item, index) => {
+                return (
+                    <Pressable
+                        onPress={() => openLink()}
+                        style={{ marginHorizontal: theme.defaultPadding, marginBottom: 10 }}
+                        key={index}
+                    >
+                        <View
+                            style={styles.listItem}
+                        >
+                            <Image
+                                style={styles.logoImage}
+                                source={
+                                    item.logo_path ?
+                                        { uri: `${imgPrefixLow}${item.logo_path}` } :
+                                        require('../assets/images/profile_default.png')}
+                            />
 
-                                    <Text style={{
-                                        ...styles.name,
-                                        fontFamily: theme.fontRegular,
-                                    }}>
-                                        {item.item.provider_name ? item.item.provider_name : 'Unknown name'}
-                                    </Text>
-
-                                    {item.item.character && showCharacter ?
-                                        <Text
-                                            style={{
-                                                ...styles.name,
-                                                color: theme.accentLight,
-                                            }}>
-                                            {item.item.character ? item.item.character : 'Unknown Character'}
-                                        </Text> : null
-                                    }
-                                </View>
-                            </Pressable>
-                        )
-                    }
-                }
-            />
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={{
+                                    ...styles.name,
+                                    fontFamily: theme.fontBold,
+                                }}>
+                                    {item.provider_name ? item.provider_name : 'Unknown name'}
+                                </Text>
+                                <MaterialCommunityIcons
+                                    name="open-in-new"
+                                    color={theme.foreground}
+                                    style={{ marginLeft: 5 }}
+                                />
+                            </View>
+                        </View>
+                    </Pressable>
+                )
+            })}
         </View>
     )
 }
