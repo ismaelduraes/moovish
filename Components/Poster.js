@@ -47,6 +47,9 @@ export default function Poster({
     const theme = useContext(ThemeContext)
     const [isImageLoading, setIsImageLoading] = useState(true)
 
+    const mediaType = data.name ? 'tv' : 'movie'
+
+
     const navigation = useNavigation()
 
     const slideAnim = useRef(new Animated.Value(animate ? 200 : 0)).current
@@ -105,11 +108,10 @@ export default function Poster({
         >
             <Pressable
                 onPress={() => {
-                    console.log(data.media_type)
-                    if (data.media_type === "movie" || data.media_type === undefined) {
+                    if (mediaType === "movie") {
                         navigation.push('movie', { movieId: data.id })
                     }
-                    else if (data.media_type === "tv") {
+                    else if (mediaType === "tv") {
                         navigation.push('show', { showId: data.id })
                     }
                 }
@@ -146,7 +148,7 @@ export default function Poster({
             </Pressable>
             {showText && cutText ?
                 <Animated.Text style={styles.title}>
-                    {data.name ? data.name.slice(0, 20) : data.title.slice(0, 20)}{data.name ? (data.name.length >= 30 ? '...' : '') : (data.title.length >= 30 ? '...' : '')}
+                    {data.name ? data.name.slice(0, 25) : data.title.slice(0, 25)}{data.name ? (data.name.length >= 25 ? '...' : '') : (data.title.length >= 25 ? '...' : '')}
                 </Animated.Text> : null}
             {showText && !cutText ?
                 <Animated.Text style={styles.title}>
