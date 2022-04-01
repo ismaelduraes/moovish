@@ -92,6 +92,12 @@ export default function TVShowScreen({ route }) {
                 setSimilar(d.data.similar.results)
                 setReviews(d.data.reviews.results.splice(0, 5))
                 setSeasons(d.data.seasons)
+
+                axios.get(`https://api.themoviedb.org/3/tv/${showId}/watch/providers?api_key=${TMDB_API_KEY}`)
+                    .then(d => {
+                        setWatchOn(d.data.results)
+                    })
+
                 setIsLoading(false)
             })
             .catch(e => setIsError(true))
@@ -277,12 +283,6 @@ export default function TVShowScreen({ route }) {
                     /> : null
                 }
 
-                {watchOn.BR && watchOn.BR.flatrate ?
-                    <WatchOn
-                        data={watchOn.BR.flatrate}
-                        tmdbLink={watchOn.hasOwnProperty('US') ? watchOn.US.link : ''}
-                    /> : null}
-
                 <Season
                     data={seasons}
                     showId={showId}
@@ -312,6 +312,11 @@ export default function TVShowScreen({ route }) {
                     </View> : null
                 }
 
+                {watchOn.US && watchOn.US.flatrate ?
+                    <WatchOn
+                        data={watchOn.US.flatrate}
+                        tmdbLink={watchOn.hasOwnProperty('US') ? watchOn.US.link : ''}
+                    /> : null}
 
                 {/* Cast */}
                 {cast.acting ?
