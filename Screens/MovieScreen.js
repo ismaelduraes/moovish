@@ -24,7 +24,7 @@ import Loading from "../Components/Loading";
 import Comment from "../Components/Comment";
 import WatchOn from "../Components/WatchOn";
 
-import { imgPrefixOriginal } from "../Components/Utilities/Utilities";
+import { imgPrefixLow, imgPrefixOriginal } from "../Components/Utilities/Utilities";
 import { AuthContext } from "../Components/Contexts/AuthContext";
 
 import axios from "axios";
@@ -79,7 +79,7 @@ export default function MovieScreen({ route }) {
 
     function fetchAllData() {
         setIsLoading(true)
-        axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,reviews`)
+        axios.get(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=images,videos,credits,similar,reviews&language=en`)
             .then(d => {
                 //insert data into their own state
                 setMovieData(d.data)
@@ -89,7 +89,7 @@ export default function MovieScreen({ route }) {
                 sortCrew(d.data.credits.crew, setCrew)
                 setProductionCompanies(d.data.production_companies[0])
                 setSimilar(d.data.similar.results)
-                setReviews(d.data.reviews.results.slice(0, 10))
+                setReviews(d.data.reviews.results.slice(0, 5))
 
                 //get watch providers
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${TMDB_API_KEY}`)
@@ -237,7 +237,7 @@ export default function MovieScreen({ route }) {
                     >
                         {productionCompany && productionCompany.logo_path ?
                             <FastImage
-                                source={{ uri: `${imgPrefixOriginal}${productionCompany.logo_path}` }}
+                                source={{ uri: `${imgPrefixLow}${productionCompany.logo_path}` }}
                                 style={styles.companyLogo}
                                 resizeMode="contain"
                                 tintColor={theme.foreground}
@@ -289,7 +289,7 @@ export default function MovieScreen({ route }) {
 
                 {/* Images carousel */}
                 {movieImages.length > 0 ?
-                    <ImageCarousel originalQuality={false} showsIcon={false} data={movieImages.slice(0, 5)} /> : null
+                    <ImageCarousel showsIcon={false} data={movieImages.slice(0, 5)} /> : null
                 }
 
 
@@ -317,6 +317,13 @@ export default function MovieScreen({ route }) {
                     <HorizontalProfileList
                         data={cast.acting}
                         title="Cast"
+                    /> : null
+                }
+                {/* crew */}
+                {crew.directing ?
+                    <HorizontalProfileList
+                        data={crew.directing}
+                        title="Directing"
                     /> : null
                 }
 
