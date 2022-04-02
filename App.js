@@ -2,8 +2,6 @@ import React, {useEffect} from 'react';
 import {useState, createContext} from 'react';
 import {StyleSheet, StatusBar, UIManager} from 'react-native';
 
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 const Stack = createStackNavigator();
@@ -11,6 +9,7 @@ const Stack = createStackNavigator();
 import {ThemeContext} from './Components/Contexts/ThemeContext';
 import {themes} from './Components/Contexts/ThemeContext';
 
+import Loading from './Components/Loading';
 import Main from './Screens/Main';
 import MovieScreen from './Screens/MovieScreen';
 import TVShowScreen from './Screens/TVShowScreen';
@@ -39,8 +38,10 @@ export default function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [token, setToken] = useState('');
   const [loginData, setLoginData] = useState({});
-  //set production=true to make moovish connect to remote api instead of localhost
 
+  const [isLoadingAnimDone, setIsLoadingAnimDone] = useState(false);
+
+  //set production=true on npm start or build to make moovish connect to remote api instead of localhost
   const moovishServer = process.env.production
     ? 'https://moovish.durev.net'
     : 'http://localhost:8080';
@@ -96,15 +97,7 @@ export default function App() {
     }
   }
 
-  const styles = StyleSheet.create({
-    container: {
-      height: '100%',
-      width: '100%',
-      backgroundColor: currentTheme.background,
-    },
-  });
-
-  return authTestDone ? (
+  return (
     <AuthContext.Provider
       value={{
         setToken,
@@ -119,6 +112,14 @@ export default function App() {
       <ThemeContext.Provider value={currentTheme}>
         <PropsContext.Provider value={{currentTheme, setCurrentTheme}}>
           <SafeAreaProvider>
+            {!authTestDone && !isLoadingAnimDone ? (
+              <Loading
+                rotate={false}
+                loadingText="moovish"
+                iconName="movie-open"
+                finishAction={() => setIsLoadingAnimDone(true)}
+              />
+            ) : null}
             <NavigationContainer>
               <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="home" component={Main} />
@@ -146,5 +147,5 @@ export default function App() {
         />
       </ThemeContext.Provider>
     </AuthContext.Provider>
-  ) : null;
+  );
 }
