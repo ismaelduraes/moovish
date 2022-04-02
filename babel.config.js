@@ -9,15 +9,12 @@ module.exports = {
       "safe": false,
       "allowUndefined": true
     }],
-  ["transform-inline-environment-variables", {
-    "include": [
-      "NODE_ENV"
-    ]
-  }]
+  ["transform-inline-environment-variables", { "include": ["NODE_ENV"] }],
+    'react-native-reanimated/plugin',
   ],
   env: {
     production: {
-      plugins: ["transform-inline-environment-variables", "transform-remove-console"]
+      plugins: ["transform-inline-environment-variables", "transform-remove-console", 'react-native-reanimated/plugin',]
     }
   }
 };

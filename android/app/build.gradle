@@ -2,6 +2,7 @@ apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
 
+
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -80,7 +81,6 @@ import com.android.build.OutputFile
 project.ext.react = [
     enableHermes: true,  // clean and rebuild if changing
 ]
-
 apply from: "../../node_modules/react-native/react.gradle"
 
 /**
@@ -216,7 +216,6 @@ dependencies {
         implementation jscFlavor
     }
 
-    compile project(':react-native-radial-gradient')
     compile project(':react-native-secure-key-store')
 }
 

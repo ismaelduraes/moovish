@@ -3,9 +3,6 @@ package com.moovish;
 import com.facebook.react.ReactActivity;
 
 import android.os.Bundle;
-
-import com.surajit.rnrg.RNRadialGradientPackage;
-
 public class MainActivity extends ReactActivity {
 
   /**
