@@ -136,6 +136,9 @@ export default function TrendingTV() {
         layout="default"
         renderToHardwareTextureAndroid
         windowSize={2}
+        panGestureHandlerProps={{
+          activeOffsetX: [-10, 10],
+        }}
         // loop
         onSnapToItem={e => {
           setActiveSlide(e);
