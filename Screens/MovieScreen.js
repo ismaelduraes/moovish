@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import {ThemeContext} from '../Components/Contexts/ThemeContext';
 
+import ParallaxScrollView from 'react-native-parallax-scroll-view';
+
 import {TMDB_API_KEY} from '@env';
 
 import {sortCast, sortCrew} from '../Components/Utilities/CreditsSort';
@@ -121,13 +123,13 @@ export default function MovieScreen({route}) {
 
   const styles = StyleSheet.create({
     container: {
-      position: 'absolute',
+      // position: 'absolute',
       height,
       width,
       backgroundColor: theme.background,
     },
     companyLogo: {
-      width: 90,
+      width: 60,
       height: 20,
       marginHorizontal: 10,
     },
@@ -200,13 +202,30 @@ export default function MovieScreen({route}) {
       //to keep theme darker
       opacity: theme.type === 'light' ? 0 : 0.1,
     },
+    titleContainer: {
+      // alignItems: 'center',
+      paddingHorizontal: theme.defaultPadding,
+      marginTop: 20,
+      zIndex: 2,
+      // marginBottom: 20,
+    },
+    headerTitle: {
+      color: theme.accent,
+      fontFamily: theme.fontBold,
+      fontSize: 24,
+      marginBottom: 5,
+    },
+    subtitle: {
+      width: '80%',
+      color: theme.foreground,
+      fontFamily: theme.fontRegular,
+    },
   });
 
   if (isLoading) return <Loading isError={isError} />;
   else
     return (
       <View style={styles.container}>
-        {/* <Nav/> */}
         <AndroidStatusBarGradient />
         <NavButtons
           movieId={movieId}
@@ -224,17 +243,29 @@ export default function MovieScreen({route}) {
                 blurRadius={50}
                 progressiveRenderingEnabled
             /> */}
-        <ScrollView
-          contentContainerStyle={{paddingBottom: 30}}
-          showsVerticalScrollIndicator={false}>
-          {/* Poster */}
-          <Header
-            imagePath={movieData.backdrop_path}
-            fallbackImagePath={movieData.poster_path}
-            title={movieData.title}
-            subtitle={movieData.tagline}
-          />
-
+        <ParallaxScrollView
+          contentContainerStyle={{
+            paddingBottom: 30,
+            backgroundColor: theme.background,
+          }}
+          parallaxHeaderHeight={350}
+          showsVerticalScrollIndicator={false}
+          backgroundScrollSpeed={1.5}
+          renderBackground={() => {
+            return (
+              <Header
+                imagePath={movieData.backdrop_path}
+                fallbackImagePath={movieData.poster_path}
+              />
+            );
+          }}>
+          {/* title */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.headerTitle}>{movieData.title}</Text>
+            {movieData.tagline ? (
+              <Text style={styles.subtitle}>{movieData.tagline}</Text>
+            ) : null}
+          </View>
           {/* Ratings */}
           <View style={{...styles.rating}}>
             <Pressable
@@ -251,7 +282,7 @@ export default function MovieScreen({route}) {
                   }}
                   style={styles.companyLogo}
                   resizeMode="contain"
-                  tintColor={theme.foreground}
+                  tintColor={theme.accent}
                 />
               ) : (
                 <Text style={{...styles.smallText, color: theme.accent}}>
@@ -261,6 +292,9 @@ export default function MovieScreen({route}) {
                 </Text>
               )}
             </Pressable>
+            {movieData.runtime > 0 ? (
+              <Text style={styles.smallText}>{movieData.runtime} min</Text>
+            ) : null}
             <View>
               <Text style={styles.ratingAverage}>
                 {movieData.vote_average
@@ -271,10 +305,6 @@ export default function MovieScreen({route}) {
                 <Text style={styles.smallText}>Rating</Text>
               ) : null}
             </View>
-
-            {movieData.runtime > 0 ? (
-              <Text style={styles.smallText}>{movieData.runtime} min</Text>
-            ) : null}
           </View>
 
           {/* Overview */}
@@ -348,7 +378,7 @@ export default function MovieScreen({route}) {
 
                     </View> : null
                 } */}
-        </ScrollView>
+        </ParallaxScrollView>
       </View>
     );
 }

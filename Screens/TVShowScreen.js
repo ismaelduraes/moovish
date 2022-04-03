@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import {ThemeContext} from '../Components/Contexts/ThemeContext';
 
+import ParallaxScrollView from 'react-native-parallax-scroll-view';
+
 import {TMDB_API_KEY} from '@env';
 
 import {sortCast, sortCrew} from '../Components/Utilities/CreditsSort';
@@ -125,7 +127,7 @@ export default function TVShowScreen({route}) {
       backgroundColor: theme.background,
     },
     companyLogo: {
-      width: 90,
+      width: 60,
       height: 20,
       marginHorizontal: 10,
     },
@@ -148,7 +150,7 @@ export default function TVShowScreen({route}) {
       alignItems: 'center',
       marginHorizontal: theme.defaultPadding,
       justifyContent: 'space-around',
-      borderColor: theme.accent + '1a',
+      borderColor: theme.accent + '4c',
       borderWidth: 3,
       borderRadius: theme.borderRadius,
       overflow: 'hidden',
@@ -198,6 +200,24 @@ export default function TVShowScreen({route}) {
       //to keep theme darker
       opacity: theme.type === 'light' ? 0 : 0.1,
     },
+    titleContainer: {
+      // alignItems: 'center',
+      paddingHorizontal: theme.defaultPadding,
+      marginTop: 20,
+      zIndex: 2,
+      // marginBottom: 20,
+    },
+    headerTitle: {
+      color: theme.accent,
+      fontFamily: theme.fontBold,
+      fontSize: 24,
+      marginBottom: 5,
+    },
+    subtitle: {
+      width: '80%',
+      color: theme.foreground,
+      fontFamily: theme.fontRegular,
+    },
   });
 
   if (isLoading) return <Loading isError={isError} />;
@@ -224,17 +244,29 @@ export default function TVShowScreen({route}) {
         blurRadius={50}
         progressiveRenderingEnabled
       /> */}
-      <ScrollView
-        contentContainerStyle={{paddingBottom: 30}}
-        showsVerticalScrollIndicator={false}>
-        {/* Poster */}
-        <Header
-          imagePath={showData.backdrop_path}
-          fallbackImagePath={showData.poster_path}
-          title={showData.name}
-          subtitle={showData.tagline}
-        />
-
+      <ParallaxScrollView
+        contentContainerStyle={{
+          paddingBottom: 30,
+          backgroundColor: theme.background,
+        }}
+        showsVerticalScrollIndicator={false}
+        parallaxHeaderHeight={350}
+        backgroundScrollSpeed={1.5}
+        renderBackground={() => {
+          return (
+            <Header
+              imagePath={showData.backdrop_path}
+              fallbackImagePath={showData.poster_path}
+            />
+          );
+        }}>
+        {/* title */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle}>{showData.name}</Text>
+          {showData.tagline ? (
+            <Text style={styles.subtitle}>{showData.tagline}</Text>
+          ) : null}
+        </View>
         {/* Ratings */}
         <View style={{...styles.rating}}>
           <Pressable
@@ -261,6 +293,11 @@ export default function TVShowScreen({route}) {
               </Text>
             )}
           </Pressable>
+          {showData.episode_run_time > 0 ? (
+            <Text style={styles.smallText}>
+              {showData.episode_run_time} min / episode
+            </Text>
+          ) : null}
           <View>
             <Text style={styles.ratingAverage}>
               {showData.vote_average
@@ -271,12 +308,6 @@ export default function TVShowScreen({route}) {
               <Text style={styles.smallText}>Rating</Text>
             ) : null}
           </View>
-
-          {showData.episode_run_time > 0 ? (
-            <Text style={styles.smallText}>
-              {showData.episode_run_time} min / episode
-            </Text>
-          ) : null}
         </View>
 
         {/* Overview */}
@@ -284,7 +315,15 @@ export default function TVShowScreen({route}) {
           <TextBody title="Overview" text={showData.overview} />
         ) : null}
 
+        {/* seasons */}
         <Season data={seasons} showId={showId} />
+        {/* watch on */}
+        {watchOn.US && watchOn.US.flatrate ? (
+          <WatchOn
+            data={watchOn.US.flatrate.slice(0, 2)}
+            tmdbLink={watchOn.hasOwnProperty('US') ? watchOn.US.link : ''}
+          />
+        ) : null}
 
         {/* Images carousel */}
         {showImages.length > 0 ? (
@@ -295,6 +334,7 @@ export default function TVShowScreen({route}) {
           />
         ) : null}
 
+        {/* reviews */}
         {reviews.length > 0 ? (
           <View style={{marginTop: 30}}>
             <Text style={styles.sectionTitle}>
@@ -304,13 +344,6 @@ export default function TVShowScreen({route}) {
               return <Comment key={item.id} comment={item} />;
             })}
           </View>
-        ) : null}
-
-        {watchOn.US && watchOn.US.flatrate ? (
-          <WatchOn
-            data={watchOn.US.flatrate}
-            tmdbLink={watchOn.hasOwnProperty('US') ? watchOn.US.link : ''}
-          />
         ) : null}
 
         {/* Cast */}
@@ -324,7 +357,7 @@ export default function TVShowScreen({route}) {
             You've reached the end. What a ride!
           </Text>
           <MaterialCommunityIcons
-            name="dog"
+            name="cat"
             style={{marginBottom: 20, opacity: 0.5, alignSelf: 'center'}}
             color={theme.foreground}
             size={30}
@@ -349,7 +382,7 @@ export default function TVShowScreen({route}) {
 
                     </View> : null
                 } */}
-      </ScrollView>
+      </ParallaxScrollView>
     </View>
   );
 }
