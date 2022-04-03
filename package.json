@@ -26,6 +26,7 @@
     "react-native-gesture-handler": "2.1.1",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-masonry": "^0.5.0-alpha.5",
+    "react-native-parallax-scroll-view": "^0.21.3",
     "react-native-reanimated": "^2.5.0",
     "react-native-reanimated-carousel": "^2.3.2",
     "react-native-recaptcha-that-works": "^1.2.0",
