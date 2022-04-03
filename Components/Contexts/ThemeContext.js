@@ -21,7 +21,7 @@ export const themes = {
     accentAlt: '#266DD3',
     background: '#000000', //black
     foreground: '#f9e7e7',
-    gray: '#0a0a0a',
+    gray: '#141414',
     fontRegular: 'Rubik-Regular',
     fontBold: 'Rubik-Bold',
     defaultPadding: 20,
