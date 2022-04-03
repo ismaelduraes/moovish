@@ -13,7 +13,7 @@ import WorthAWatch from '../Components/WorthAWatch';
 import Kids from '../Components/Kids';
 import Anime from '../Components/Anime';
 
-export default function Main({navigation}) {
+export default function Main() {
   const theme = useContext(ThemeContext);
 
   const styles = StyleSheet.create({
@@ -32,10 +32,7 @@ export default function Main({navigation}) {
       <Nav />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
-        removeClippedSubviews
-        // stickyHeaderIndices={[0]}
-      >
+        contentContainerStyle={styles.contentContainer}>
         <NowPlaying />
         <TrendingTV />
         <New />
