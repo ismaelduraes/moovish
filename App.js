@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import {useState, createContext} from 'react';
-import {StyleSheet, StatusBar, UIManager} from 'react-native';
+import {StatusBar, UIManager} from 'react-native';
 
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, DarkTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 const Stack = createStackNavigator();
 
@@ -120,14 +120,13 @@ export default function App() {
                 finishAction={() => setIsLoadingAnimDone(true)}
               />
             ) : null}
-            <NavigationContainer>
+            <NavigationContainer
+              theme={currentTheme.type === 'light' ? undefined : DarkTheme}>
               <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="home" component={Main} />
-
                 <Stack.Screen name="movie" component={MovieScreen} />
                 <Stack.Screen name="show" component={TVShowScreen} />
                 <Stack.Screen name="season" component={SeasonScreen} />
-
                 <Stack.Screen name="profile" component={ProfileScreen} />
                 <Stack.Screen name="search" component={SearchScreen} />
                 <Stack.Screen name="login" component={LoginScreen} />
