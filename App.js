@@ -45,9 +45,9 @@ export default function App() {
   const moovishServer = process.env.local
     ? 'http://localhost:8080'
     : 'https://moovish.durev.net';
-  const [captchaKey, setCaptchaKey] = useState(
-    process.env.local ? RECAPTCHA_CLIENT_KEY_LOCAL : RECAPTCHA_CLIENT_KEY,
-  );
+  const captchaKey = process.env.local
+    ? RECAPTCHA_CLIENT_KEY_LOCAL
+    : RECAPTCHA_CLIENT_KEY;
 
   function checkAuth() {
     RNSecureKeyStore.get('auth_token')
