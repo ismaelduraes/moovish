@@ -40,7 +40,7 @@ export default function NavButtons({movieId, showId, personId, movieRuntime}) {
       //if success
       .then(r => {
         //check if any of the movies in library match current movieId
-        r.data.forEach(item => {
+        r.data.movies.forEach(item => {
           if (item.movie_id === movieId) {
             setIsInLibrary(true);
           }
@@ -48,7 +48,8 @@ export default function NavButtons({movieId, showId, personId, movieRuntime}) {
         setIsLoading(false);
       })
       //if fail
-      .catch(() => {
+      .catch(e => {
+        console.log(e);
         setIsLoading(false);
         setIsInLibrary(false);
       });
