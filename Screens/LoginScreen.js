@@ -108,9 +108,18 @@ export default function LoginScreen() {
   }
 
   async function login() {
+    //some keyboards add spaces at the end of inputs.
+    //this removes any spaces added to the username and password,
+    //since they aren't valid anyways.
+    const usernameFixed = username.replaceAll(' ', '');
+    const passwordFixed = password.replaceAll(' ', '');
+
     setIsLoading(true);
     axios
-      .post(`${contextAuth.moovishServer}/login`, {username, password})
+      .post(`${contextAuth.moovishServer}/login`, {
+        username: usernameFixed,
+        password: passwordFixed,
+      })
       .then(res => {
         setIsLoading(false);
         if (res.data.verified) {
