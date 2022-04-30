@@ -37,6 +37,7 @@ export default function Library() {
 
   const [toWatchMovies, setToWatchMovies] = useState([]);
   const [watchedMovies, setWatchedMovies] = useState([]);
+  const [totalRuntime, setTotalRuntime] = useState(0);
   //0 is to watch list, 1 is watched
   const [currentScreen, setCurrentScreen] = useState(0);
 
@@ -81,19 +82,25 @@ export default function Library() {
         headers: {'auth-token': contextAuth.token},
       })
       .then(res => {
-        parseMovies(res.data);
+        parseMovies(res.data.movies);
+        setTotalRuntime(res.data.runtime);
         setIsLoading(false);
       })
-      .catch(e => setIsError(true));
+      .catch(e => {
+        console.log(e);
+        setIsError(true);
+      });
   }
 
   function deleteMovie() {
+    setIsLoading(true);
     axios
       .delete(
         `${contextAuth.moovishServer}/profile/library/${pendingModal.movieId}`,
         {headers: {'auth-token': contextAuth.token}},
       )
       .then(() => {
+        setIsLoading(false);
         fetchData();
         setPendingModal({isActive: false});
         setPendingPopUpState({isActive: true, text: 'Removed from library.'});
@@ -102,6 +109,7 @@ export default function Library() {
   }
 
   function setWatched() {
+    setIsLoading(true);
     //change watched to true
     axios
       .patch(
@@ -111,6 +119,7 @@ export default function Library() {
       )
       .then(() => {
         fetchData();
+        setIsLoading(false);
         setPendingModal({isActive: false});
         setPendingPopUpState({
           isActive: true,
@@ -308,10 +317,26 @@ export default function Library() {
             </Text>
           </View>
         ) : null}
-
+        {totalRuntime && currentScreen === 1 ? (
+          <Text
+            style={{
+              fontFamily: theme.fontBold,
+              color: theme.foreground,
+              fontSize: 14,
+              textAlign: 'center',
+              marginHorizontal: theme.defaultPadding,
+              marginBottom: 15,
+              maxWidth: '70%',
+              opacity: 0.5,
+              alignSelf: 'center',
+            }}>
+            You have watched a total of {Math.floor(totalRuntime / 60)} hours
+            and {Math.round(((totalRuntime / 60) % 1).toFixed(4) * 60)} minutes.
+          </Text>
+        ) : null}
         <FlatList
           contentContainerStyle={{
-            paddingTop: 20,
+            paddingTop: currentScreen === 0 ? 20 : 0,
             paddingBottom: 20,
           }}
           style={{zIndex: 0}}
