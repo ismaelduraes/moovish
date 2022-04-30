@@ -36,6 +36,9 @@ export default function Header({
       paddingHorizontal: resizeMode === 'contain' ? theme.defaultPadding : 0,
       backgroundColor: theme.accent,
       marginBottom: 25,
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'center',
     },
     poster: {
       width: '100%',
