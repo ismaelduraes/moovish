@@ -13,7 +13,7 @@ React Native app for gathering information about movies, TV shows and documentar
    `npm install`
 5. (If developing for android, skip to step 6)
    <br/>If you're on macOS and developing for iOS, install pod dependencies: `cd ios && pod install && cd ..`
-6. Add your TMDB API keys to `.env`
+6. Add your TMDB API keys to `.env.template`, copy it and rename it to `.env`.
 7. Optional: Run moovish by running `npm start` on your preferred terminal, then, on another terminal tab, running `npx react-native run-android` or `npx react-native run-ios`.
 8. If building for Android, run `cd android && ./gradlew assembleRelease && cd ..`
    <br/>For iOS, [read this](https://reactnative.dev/docs/publishing-to-app-store)
