@@ -1,102 +1,98 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
-    StyleSheet,
-    Dimensions,
-    Text,
-    Animated,
-    Easing,
-    View,
-    SafeAreaView
-} from 'react-native'
+  StyleSheet,
+  Dimensions,
+  Text,
+  Animated,
+  Easing,
+  View,
+} from 'react-native';
 // import {  } from "react-native-safe-area-context";
-import { ThemeContext } from "./Contexts/ThemeContext";
+import {ThemeContext} from './Contexts/ThemeContext';
 
-import SlideAnimationFunction from "./Utilities/SlideAnimationFuncion";
+import SlideAnimationFunction from './Utilities/SlideAnimationFuncion';
 
-const height = Dimensions.get('window').height
+const height = Dimensions.get('window').height;
 
-export default function BottomPopUp({ setPopUpState, popUpState }) {
-    const theme = useContext(ThemeContext)
-    const slideAnim = useRef(new Animated.Value(100)).current
+export default function BottomPopUp({setPopUpState, popUpState}) {
+  const theme = useContext(ThemeContext);
+  const slideAnim = useRef(new Animated.Value(100)).current;
 
-    //waits for 3.5 seconds and then sets popup as inactive
-    async function unmount() {
-        const timeout = await setTimeout(() => {
-            Animated.timing(slideAnim, {
-                toValue: 100,
-                duration: 1000,
-                useNativeDriver: true,
-                easing: Easing.out(Easing.exp)
-            }).start(() => clear())
+  //waits for 3.5 seconds and then sets popup as inactive
+  async function unmount() {
+    const timeout = await setTimeout(() => {
+      Animated.timing(slideAnim, {
+        toValue: 100,
+        duration: 1000,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.exp),
+      }).start(() => clear());
+    }, 3500);
 
-        }, 3500)
+    clear = () => {
+      setPopUpState({isActive: false});
+      Animated.timing(slideAnim).stop();
+      clearTimeout(timeout);
+    };
+    //slide down and set as inactive (from callback)
+  }
 
-        clear = () => {
-            // setPopUpState({ isActive: false })
-            Animated.timing(slideAnim).stop()
-            clearTimeout(timeout)
-        }
-        //slide down and set as inactive (from callback)
-    }
+  SlideAnimationFunction(slideAnim, 0, 1000, true);
 
-    SlideAnimationFunction(slideAnim, 0, 1000, true)
+  useEffect(() => {
+    unmount();
+  }, []);
 
-    useEffect(() => {
-        unmount()
-    }, [])
+  const styles = StyleSheet.create({
+    container: {
+      position: 'absolute',
+      height: height,
+      width: '100%',
+      zIndex: 10,
+      alignSelf: 'center',
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    popUp: {
+      zIndex: 10,
+      height: 80,
+      width: '100%',
+      // marginTop: height - 60,
 
-    const styles = StyleSheet.create({
-        container: {
-            position: 'absolute',
-            height: height,
-            width: '100%',
-            zIndex: 10,
-            alignSelf: 'center',
-            flex: 1,
-            justifyContent: 'flex-end'
-        },
-        popUp: {
-            zIndex: 10,
-            height: 80,
-            width: '100%',
-            // marginTop: height - 60,
+      // bottom: height - 60,
+      paddingBottom: 5,
 
-            // bottom: height - 60,
-            paddingBottom: 5,
+      backgroundColor: theme.background,
 
-            backgroundColor: theme.background,
+      transform: [{translateY: slideAnim}],
 
-            transform: [{ translateY: slideAnim }],
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'center',
 
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignSelf: 'center',
+      overflow: 'hidden',
+    },
+    text: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.foreground,
+      marginHorizontal: theme.defaultPadding,
+      textAlign: 'center',
+    },
+    blur: {
+      height: '1000%',
+      width: '100%',
+      position: 'absolute',
+    },
+  });
 
-            overflow: 'hidden'
-        },
-        text: {
-            fontSize: 16,
-            fontFamily: theme.fontRegular,
-            color: theme.foreground,
-            marginHorizontal: theme.defaultPadding,
-            textAlign: 'center'
-        },
-        blur: {
-            height: '1000%',
-            width: '100%',
-            position: 'absolute'
-        }
-    })
-
-    return (
-        // <Animated.View>
-        <View pointerEvents="box-none" style={styles.container}>
-            <Animated.View style={styles.popUp}>
-                <Text style={styles.text}>
-                    {popUpState.text}
-                </Text>
-            </Animated.View>
-        </View>
-        // </Animated.View>
-    )
+  return (
+    // <Animated.View>
+    <View pointerEvents="box-none" style={styles.container}>
+      <Animated.View style={styles.popUp}>
+        <Text style={styles.text}>{popUpState.text}</Text>
+      </Animated.View>
+    </View>
+    // </Animated.View>
+  );
 }
