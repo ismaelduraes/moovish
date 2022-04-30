@@ -29,7 +29,7 @@ export default function Kids() {
   function fetchData() {
     axios
       .get(
-        `https://api.themoviedb.org/3/discover/tv?api_key=cd2313ca79ff33e56d832cf18a212b69&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&with_genres=16,10762&include_null_first_air_dates=false`,
+        `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&with_genres=16,10762&include_null_first_air_dates=false`,
       )
       .then(result => setNewMoviesData(result.data.results));
   }
