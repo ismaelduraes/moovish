@@ -41,12 +41,12 @@ export default function App() {
 
   const [isLoadingAnimDone, setIsLoadingAnimDone] = useState(false);
 
-  //set production=true on npm start or build to make moovish connect to remote api instead of localhost
-  const moovishServer = process.env.production
-    ? 'https://moovish.durev.net'
-    : 'http://localhost:8080';
+  //set local=true on npm start or build to make moovish connect to local api instead of remote
+  const moovishServer = process.env.local
+    ? 'http://localhost:8080'
+    : 'https://moovish.durev.net';
   const [captchaKey, setCaptchaKey] = useState(
-    process.env.production ? RECAPTCHA_CLIENT_KEY : RECAPTCHA_CLIENT_KEY_LOCAL,
+    process.env.local ? RECAPTCHA_CLIENT_KEY_LOCAL : RECAPTCHA_CLIENT_KEY,
   );
 
   function checkAuth() {
@@ -86,7 +86,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    console.log(moovishServer);
+    console.log('connecting to', moovishServer);
     checkAuth();
   }, []);
 
