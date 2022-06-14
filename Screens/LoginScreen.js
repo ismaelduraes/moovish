@@ -33,8 +33,8 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   //sign up
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  //this is the email input used for signing up. for signing in, the username variable
-  //is used.
+  //↓ this is the email input used for signing up. for signing in, the username variable
+  //is used (its value can be an email).
   const [email, setEmail] = useState('');
   const [hasAccount, setHasAccount] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +84,7 @@ export default function LoginScreen() {
       setPendingModal({
         isActive: true,
         title: "Couldn't sign you up.",
-        text: 'Make sure your username is over 6 characters long, and your password is over 8 characters long.\n\nYou can only use letters (a-Z), numbers (0-9), underscores (_) and dots (.) on your username.\n\nYou have to use at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol on your password.',
+        text: 'Make sure your username is over 6 characters long, and your password is over 8 characters long.\n\nYou can only use letters, numbers, underscores (_) and dots (.) on your username.\n\nYou need to have at least 1 uppercase and lowercase letter, 1 number, and 1 symbol on your password.',
       });
       return;
     }
@@ -111,8 +111,8 @@ export default function LoginScreen() {
     //some keyboards add spaces at the end of inputs.
     //this removes any spaces added to the username and password,
     //since they aren't valid anyways.
-    const usernameFixed = username.replaceAll(' ', '');
-    const passwordFixed = password.replaceAll(' ', '');
+    const usernameFixed = username.trim();
+    const passwordFixed = password.trim();
 
     setIsLoading(true);
     axios
@@ -126,11 +126,18 @@ export default function LoginScreen() {
           // set token
           RNSecureKeyStore.set('auth_token', res.data.token, {
             accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK,
-          }).then(() => {
-            contextAuth.setToken(res.data.token);
-            contextAuth.setIsAuth(true);
-            navigation.navigate('home');
-          });
+          })
+            .then(() => {
+              alert('logged in successfully');
+              contextAuth.setToken(res.data.token);
+              contextAuth.setIsAuth(true);
+              navigation.navigate('home');
+            })
+            .catch(e => {
+              alert(
+                `Something went wrong and moovish couldn't store your user data. ${e}`,
+              );
+            });
           // get user data (username, email, uuid)
           axios
             .get(`${contextAuth.moovishServer}/profile/data`, {
@@ -147,15 +154,14 @@ export default function LoginScreen() {
       //handle errors
       .catch(err => {
         setIsLoading(false);
-        switch (err.response.status) {
-          case 401:
+        if (err.response) {
+          if (err.response.status === 401) {
             setPendingModal({
               isActive: true,
               title: "Couldn't sign you in.",
               text: 'Incorrect username or password.',
             });
-            break;
-          default:
+          } else
             setPendingModal({
               isActive: true,
               title: "Couldn't sign you in.",
@@ -163,8 +169,7 @@ export default function LoginScreen() {
                 "Something went wrong and you couldn't be signed in." +
                 err.response.data,
             });
-            break;
-        }
+        } else alert(err);
       });
   }
 
