@@ -1,14 +1,6 @@
 import React from 'react';
-import {useState, useMemo, useEffect, useContext} from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-  Image,
-} from 'react-native';
+import {useState, useEffect, useContext} from 'react';
+import {View, Text, Pressable, StyleSheet, Dimensions} from 'react-native';
 import {ThemeContext} from '../Components/Contexts/ThemeContext';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -26,10 +18,7 @@ import Loading from '../Components/Loading';
 import Comment from '../Components/Comment';
 import WatchOn from '../Components/WatchOn';
 
-import {
-  imgPrefixLow,
-  imgPrefixOriginal,
-} from '../Components/Utilities/Utilities';
+import {imgPrefixLow} from '../Components/Utilities/Utilities';
 import {AuthContext} from '../Components/Contexts/AuthContext';
 
 import axios from 'axios';
@@ -65,7 +54,6 @@ export default function MovieScreen({route}) {
   const {movieId} = route.params;
 
   useEffect(() => {
-    // fetchData()
     fetchAllData();
 
     return () => {
@@ -227,22 +215,8 @@ export default function MovieScreen({route}) {
     return (
       <View style={styles.container}>
         <AndroidStatusBarGradient />
-        <NavButtons
-          movieId={movieId}
-          movieRuntime={movieData.runtime}
-          // isInLibrary={isInLibrary}
-          // setIsInLibrary={setIsInLibrary}
-        />
+        <NavButtons movieId={movieId} movieRuntime={movieData.runtime} />
 
-        {/* background image */}
-        {/* <Image
-                style={styles.imageBg}
-                source={movieData.backdrop_path ?
-                    { uri: `${imgPrefixOriginal}${movieData.backdrop_path}` } :
-                    require('../assets/images/profile_default.png')}
-                blurRadius={50}
-                progressiveRenderingEnabled
-            /> */}
         <ParallaxScrollView
           contentContainerStyle={{
             paddingBottom: 30,

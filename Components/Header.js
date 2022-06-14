@@ -1,12 +1,6 @@
 import React from 'react';
 import {useContext, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import {View, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 
 import {imgPrefixOriginal} from './Utilities/Utilities';
 
