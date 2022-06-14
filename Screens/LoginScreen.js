@@ -3,7 +3,6 @@ import React from 'react';
 import {useContext, useState, useRef} from 'react';
 import {
   View,
-  Image,
   Text,
   TextInput,
   StyleSheet,
@@ -128,10 +127,9 @@ export default function LoginScreen() {
             accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK,
           })
             .then(() => {
-              alert('logged in successfully');
+              navigation.navigate('home');
               contextAuth.setToken(res.data.token);
               contextAuth.setIsAuth(true);
-              navigation.navigate('home');
             })
             .catch(e => {
               alert(
