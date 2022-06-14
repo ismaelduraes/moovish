@@ -1,14 +1,6 @@
 import React from 'react';
-import {useState, useMemo, useEffect, useContext} from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-  Image,
-} from 'react-native';
+import {useState, useEffect, useContext} from 'react';
+import {View, Text, Pressable, StyleSheet, Dimensions} from 'react-native';
 import {ThemeContext} from '../Components/Contexts/ThemeContext';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -59,7 +51,6 @@ export default function TVShowScreen({route}) {
   const [isError, setIsError] = useState(false);
 
   const theme = useContext(ThemeContext);
-  const contextAuth = useContext(AuthContext);
 
   const {showId} = route.params;
 
