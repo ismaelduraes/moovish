@@ -65,13 +65,13 @@ export default function App() {
           //if error
           .catch(error => {
             if (error.code === 401) {
-              //conection has been denied by server; log user out
+              //connection has been denied by server; log user out
               alert(
                 'Something went wrong and you have been logged out. Please log back in again.',
               );
               setIsAuth(false);
             } else {
-              //has token but couldnt connect to moovish servers
+              //has token but couldn't connect to moovish servers
               alert(
                 'Something went wrong while trying to connect to moovish. Please check your internet connection.',
               );
