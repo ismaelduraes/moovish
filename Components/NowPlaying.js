@@ -27,7 +27,7 @@ export default function NowPlaying() {
       .get(
         `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&page=1`,
       )
-      .then(result => setNowPlaying(result.data.results[0]));
+      .then(result => setNowPlaying(result.data.results[7]));
   }
 
   useEffect(() => {
