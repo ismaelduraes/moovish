@@ -119,7 +119,7 @@ export default function TrendingTV() {
         style={{
           ...styles.sectionTitle,
         }}>
-        Top Shows
+        Trending Shows
       </Text>
 
       <Carousel
@@ -152,7 +152,7 @@ export default function TrendingTV() {
         <Pressable
           style={{paddingHorizontal: theme.defaultPadding}}
           onPress={() =>
-            navigation.push('movie', {movieId: trending[activeSlide].id})
+            navigation.push('show', {showId: trending[activeSlide].id})
           }>
           <IndexDots data={trending} active={activeSlide} />
           <Animated.Text
