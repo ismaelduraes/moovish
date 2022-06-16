@@ -19,7 +19,7 @@ import ProfileScreen from './Screens/ProfileScreen';
 import Library from './Screens/Library';
 
 import RNSecureKeyStore from 'react-native-secure-key-store';
-
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 import {PropsContext} from './Components/Contexts/PropsContext';
@@ -95,6 +95,8 @@ export default function App() {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
+
+    changeNavigationBarColor(currentTheme.background);
   }
 
   return (
