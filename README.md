@@ -28,4 +28,4 @@ React Native app for gathering information about movies, TV shows and documentar
 - Please note that this app was only made for practice and study purposes only. You can do with this code whatever you will; but I don't plan on keeping it updated long term, nor do I guarantee that I will support it in the future.
   <br/>
   <br/>
-- Feel free to make it your own, re-release it or do whatever; I truly do not mind. Whatever changes you make to it, though, don't market them as if they were made by me. I am not responsible for anything that is made beyond the code in this repository.
+- Feel free to make it your own, re-release it or do whatever; I truly do not mind. Whatever changes you make to it, though, don't publish them as if they were made by me. I am not responsible for anything that is made beyond the code in this repository.
